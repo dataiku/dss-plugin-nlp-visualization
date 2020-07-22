@@ -1,20 +1,17 @@
 {
-    // Plugin identifiers are globally unique and only contain A-Za-z0-9_-
-    "id": "dss-plugin-nlp-visualization",
-    // It is highly recommended to use Semantic Versioning
+    "id": "nlp-visualization",
     "version": "1.0.0",
-    // Meta data for display purposes:
     "meta": {
-        // label: name of the plugin as displayed, should be short
-        "label": "NLP Visualization",
-        // description: longer string to help end users understand what this plugin does
-        "description": "Visualize vocabulary used in a text corpus",
-        "author": "admin",
-        // icon: must be one of the FontAwesome 3.2.1 icons, complete list here at https://fontawesome.com/v3.2.1/icons/
-        "icon": "icon-puzzle-piece",
-        // List of tags for filtering the list of plugins
-        "tags": ["Visualization", "NLP"]
-        // URL where the user can learn more about the plugin
-        "url": "",
-        "licenseInfo": "Apache Software License"
+        "label": "Text Visualization",
+        "category": "Natural Language Processing",
+        "description": "Visualize text data as word clouds",
+        "author": "Dataiku (Alex LANDEAU and Alex COMBESSIE)",
+        "icon": "icon-file-text",
+        "tags": [
+            "NLP"
+        ],
+        "url": "https://www.dataiku.com/product/plugins/nlp-visualization/",
+        "licenseInfo": "Apache Software License",
+        "supportLevel": "TIER2_SUPPORT"
     }
+}
