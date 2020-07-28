@@ -1,0 +1,44 @@
+// This file is the descriptor for webapp wordcloud
+{
+    "meta": {
+        // label: name of the webapp as displayed, should be short
+        "label": "Wordcloud",
+        // description: longer string to help end users understand what this webapp does
+        "description": "",
+        // icon: must be one of the FontAwesome 3.2.1 icons, complete list here at https://fontawesome.com/v3.2.1/icons/
+        "icon": "icon-font"
+    },
+
+    "baseType": "STANDARD", // WARNING: do not change
+    "hasBackend": "true",
+	
+	"chart" : {
+        "datasetParamName": "dataset",
+        //"leftBarLabel": "Chart parameters",
+        "topBar": "STD_FORM",
+        "topBarParams": [
+            {
+                "name": "text_col",
+                "type": "DATASET_COLUMN",
+                "datasetParamName": "dataset",
+                "label": "Text column",
+                "description": "",
+                "mandatory": true
+            },
+            {
+                "name": "language",
+                "type": "SELECT",
+                "selectChoices": [
+					{ "value": "en", "label": "English"},
+					{ "value": "fr", "label": "Français"}
+				],                "label": "Language",
+                "description": "",
+                "mandatory": false
+            }
+        ],
+        //"leftBar": "STD_FORM",
+        "leftBarParams": [],
+		"canFilter": false,
+        "canFacet": false
+    }
+}
