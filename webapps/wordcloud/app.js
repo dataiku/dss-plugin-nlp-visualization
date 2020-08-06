@@ -22,5 +22,7 @@ function set_simple_svg(){
 window.addEventListener('message', function(event) {
     if (event.data) {
         set_simple_svg()
+    } else {
+        set_simple_svg()
     }
  });
