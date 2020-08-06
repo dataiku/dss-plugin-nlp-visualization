@@ -19,4 +19,11 @@ function set_simple_svg(){
     console.log("Hello !");
 }
 
-set_simple_svg()
+window.addEventListener('message', function(event) {
+    if (event.data) {
+        set_simple_svg
+    }
+    //event.data should contain the config
+});
+
+// set_simple_svg()
