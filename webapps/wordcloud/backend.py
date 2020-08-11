@@ -63,7 +63,7 @@ def get_svg():
     # Generate a word cloud image
     print('Starting to generate wordcloud')
     logging.info('Starting to generate wordcloud')
-    wordcloud = WordCloud(background_color='white', scale = 2 , margin=4, max_words=100)\
+    wordcloud = WordCloud(background_color='white', scale = 8 , margin=4, max_words=100)\
     .generate(text).recolor(color_func=color_func, random_state=3)
 
     chart_svg = wordcloud.to_svg(embed_font=True)
