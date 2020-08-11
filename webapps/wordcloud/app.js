@@ -13,7 +13,7 @@ function set_simple_svg(){
     .then(function(response){
         response.json()
         .then(function(data){
-            document.getElementById('wordcloud').innerHTML = data.svg;
+            document.getElementsByClassName('chart').innerHTML = data.svg;
         })
     })
     console.log("Hello !");
