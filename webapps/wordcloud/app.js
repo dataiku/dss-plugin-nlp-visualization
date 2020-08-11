@@ -14,6 +14,7 @@ function set_simple_svg(){
         response.json()
         .then(function(data){
             document.getElementById('wordcloud').innerHTML = data.svg;
+            document.getElementById('wordcloud2').innerHTML = data.svg;
         })
     })
     console.log("Hello !");
