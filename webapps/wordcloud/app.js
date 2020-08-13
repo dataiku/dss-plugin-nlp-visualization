@@ -1,6 +1,8 @@
 let allRows;
 let webAppConfig = dataiku.getWebAppConfig()['webAppConfig'];
 
+window.parent.postMessage("sendConfig", "*");
+
 function set_simple_svg(){
     let headers = new Headers()
     let init = {
