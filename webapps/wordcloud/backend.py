@@ -78,7 +78,7 @@ def get_svg(params):
         text = df[text_col].str.cat(sep=' ')
         svg = wordcloud_svg(text, color_func)
         logging.info('Wordcloud generated')
-        response = [{'facet': None, 'svg':chart_svg}]
+        response = [{'facet': None, 'svg':svg}]
         return json.dumps(response)
 
     else:
