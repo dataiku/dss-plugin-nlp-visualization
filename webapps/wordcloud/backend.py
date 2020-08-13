@@ -13,7 +13,8 @@ from dataiku.customwebapp import get_webapp_config
 logger = logging.getLogger(__name__)
 
 #input_dataset = dataiku.Dataset("tweet_data_prepared")
-#input_dataset = get_webapp_config()['dataset']
+input_dataset = get_webapp_config()['dataset']
+df = dataiku.Dataset(dataset_name).get_dataframe()
 
 
 #text_col = get_webapp_config()['text_col']
@@ -67,7 +68,7 @@ def get_svg(params):
     logging.info('Webapp parameters loaded: {}'.format(params_dict))
 
     dataset_name = params_dict.get('dataset_name')
-    df = dataiku.Dataset(dataset_name).get_dataframe()
+    #df = dataiku.Dataset(dataset_name).get_dataframe()
 
     text_col = params_dict.get('text_column', None)
     language = params_dict.get('language', None)
