@@ -52,7 +52,7 @@ def color_func(word, font_size, position, orientation, random_state=None,
 
 
 @app.route('/get_svg/<path:params>')
-def get_svg():
+def get_svg(params):
     params_dict = json.loads(params)
     logging.info('Webapp parameters loaded: {}'.format(params_dict))
     config = get_webapp_config().get("webAppConfig")
