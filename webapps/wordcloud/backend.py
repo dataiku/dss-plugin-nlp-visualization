@@ -83,6 +83,7 @@ def get_svg(params):
 
     else:
 
+        df_grouped = df.groupby(facet_col)
         facets = df[facet_col].unique().tolist()
         texts = [df_grouped.get_group(facet)[text_col].str.cat(sep=' ') for facet in facets]
         svgs = [wordcloud_svg(text, color_func) for text in texts]
