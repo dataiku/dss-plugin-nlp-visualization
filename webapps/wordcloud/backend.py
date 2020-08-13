@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 #input_dataset = dataiku.Dataset("tweet_data_prepared")
 input_dataset = get_webapp_config()['dataset']
-df = dataiku.Dataset(dataset_name).get_dataframe()
+df = dataiku.Dataset(input_dataset).get_dataframe()
 
 
 #text_col = get_webapp_config()['text_col']
