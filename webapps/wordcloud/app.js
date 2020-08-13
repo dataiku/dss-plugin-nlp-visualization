@@ -22,7 +22,6 @@ function set_simple_svg(){
 
 window.addEventListener('message', function(event) {
     if (event.data) {
-        let webAppConfig = dataiku.getWebAppConfig()['webAppConfig'];
         console.log(webAppConfig);
         set_simple_svg();
     } else {
