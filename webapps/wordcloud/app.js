@@ -1,5 +1,6 @@
 let allRows;
 let webAppConfig = dataiku.getWebAppConfig()['webAppConfig'];
+let webAppDesc = dataiku.getWebAppDesc()['chart'];
 
 window.parent.postMessage("sendConfig", "*");
 
@@ -27,6 +28,22 @@ window.addEventListener('message', function(event) {
         event_data = JSON.parse(event.data);
         webAppConfig = event_data['webAppConfig']
         console.log(webAppConfig);
+
+        // TODO catch when filter all alphanum column type values
+        try {
+            checkWebAppParameters(webAppConfig, webAppDesc);
+        } catch (e) {
+            dataiku.webappMessages.displayFatalError(e.message);
+            return;
+        }
+
+        try {
+            checkWebAppConfig(webAppConfig)
+        } catch (e) {
+            dataiku.webappMessages.displayFatalError(e.message);
+            return;
+        }
+                
 
         set_simple_svg();
     } 
