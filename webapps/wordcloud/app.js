@@ -23,10 +23,11 @@ function set_simple_svg(){
 
 window.addEventListener('message', function(event) {
     if (event.data) {
+
+        event_data = JSON.parse(event.data);
+        webAppConfig = event_data['webAppConfig']
         console.log(webAppConfig);
+
         set_simple_svg();
-    } else {
-        console.log(webAppConfig);
-        set_simple_svg();
-    }
+    } 
  });
