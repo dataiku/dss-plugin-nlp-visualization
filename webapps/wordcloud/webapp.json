@@ -39,6 +39,6 @@
         //"leftBar": "STD_FORM",
         "leftBarParams": [],
 		"canFilter": false,
-        "canFacet": true
+        "canFacet": false
     }
 }
