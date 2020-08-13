@@ -26,6 +26,7 @@ window.addEventListener('message', function(event) {
     if (event.data) {
 
         event_data = JSON.parse(event.data);
+        
         webAppConfig = event_data['webAppConfig']
         console.log(webAppConfig);
 
