@@ -27,5 +27,6 @@ window.addEventListener('message', function(event) {
         set_simple_svg();
     } else {
         console.log(webAppConfig);
+        set_simple_svg();
     }
  });
