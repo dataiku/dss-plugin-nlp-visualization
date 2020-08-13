@@ -57,6 +57,11 @@ window.addEventListener('message', function(event) {
             return;
         }
 
+        var div = document.getElementById('worcloud');
+        while(div.firstChild){
+            div.removeChild(div.firstChild);
+}
+
         set_simple_svg(params);
     } 
  });
