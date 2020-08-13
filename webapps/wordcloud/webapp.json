@@ -47,7 +47,7 @@
                 "label": "Breakdown by",
                 "description": "",
                 "mandatory": false
-            },
+            }
 
         ],
 		"canFilter": false,
