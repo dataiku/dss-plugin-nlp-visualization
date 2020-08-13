@@ -57,7 +57,7 @@ window.addEventListener('message', function(event) {
             return;
         }
 
-        var div = document.getElementById('worcloud');
+        var div = document.getElementById('wordcloud');
         while(div.firstChild){
             div.removeChild(div.firstChild);
         }
