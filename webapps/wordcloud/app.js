@@ -36,7 +36,7 @@ window.addEventListener('message', function(event) {
             dataiku.webappMessages.displayFatalError(e.message);
             return;
         }
-        
+
         set_simple_svg();
     } 
  });
