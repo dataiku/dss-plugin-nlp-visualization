@@ -46,14 +46,19 @@ def color_func(word, font_size, position, orientation, random_state=None,
 
 #render_template('body.html', svg=value)
 
+config = get_webapp_config().get("webAppConfig")
+dataset_name = config.get('dataset')
+df = dataiku.Dataset(dataset_name).get_dataframe()
+
+
 @app.route('/get_svg')
 def get_svg():
 
-    config = get_webapp_config().get("webAppConfig")
-    logging.info('Webapp config loaded: {}'.format(config))
+    #config = get_webapp_config().get("webAppConfig")
+    #logging.info('Webapp config loaded: {}'.format(config))
 
-    dataset_name = config.get('dataset')
-    df = dataiku.Dataset(dataset_name).get_dataframe()
+    #dataset_name = config.get('dataset')
+    #df = dataiku.Dataset(dataset_name).get_dataframe()
 
     text_col = config.get('text_col')
     language = config.get('language')
