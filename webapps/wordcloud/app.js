@@ -16,7 +16,18 @@ function set_simple_svg(params){
     .then(function(response){
         response.json()
         .then(function(data){
-            document.getElementById('wordcloud').innerHTML = data.svg;
+            for (var chart of data) {
+								
+                var title = document.createElement('div');
+                title.innerHTML = chart.facet;
+                title.setAttribute('class', 'sep');
+                document.getElementById('wordcloud').appendChild(title);
+                
+                var worcloud = document.createElement('div');
+                worcloud.innerHTML = chart.svg;
+                worcloud.setAttribute('class', 'wordcloud');
+                document.getElementById('wordcloud').appendChild(worcloud);
+            }
         })
     })
     console.log("Hello !");
