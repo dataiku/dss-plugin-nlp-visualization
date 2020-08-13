@@ -60,13 +60,13 @@ def get_svg(params):
 
     logging.info('1')
 
-    dataset_name = config.get('dataset')
+    dataset_name = params_dict.get('dataset_name')
     df = dataiku.Dataset(dataset_name).get_dataframe()
 
     logging.info('2')
 
-    text_col = config.get('text_col')
-    language = config.get('language')
+    text_col = params_dict.get('text_column')
+    language = params_dict.get('language')
 
     logging.info('3')
 
