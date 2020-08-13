@@ -46,6 +46,6 @@ window.addEventListener('message', function(event) {
             return;
         }
 
-        set_simple_svg();
+        set_simple_svg(params);
     } 
  });
