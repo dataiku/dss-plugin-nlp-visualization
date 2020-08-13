@@ -74,7 +74,7 @@ dataiku.webappMessages = (function() {
     function displayFatalError(err) {
         const errElt = $('<div class="fatal-error" style="margin: 100px auto; text-align: center; color: var(--error-red)"></div>')
         errElt.text(err);
-        $('#waterfall-chart').html(errElt);
+        $('#wordcloud-chart').html(errElt);
     }
     return  Object.freeze({displayFatalError})
 })();
