@@ -51,9 +51,10 @@ def color_func(word, font_size, position, orientation, random_state=None,
 #df = dataiku.Dataset(dataset_name).get_dataframe()
 
 
-@app.route('/get_svg')
+@app.route('/get_svg/<path:params>')
 def get_svg():
-
+    params_dict = json.loads(params)
+    logging.info('Webapp parameters loaded: {}'.format(params_dict))
     config = get_webapp_config().get("webAppConfig")
     logging.info('Webapp config loaded: {}'.format(config))
 
