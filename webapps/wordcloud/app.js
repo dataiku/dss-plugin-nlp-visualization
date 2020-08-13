@@ -1,6 +1,6 @@
 let allRows;
 let webAppConfig = dataiku.getWebAppConfig()['webAppConfig'];
-let webAppDesc = dataiku.getWebAppDesc()['chart'];
+let webAppDesc = dataiku.getWebAppDesc()['chart']
 
 window.parent.postMessage("sendConfig", "*");
 
