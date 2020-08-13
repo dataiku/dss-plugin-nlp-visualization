@@ -67,6 +67,7 @@ def get_svg(params):
 
     text_col = params_dict.get('text_column')
     language = params_dict.get('language')
+    facet_col = params_dict.get('facet_column')
 
     logging.info('3')
 
