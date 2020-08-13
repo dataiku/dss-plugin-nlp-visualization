@@ -24,20 +24,32 @@
                 "label": "Text column",
                 "description": "",
                 "mandatory": true
-            },
+            }
+        ],
+        //"leftBar": "STD_FORM",
+        "leftBarParams": [
             {
                 "name": "language",
                 "type": "SELECT",
                 "selectChoices": [
 					{ "value": "en", "label": "English"},
 					{ "value": "fr", "label": "Français"}
-				],                "label": "Language",
+                ],
+                "label": "Language",
                 "description": "",
                 "mandatory": false
-            }
+            },
+
+            {
+                "name": "facet_col",
+                "type": "DATASET_COLUMN",
+                "datasetParamName": "dataset",
+                "label": "Breakdown by",
+                "description": "",
+                "mandatory": false
+            },
+
         ],
-        //"leftBar": "STD_FORM",
-        "leftBarParams": [],
 		"canFilter": false,
         "canFacet": false
     }
