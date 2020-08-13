@@ -4,14 +4,14 @@ let webAppDesc = dataiku.getWebAppDesc()['chart']
 
 window.parent.postMessage("sendConfig", "*");
 
-function set_simple_svg(){
+function set_simple_svg(params){
     let headers = new Headers()
     let init = {
         method : 'GET',
         headers : headers
     }
 
-    let url = getWebAppBackendUrl('/get_svg')
+    let url = getWebAppBackendUrl('/get_svg')+'/'+JSON.stringify(params)
     fetch(url, init)
     .then(function(response){
         response.json()
@@ -28,6 +28,14 @@ window.addEventListener('message', function(event) {
         event_data = JSON.parse(event.data);
 
         webAppConfig = event_data['webAppConfig']
+
+        var params = {
+            dataset_name: webAppConfig['dataset'],
+            text_column: webAppConfig['text_col'],
+            language: webAppConfig['language'],
+            facet_column: webAppConfig['facet_col']
+        }
+
         console.log(webAppConfig);
 
         // TODO catch when filter all alphanum column type values
