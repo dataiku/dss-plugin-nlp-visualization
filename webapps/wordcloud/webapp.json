@@ -14,6 +14,7 @@
 	
 	"chart" : {
         "datasetParamName": "dataset",
+        "paramsPythonSetup": "get_language_list.py",
         //"leftBarLabel": "Chart parameters",
         "topBar": "STD_FORM",
         "topBarParams": [
