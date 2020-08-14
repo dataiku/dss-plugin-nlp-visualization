@@ -37,7 +37,8 @@
                 ],
                 "label": "Language",
                 "description": "",
-                "mandatory": false
+                "mandatory": false,
+                "defaultValue": "en"
             },
 
             {
