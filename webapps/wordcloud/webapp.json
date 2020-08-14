@@ -31,10 +31,7 @@
             {
                 "name": "language",
                 "type": "SELECT",
-                "selectChoices": [
-					{ "value": "en", "label": "English"},
-					{ "value": "fr", "label": "Français"}
-                ],
+                "getChoicesFromPython": true,
                 "label": "Language",
                 "description": "Language used for text processing",
                 "mandatory": false,
