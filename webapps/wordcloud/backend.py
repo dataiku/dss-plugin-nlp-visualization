@@ -72,24 +72,24 @@ def get_svg(params):
 
     text_col = params_dict.get('text_column', None)
     language = params_dict.get('language', None)
-    facet_col = params_dict.get('facet_column', None)
+    subchart_column = params_dict.get('subchart_column', None)
 
-    if facet_col == None:
+    if subchart_column == None:
 
         text = df[text_col].str.cat(sep=' ')
         svg = wordcloud_svg(text, color_func)
         logging.info('Wordcloud generated')
-        response = [{'facet': None, 'svg':svg}]
+        response = [{'subchart': None, 'svg':svg}]
         return json.dumps(response)
 
     else:
 
-        df_grouped = df.groupby(facet_col)
-        facets = df[facet_col].unique().tolist()
-        texts = [df_grouped.get_group(facet)[text_col].str.cat(sep=' ') for facet in facets]
+        df_grouped = df.groupby(subchart_column)
+        subcharts = df[subchart_column].unique().tolist()
+        texts = [df_grouped.get_group(subchart)[text_col].str.cat(sep=' ') for subchart in subcharts]
         svgs = [wordcloud_svg(text, color_func) for text in texts]
         logging.info('Wordclouds generated')
-        response = [{'facet':facet, 'svg':svg} for facet, svg in zip(facets, svgs)]
+        response = [{'subchart':subchart, 'svg':svg} for subchart, svg in zip(subcharts, svgs)]
         return json.dumps(response)
 
 
