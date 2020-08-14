@@ -22,7 +22,7 @@
                 "type": "DATASET_COLUMN",
                 "datasetParamName": "dataset",
                 "label": "Text column",
-                "description": "",
+                "description": "Text column used to generate wordcloud",
                 "mandatory": true
             }
         ],
@@ -36,7 +36,7 @@
 					{ "value": "fr", "label": "Français"}
                 ],
                 "label": "Language",
-                "description": "",
+                "description": "Language used for text processing",
                 "mandatory": false,
                 "defaultValue": "en"
             },
