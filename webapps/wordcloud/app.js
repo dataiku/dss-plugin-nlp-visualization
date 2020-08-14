@@ -19,7 +19,7 @@ function set_simple_svg(params){
             for (var chart of data) {
 								
                 var title = document.createElement('div');
-                title.innerHTML = chart.facet;
+                title.innerHTML = chart.subchart;
                 title.setAttribute('class', 'sep');
                 document.getElementById('wordcloud').appendChild(title);
                 
@@ -44,7 +44,7 @@ window.addEventListener('message', function(event) {
             dataset_name: webAppConfig['dataset'],
             text_column: webAppConfig['text_column'],
             language: webAppConfig['language'],
-            facet_column: webAppConfig['facet_column']
+            subchart_column: webAppConfig['subchart_column']
         }
 
         console.log(webAppConfig);
