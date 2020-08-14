@@ -42,7 +42,7 @@ window.addEventListener('message', function(event) {
 
         var params = {
             dataset_name: webAppConfig['dataset'],
-            text_column: webAppConfig['text_col'],
+            text_column: webAppConfig['text_column'],
             language: webAppConfig['language'],
             facet_column: webAppConfig['facet_col']
         }
