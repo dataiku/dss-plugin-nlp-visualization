@@ -42,11 +42,11 @@
             },
 
             {
-                "name": "facet_column",
+                "name": "subchart_column",
                 "type": "DATASET_COLUMN",
                 "datasetParamName": "dataset",
-                "label": "Breakdown by",
-                "description": "",
+                "label": "Subcharts",
+                "description": "Categorical column used to create subcharts",
                 "mandatory": false
             }
 
