@@ -41,7 +41,7 @@
             },
 
             {
-                "name": "facet_col",
+                "name": "facet_column",
                 "type": "DATASET_COLUMN",
                 "datasetParamName": "dataset",
                 "label": "Breakdown by",
