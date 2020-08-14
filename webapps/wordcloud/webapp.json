@@ -18,7 +18,7 @@
         "topBar": "STD_FORM",
         "topBarParams": [
             {
-                "name": "text_col",
+                "name": "text_column",
                 "type": "DATASET_COLUMN",
                 "datasetParamName": "dataset",
                 "label": "Text column",
