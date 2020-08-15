@@ -46,6 +46,8 @@ def get_svg(params):
         df = dataiku.Dataset(dataset_name).get_dataframe(columns=necessary_columns)
         if df.empty:
             raise Exception("Dataframe is empty")
+        else:
+            logging.info('Read dataset of shape: '.format(df.shape))
 
         if subchart_column == None:
             text = df[text_column].str.cat(sep=' ')
