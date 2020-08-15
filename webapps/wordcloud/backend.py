@@ -59,11 +59,10 @@ def get_svg(params):
 
             texts = []
             subcharts = []
-            for name, group in dg_gr
+            for name, group in df_grouped:
+                subcharts.append(name)
+                texts.append(group[text_col].str.cat(sep=' '))
 
-            subcharts = df[subchart_column].unique().tolist()
-
-            texts = [df_grouped.get_group(subchart)[text_col].str.cat(sep=' ') for subchart in subcharts]
             svgs = [get_wordcloud_svg(text, color_func) for text in texts]
             logging.info('Wordclouds generated')
 
