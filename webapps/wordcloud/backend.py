@@ -24,7 +24,7 @@ def get_wordcloud_svg(text, colour_func):
     # Return the wordcloud as an svg file
     wordcloud = WordCloud(background_color='white', scale=2, margin=4, max_words=100)\
         .generate(text).recolor(color_func=color_func, random_state=3)
-        
+
     svg = wordcloud.to_svg(embed_font=True)
     return svg
     
@@ -41,7 +41,7 @@ def get_svg(params):
     params_dict = json.loads(params)
     logging.info('Webapp parameters loaded: {}'.format(params_dict))
 
-    dataset_name = params_dict.get('dataset_name')
+    dataset_name = params_dict.get('dataset_name', None)
     text_col = params_dict.get('text_column', None)
     language = params_dict.get('language', None)
     subchart_column = params_dict.get('subchart_column', None)
