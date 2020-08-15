@@ -23,7 +23,7 @@
                 "type": "DATASET_COLUMN",
                 "datasetParamName": "dataset",
                 "label": "Text column",
-                "description": "Text column used to generate wordcloud",
+                "description": "Text column used to generate the wordcloud",
                 "mandatory": true
             }
         ],
