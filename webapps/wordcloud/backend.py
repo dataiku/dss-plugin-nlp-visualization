@@ -29,12 +29,6 @@ def get_wordcloud_svg(text, colour_func):
     return svg
     
 
-# Load dataset
-config = get_webapp_config().get("webAppConfig")
-dataset_name = config.get('dataset', None)
-df = dataiku.Dataset(dataset_name).get_dataframe()
-
-
 @app.route('/get_svg/<path:params>')
 def get_svg(params):
     # Load parameters
@@ -45,6 +39,11 @@ def get_svg(params):
     text_col = params_dict.get('text_column', None)
     language = params_dict.get('language', None)
     subchart_column = params_dict.get('subchart_column', None)
+
+    # Load input dataframe
+    df = dataiku.Dataset(dataset_name).get_dataframe()
+    if df.empty:
+        raise Exception("Dataframe is empty")
 
     if subchart_column == None:
 
