@@ -48,6 +48,8 @@ def get_svg(params):
 
         if subchart_column == None:
             text = df[text_col].str.cat(sep=' ')
+
+            # Generate wordcloud
             svg = get_wordcloud_svg(text, color_func)
             logging.info('Wordcloud generated')
 
@@ -64,6 +66,7 @@ def get_svg(params):
                 texts.append(group[text_col].str.cat(sep=' '))
                 subcharts.append(name)
 
+            # Generate wordclouds
             svgs = [get_wordcloud_svg(text, color_func) for text in texts]
             logging.info('Wordclouds generated')
 
