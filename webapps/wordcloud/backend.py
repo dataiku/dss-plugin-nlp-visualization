@@ -48,7 +48,7 @@ def get_svg(params):
     if subchart_column == None:
 
         text = df[text_col].str.cat(sep=' ')
-        svg = wordcloud_svg(text, color_func)
+        svg = get_wordcloud_svg(text, color_func)
         logging.info('Wordcloud generated')
         response = [{'subchart': None, 'svg':svg}]
         return json.dumps(response)
@@ -58,7 +58,7 @@ def get_svg(params):
         df_grouped = df.groupby(subchart_column)
         subcharts = df[subchart_column].unique().tolist()
         texts = [df_grouped.get_group(subchart)[text_col].str.cat(sep=' ') for subchart in subcharts]
-        svgs = [wordcloud_svg(text, color_func) for text in texts]
+        svgs = [get_wordcloud_svg(text, color_func) for text in texts]
         logging.info('Wordclouds generated')
         response = [{'subchart':subchart, 'svg':svg} for subchart, svg in zip(subcharts, svgs)]
         return json.dumps(response)
