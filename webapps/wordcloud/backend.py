@@ -31,7 +31,7 @@ def get_wordcloud_svg(text, colour_func):
 
 # Load dataset
 config = get_webapp_config().get("webAppConfig")
-dataset_name = config.get('dataset')
+dataset_name = config.get('dataset', None)
 df = dataiku.Dataset(dataset_name).get_dataframe()
 
 
