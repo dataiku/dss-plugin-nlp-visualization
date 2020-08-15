@@ -12,30 +12,12 @@ from dataiku.customwebapp import get_webapp_config
 
 logger = logging.getLogger(__name__)
 
-#input_dataset = dataiku.Dataset("tweet_data_prepared")
-#input_dataset = get_webapp_config()['dataset']
-#df = dataiku.Dataset(input_dataset).get_dataframe()
-
-
-#text_col = get_webapp_config()['text_col']
-
-#export_folder = dataiku.Folder("AA1eOTbv")
-#folder_path = export_folder.get_path()
-
-#try:
-
-#except Exception as e:
-#    logger.error(traceback.format_exc())
-    #return str(e), 500
-
-# Generate a custom color palette
-def color_func(word, font_size, position, orientation, random_state=None,
-                    **kwargs):
+def color_func(word, font_size, position, orientation, random_state=None, **kwargs):
     color_list = ['hsl(205,71%,41%)', 'hsl(214,56%,80%)', 'hsl(28,100%,53%)', 'hsl(30,100%,74%)',
                   'hsl(120,57%,40%)', 'hsl(110,57%,71%)']
     return random.choice(color_list)
 
-def wordcloud_svg(text, colour_func):
+def get_wordcloud_svg(text, colour_func):
     # Generate a word cloud image
     wordcloud = WordCloud(background_color='white', scale=2, margin=4, max_words=100)\
     .generate(text).recolor(color_func=color_func, random_state=3)
@@ -43,19 +25,8 @@ def wordcloud_svg(text, colour_func):
     svg = wordcloud.to_svg(embed_font=True)
     
     return svg
-
-#Load text
-#text = str(df[text_col])
-
-# Generate a word cloud image
-#wordcloud = WordCloud(background_color='white', width=800, height=400, margin=4, max_words=100)\
-#.generate(text).recolor(color_func=color_func, random_state=3)
-
-#chart_svg = wordcloud.to_svg(embed_font=True)
-#value = Markup('<strong>{}</strong>'.format(chart_svg))
-
-#render_template('body.html', svg=value)
-
+    
+# Load dataset
 config = get_webapp_config().get("webAppConfig")
 dataset_name = config.get('dataset')
 df = dataiku.Dataset(dataset_name).get_dataframe()
