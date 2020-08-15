@@ -10,20 +10,20 @@ from wordcloud import WordCloud
 import random
 from dataiku.customwebapp import get_webapp_config
 
+# Initiate logger
 logger = logging.getLogger(__name__)
 
 def color_func(word, font_size, position, orientation, random_state=None, **kwargs):
+    # Return the color function used in the wordcloud
     color_list = ['hsl(205,71%,41%)', 'hsl(214,56%,80%)', 'hsl(28,100%,53%)', 'hsl(30,100%,74%)',
                   'hsl(120,57%,40%)', 'hsl(110,57%,71%)']
     return random.choice(color_list)
 
 def get_wordcloud_svg(text, colour_func):
-    # Generate a word cloud image
+    # Return the wordcloud as an svg file
     wordcloud = WordCloud(background_color='white', scale=2, margin=4, max_words=100)\
-    .generate(text).recolor(color_func=color_func, random_state=3)
-    
+        .generate(text).recolor(color_func=color_func, random_state=3)
     svg = wordcloud.to_svg(embed_font=True)
-    
     return svg
     
 # Load dataset
