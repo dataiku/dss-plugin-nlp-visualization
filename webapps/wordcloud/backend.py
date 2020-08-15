@@ -22,7 +22,7 @@ def color_func(word, font_size, position, orientation, random_state=None, **kwar
 
 def get_wordcloud_svg(text, colour_func):
     # Return the wordcloud as an svg file
-    wordcloud = WordCloud(background_color='white', scale=2, margin=4, max_words=100)\
+    wordcloud = WordCloud(background_color='white', scale=2, margin=4, max_words=100, collocations=False)\
         .generate(text).recolor(color_func=color_func, random_state=3)
 
     svg = wordcloud.to_svg(embed_font=True)
