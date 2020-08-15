@@ -12,7 +12,6 @@ import random
 from dataiku.customwebapp import get_webapp_config
 
 
-
 def color_func(word, font_size, position, orientation, random_state=None, **kwargs):
     # Return the color function used in the wordcloud
     color_list = ['hsl(205,71%,41%)', 'hsl(214,56%,80%)', 'hsl(28,100%,53%)', 'hsl(30,100%,74%)',
