@@ -54,14 +54,16 @@ def get_svg(params):
             response = [{'subchart': None, 'svg':svg}]
             return json.dumps(response)
         else:
+            # Group data
             df.dropna(subset=[subchart_column], inplace=True)
             df_grouped = df.groupby(subchart_column)
 
             texts = []
             subcharts = []
             for name, group in df_grouped:
-                subcharts.append(name)
                 texts.append(group[text_col].str.cat(sep=' '))
+                subcharts.append(name)
+                
 
             svgs = [get_wordcloud_svg(text, color_func) for text in texts]
             logging.info('Wordclouds generated')
