@@ -16,6 +16,7 @@ def color_func(word, font_size, position, orientation, random_state=None, **kwar
     # Return the color function used in the wordcloud
     color_list = ['hsl(205,71%,41%)', 'hsl(214,56%,80%)', 'hsl(28,100%,53%)', 'hsl(30,100%,74%)',
                   'hsl(120,57%,40%)', 'hsl(110,57%,71%)']
+
     return random.choice(color_list)
 
 
@@ -23,6 +24,7 @@ def get_wordcloud_svg(text, colour_func):
     # Return the wordcloud as an svg file
     wordcloud = WordCloud(background_color='white', scale=2, margin=4, max_words=100)\
         .generate(text).recolor(color_func=color_func, random_state=3)
+        
     svg = wordcloud.to_svg(embed_font=True)
     return svg
     
@@ -35,13 +37,11 @@ df = dataiku.Dataset(dataset_name).get_dataframe()
 
 @app.route('/get_svg/<path:params>')
 def get_svg(params):
-
+    # Load parameters
     params_dict = json.loads(params)
     logging.info('Webapp parameters loaded: {}'.format(params_dict))
 
     dataset_name = params_dict.get('dataset_name')
-    #df = dataiku.Dataset(dataset_name).get_dataframe()
-
     text_col = params_dict.get('text_column', None)
     language = params_dict.get('language', None)
     subchart_column = params_dict.get('subchart_column', None)
