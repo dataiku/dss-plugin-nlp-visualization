@@ -56,6 +56,11 @@ def get_svg(params):
         else:
             df.dropna(subset=[subchart_column], inplace=True)
             df_grouped = df.groupby(subchart_column)
+
+            texts = []
+            subcharts = []
+            for name, group in dg_gr
+
             subcharts = df[subchart_column].unique().tolist()
 
             texts = [df_grouped.get_group(subchart)[text_col].str.cat(sep=' ') for subchart in subcharts]
