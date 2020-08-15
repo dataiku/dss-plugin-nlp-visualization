@@ -34,7 +34,7 @@
                 "type": "SELECT",
                 "getChoicesFromPython": true,
                 "label": "Language",
-                "description": "Language used for text processing",
+                "description": "Language used to process text",
                 "mandatory": false,
                 "defaultValue": "en"
             },
