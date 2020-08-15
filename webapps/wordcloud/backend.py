@@ -41,12 +41,11 @@ def get_svg(params):
     subchart_column = params_dict.get('subchart_column', None)
 
     # Load input dataframe
-    df = dataiku.Dataset(dataset_name).get_dataframe()
+    df = dataiku.Dataset(dataset_name).get_dataframe(columns=[text_col])
     if df.empty:
         raise Exception("Dataframe is empty")
 
     if subchart_column == None:
-
         text = df[text_col].str.cat(sep=' ')
         svg = get_wordcloud_svg(text, color_func)
         logging.info('Wordcloud generated')
