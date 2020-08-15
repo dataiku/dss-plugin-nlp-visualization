@@ -1,5 +1,6 @@
 import dataiku
 import logging
+logger = logging.getLogger(__name__)
 import traceback
 from flask import request
 import json
@@ -10,9 +11,6 @@ from wordcloud import WordCloud
 import random
 from dataiku.customwebapp import get_webapp_config
 
-
-# Initiate logger
-logger = logging.getLogger(__name__)
 
 
 def color_func(word, font_size, position, orientation, random_state=None, **kwargs):
