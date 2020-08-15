@@ -54,6 +54,7 @@ def get_svg(params):
             response = [{'subchart': None, 'svg':svg}]
             return json.dumps(response)
         else:
+            df.dropna(subset=[subchart_column], inplace=True)
             df_grouped = df.groupby(subchart_column)
             subcharts = df[subchart_column].unique().tolist()
 
