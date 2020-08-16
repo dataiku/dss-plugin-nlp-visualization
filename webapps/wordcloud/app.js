@@ -49,7 +49,6 @@ window.addEventListener('message', function(event) {
 
         console.log(webAppConfig);
 
-        // TODO catch when filter all alphanum column type values
         try {
             checkWebAppParameters(webAppConfig, webAppDesc);
         } catch (e) {
