@@ -44,7 +44,7 @@ def get_svg(params):
         # Load input dataframe
         necessary_columns = [column for column in [text_column, subchart_column] if column != None]
         df = dataiku.Dataset(dataset_name).get_dataframe(columns=necessary_columns)
-        pandas.Data
+
         if df.empty:
             raise Exception("Dataframe is empty")
         else:
