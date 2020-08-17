@@ -71,7 +71,7 @@ def get_svg(params):
                 subcharts.append(name)
 
             # Generate wordclouds
-            svgs = [get_wordcloud_svg(text, color_func) for text in texts]
+            svgs = [get_wordcloud_svg(text, color_func, scale=1) for text in texts]
             logging.info('Wordclouds generated')
 
             response = [{'subchart':subchart, 'svg':svg} for subchart, svg in zip(subcharts, svgs)]
