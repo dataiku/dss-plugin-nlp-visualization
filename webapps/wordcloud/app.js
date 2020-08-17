@@ -37,7 +37,8 @@ window.addEventListener('message', function(event) {
 
         event_data = JSON.parse(event.data);
 
-        webAppConfig = event_data['webAppConfig']
+        // Load webapp config
+        webAppConfig = event_data['webAppConfig'];
 
         var params = {
             dataset_name: webAppConfig['dataset'],
@@ -48,6 +49,7 @@ window.addEventListener('message', function(event) {
 
         console.log(webAppConfig);
 
+        // Check webapp config
         try {
             checkWebAppParameters(webAppConfig, webAppDesc);
         } catch (e) {
@@ -55,11 +57,13 @@ window.addEventListener('message', function(event) {
             return;
         }
 
+        // Clear previous webapp HTML
         var div = document.getElementById('wordcloud');
         while(div.firstChild){
             div.removeChild(div.firstChild);
         }
 
+        // Load new webapp HTML
         set_simple_svg(params);
     } 
  });
