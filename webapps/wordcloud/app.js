@@ -5,13 +5,13 @@ let webAppDesc = dataiku.getWebAppDesc()['chart']
 window.parent.postMessage("sendConfig", "*");
 
 function set_simple_svg(params){
-    let headers = new Headers()
+    let headers = new Headers();
     let init = {
         method : 'GET',
         headers : headers
-    }
+    };
+    let url = getWebAppBackendUrl('/get_svg')+'/'+JSON.stringify(params);
 
-    let url = getWebAppBackendUrl('/get_svg')+'/'+JSON.stringify(params)
     fetch(url, init)
     .then(function(response){
         response.json()
@@ -30,7 +30,6 @@ function set_simple_svg(params){
             }
         })
     })
-    console.log("Hello !");
 }
 
 window.addEventListener('message', function(event) {
