@@ -47,7 +47,7 @@ def get_svg(params):
         if df.empty:
             raise Exception("Dataframe is empty")
         else:
-            logging.info('Read dataset of shape: ', df.shape)
+            logging.info('Read dataset of shape: {}'.format(df.shape))
 
         if subchart_column == None:
             text = df[text_column].str.cat(sep=' ')
