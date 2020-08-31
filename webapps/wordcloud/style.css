@@ -1,5 +1,11 @@
 @import '/plugins/nlp-visualization/resource/style.css';
 
-.sep {
+.sep_wordcloud {
 	height: 5%;
+	line-height: 20px;
+	border-style: hidden hidden solid hidden;
+	border-width: 1px;
+	border-color: #b3b3b3;
+	border-opacity: 0.3;
+
 }

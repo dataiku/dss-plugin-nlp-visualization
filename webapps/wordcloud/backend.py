@@ -2,14 +2,43 @@ import dataiku
 import logging
 logger = logging.getLogger(__name__)
 import traceback
-from flask import request
 import json
+from typing import List, AnyStr
 import pandas as pd
+from flask import request
 import spacy.lang
-import matplotlib.pyplot as plt
+import os
 from wordcloud import WordCloud
-import random
+import json
+from collections import Counter
+import datetime
 from dataiku.customwebapp import get_webapp_config
+from spacy_tokenizer import MultilingualTokenizer
+import random
+
+
+DEFAULT_FILTER_TOKEN_ATTRIBUTES = (
+        "is_space",
+        "is_punct",
+        "is_digit",
+        "is_currency",
+        "is_stop",
+        "like_url",
+        "like_email",
+        "like_num",
+        "is_emoji",
+        "is_hashtag",
+        "is_username",
+        "is_symbol",
+        "is_unit",
+        "is_time",
+)
+
+
+def exclude(token, token_attributes: List[AnyStr] = DEFAULT_FILTER_TOKEN_ATTRIBUTES):
+    match_token_attributes = [getattr(token, t, False) or getattr(token._, t, False) for t in token_attributes]
+    filter_conditions = any(match_token_attributes)
+    return filter_conditions
 
 
 def color_func(word, font_size, position, orientation, random_state=None, **kwargs):
@@ -20,14 +49,18 @@ def color_func(word, font_size, position, orientation, random_state=None, **kwar
     return random.choice(color_list)
 
 
-def get_wordcloud_svg(text, colour_func, scale=2):
-    # Return the wordcloud as an svg file
-    wordcloud = WordCloud(background_color='white', scale=scale, margin=4, max_words=100, collocations=False)\
-        .generate(text).recolor(color_func=color_func, random_state=3)
-
-    svg = wordcloud.to_svg(embed_font=True)
-    return svg
+def get_wordcloud_svg(frequencies, colour_func, scale=2):
+    # Return a wordcloud as a svg file
+    wordcloud = WordCloud(background_color='white', scale=scale, margin=4, max_words=100)\
+    .generate_from_frequencies(frequencies).recolor(color_func=color_func, random_state=3)
     
+    svg = wordcloud.to_svg(embed_font=True)
+    
+    return svg
+
+
+tokenizer = MultilingualTokenizer()
+
 
 @app.route('/get_svg/<path:params>')
 def get_svg(params):
@@ -41,41 +74,139 @@ def get_svg(params):
         language = params_dict.get('language', None)
         subchart_column = params_dict.get('subchart_column', None)
 
+        language_column = None
+        if language == 'language_column':
+            language_column = text_column + '_language_code'
+
         # Load input dataframe
-        necessary_columns = [column for column in [text_column, subchart_column] if column != None]
-        df = dataiku.Dataset(dataset_name).get_dataframe(columns=necessary_columns)
+        necessary_columns = [column for column in set([text_column, language_column, subchart_column]) if column != None]
+        df = dataiku.Dataset(dataset_name).get_dataframe(columns=necessary_columns, limit=10000)
 
         if df.empty:
             raise Exception("Dataframe is empty")
         else:
             logging.info('Read dataset of shape: {}'.format(df.shape))
 
-        if subchart_column == None:
-            text = df[text_column].str.cat(sep=' ')
+        if language_column == None and subchart_column == None:
+            
+            # Tokenize text
+            logging.info('Initializing monolingual tokenization')
+            text = [df[text_column].str.cat(sep=' ')]
+            docs = tokenizer.tokenize_list(text_list=text, language=language)
+            logging.info('Tokenization successful')
+
+            # Count and lemmatize tokens
+            logging.info('Initializing count and lemmatization')
+            counts = Counter()
+            for token in docs[0]:
+                counts[token.lemma_] += 1
+            logging.info('Count and lemmatization successful')
+
+            # Filter tokens
+            logging.info('Initializing token filtering')
+            nlp = tokenizer.spacy_nlp_dict[language]
+            filtered_count = {}
+            sorted_count = counts.most_common()
+            i = 0
+            while len(filtered_count) < 100:
+                if not exclude(nlp(sorted_count[i][0])[0]):
+                    filtered_count[sorted_count[i][0]] = sorted_count[i][1]
+                i+=1
+            logging.info('Token filtering successful')
 
             # Generate wordcloud
-            svg = get_wordcloud_svg(text, color_func)
-            logging.info('Wordcloud generated')
+            logging.info('Generating wordcloud')
+            svg = get_wordcloud_svg(filtered_count, color_func)
+            logging.info('Wordcloud generation successful')
 
             response = [{'subchart': None, 'svg':svg}]
             return json.dumps(response)
+
         else:
+
             # Group data
-            df.dropna(subset=[subchart_column], inplace=True)
-            df_grouped = df.groupby(subchart_column)
+            group_columns = [col for col in [language_column, subchart_column] if col != None]
+            df.dropna(subset=group_columns, inplace=True)
+            df_grouped = df.groupby(group_columns)
 
+            # Tokenize text
+            logging.info('Initializing monolingual tokenization')
             texts = []
-            subcharts = []
+            group_names = []
             for name, group in df_grouped:
-                texts.append(group[text_column].str.cat(sep=' '))
-                subcharts.append(name)
+                texts.append([group[text_column].str.cat(sep=' ')])
+                group_names.append(name)
 
-            # Generate wordclouds
-            svgs = [get_wordcloud_svg(text, color_func, scale=1.5) for text in texts]
-            logging.info('Wordclouds generated')
+            if language_column != None and subchart_column != None:
+                    languages, subcharts = zip(*group_names)
+                    languages = list(languages)
+                    subcharts = list(subcharts)
+                    docs = [tokenizer.tokenize_list(text, language)[0] for text, language in zip(texts, languages)]
+            elif subchart_column != None:
+                subcharts = group_names
+                languages = [language] * len(subcharts)
+                docs = [tokenizer.tokenize_list(text, language)[0] for text in texts]
+            else:
+                languages = group_names
+                docs = [tokenizer.tokenize_list(text, language)[0] for text, language in zip(texts, languages)]
 
-            response = [{'subchart':subchart, 'svg':svg} for subchart, svg in zip(subcharts, svgs)]
-            return json.dumps(response)
+            # Count and lemmatize tokens
+            logging.info('Initializing count and lemmatization')
+            counts = []
+            for doc in docs:
+                counter = Counter()
+                for token in doc:
+                    counter[(token.lemma_)] += 1 # Equivalently, token.text
+                counts.append(counter)
+            logging.info('Count and lemmatization successful')
+                
+            # Filter tokens
+            logging.info('Initializing token filtering')
+            filtered_counts = []
+
+            for counter, language in zip(counts, languages):
+                filtered_counter = {}
+                nlp = tokenizer.spacy_nlp_dict[language]
+                sorted_counter = counter.most_common()
+                i = 0
+                while len(filtered_counter) < 100:
+                    if not exclude(nlp(sorted_counter[i][0])[0]):
+                        filtered_counter[sorted_counter[i][0]] = sorted_counter[i][1]
+                    i+=1
+
+                filtered_counts.append(filtered_counter)
+            
+            if subchart_column == None:
+                filtered_count = sum(filtered_counts)
+                logging.info('Token filtering successful')
+            else:
+                filtered_counts_df = pd.DataFrame(list(zip(subcharts, filtered_counts)), columns=['subchart',\
+                    'filtered_count'])
+                filtered_counts_df = filtered_counts_df.groupby(by=['subchart']).agg({'filtered_count':'sum'})
+                logging.info('Token filtering successful')
+            
+            # Generate wordcloud
+            if subchart_column == None:
+                logging.info('Generating wordcloud')
+                svg = get_wordcloud_svg(text, color_func)
+                logging.info('Wordcloud generation successful')
+
+                response = [{'subchart': None, 'svg':svg}]
+                return json.dumps(response)
+
+            else:
+                facets = []
+                svgs = []
+
+                logging.info('Generating wordclouds')
+                for name, row in filtered_counts_df.iterrows():
+                    wordcloud = get_wordcloud_svg(row['filtered_count'], color_func, scale=1.7)
+                    facets.append(name)
+                    svgs.append(wordcloud)
+                logging.info('Wordclouds generation successful')
+
+                response = [{'subchart':facet, 'svg':svg} for facet, svg in zip(facets, svgs)]
+                return json.dumps(response)
     
     except:
         logger.error(traceback.format_exc())

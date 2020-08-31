@@ -20,12 +20,12 @@ function set_simple_svg(params){
 								
                 var title = document.createElement('div');
                 title.innerHTML = chart.subchart;
-                title.setAttribute('class', 'sep');
+                title.setAttribute('class', 'sep_wordcloud');
                 document.getElementById('wordcloud').appendChild(title);
                 
                 var worcloud = document.createElement('div');
                 worcloud.innerHTML = chart.svg;
-                worcloud.setAttribute('class', 'wordcloud');
+                worcloud.setAttribute('class', 'chart');
                 document.getElementById('wordcloud').appendChild(worcloud);
             }
         })
@@ -61,7 +61,12 @@ window.addEventListener('message', function(event) {
         var div = document.getElementById('wordcloud');
         while(div.firstChild){
             div.removeChild(div.firstChild);
-        }
+        };
+		
+		/*
+		// Add loader
+		div.setAttribute('class', 'dku-loader');
+		*/
 
         // Load new webapp HTML
         set_simple_svg(params);
