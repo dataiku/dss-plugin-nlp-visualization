@@ -46,6 +46,14 @@
                 "label": "Subcharts",
                 "description": "Categorical column used to create subcharts",
                 "mandatory": false
+            },
+
+            {
+                "name": "lemmatize",
+                "type": "BOOLEAN",
+                "label": "Lematize text",
+                "description": "",
+                "mandatory": false
             }
 
         ],

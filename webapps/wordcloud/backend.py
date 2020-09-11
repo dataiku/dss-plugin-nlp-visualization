@@ -37,6 +37,7 @@ DEFAULT_FILTER_TOKEN_ATTRIBUTES = (
 
 def exclude(token, token_attributes: List[AnyStr] = DEFAULT_FILTER_TOKEN_ATTRIBUTES):
     match_token_attributes = [getattr(token, t, False) or getattr(token._, t, False) for t in token_attributes]
+    match_token_attributes.append(token.text == '-PRON-')
     filter_conditions = any(match_token_attributes)
     return filter_conditions
 
@@ -49,9 +50,9 @@ def color_func(word, font_size, position, orientation, random_state=None, **kwar
     return random.choice(color_list)
 
 
-def get_wordcloud_svg(frequencies, colour_func, scale=2):
+def get_wordcloud_svg(frequencies, colour_func, scale=1.7):
     # Return a wordcloud as a svg file
-    wordcloud = WordCloud(background_color='white', scale=scale, margin=4, max_words=100)\
+    wordcloud = WordCloud(background_color='white', scale=scale, margin=4)\
     .generate_from_frequencies(frequencies).recolor(color_func=color_func, random_state=3)
     
     svg = wordcloud.to_svg(embed_font=True)
@@ -73,6 +74,7 @@ def get_svg(params):
         text_column = params_dict.get('text_column', None)
         language = params_dict.get('language', None)
         subchart_column = params_dict.get('subchart_column', None)
+        lemmatize = params_dict.get('lemmatize', None)
 
         language_column = None
         if language == 'language_column':
@@ -99,7 +101,10 @@ def get_svg(params):
             logging.info('Initializing count and lemmatization')
             counts = Counter()
             for token in docs[0]:
-                counts[token.lemma_] += 1
+                    if lemmatize:
+                        counts[(token.lemma_)] += 1 # Equivalently, token.text
+                    else:
+                        counts[(token.text)] += 1
             logging.info('Count and lemmatization successful')
 
             # Filter tokens
@@ -156,7 +161,10 @@ def get_svg(params):
             for doc in docs:
                 counter = Counter()
                 for token in doc:
-                    counter[(token.lemma_)] += 1 # Equivalently, token.text
+                    if lemmatize:
+                        counter[(token.lemma_)] += 1 # Equivalently, token.text
+                    else:
+                        counter[(token.text)] += 1
                 counts.append(counter)
             logging.info('Count and lemmatization successful')
                 
@@ -200,8 +208,8 @@ def get_svg(params):
 
                 logging.info('Generating wordclouds')
                 for name, row in filtered_counts_df.iterrows():
-                    wordcloud = get_wordcloud_svg(row['filtered_count'], color_func, scale=1.7)
-                    facets.append(name)
+                    wordcloud = get_wordcloud_svg(row['filtered_count'], color_func, scale=1.5)
+                    facets.append('<h3>' + name + '</h3>')
                     svgs.append(wordcloud)
                 logging.info('Wordclouds generation successful')
 

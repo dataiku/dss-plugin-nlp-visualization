@@ -1,11 +1,23 @@
 @import '/plugins/nlp-visualization/resource/style.css';
 
-.sep_wordcloud {
-	height: 5%;
-	line-height: 20px;
+@import '/plugins/nlp-visualization/resource/style.css';
+
+.col-md-10 {
+	border-style: hidden hidden hidden solid;
+	border-width: 1px;
+	border-color: #b3b3b3;
+
+}
+
+.subcharts {
 	border-style: hidden hidden solid hidden;
 	border-width: 1px;
 	border-color: #b3b3b3;
-	border-opacity: 0.3;
 
+}
+
+.single-chart {
+	
+	text-align: center;
+	
 }

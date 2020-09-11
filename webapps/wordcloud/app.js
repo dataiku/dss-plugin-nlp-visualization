@@ -17,16 +17,53 @@ function set_simple_svg(params){
         response.json()
         .then(function(data){
             for (var chart of data) {
-								
-                var title = document.createElement('div');
-                title.innerHTML = chart.subchart;
-                title.setAttribute('class', 'sep_wordcloud');
-                document.getElementById('wordcloud').appendChild(title);
+                
+                var row = document.createElement('div');
+                row.setAttribute('class', 'row')
+
+                var col = document.createElement('div');
+                col.setAttribute('class', 'col')
+                row.appendChild(col)
                 
                 var worcloud = document.createElement('div');
                 worcloud.innerHTML = chart.svg;
-                worcloud.setAttribute('class', 'chart');
-                document.getElementById('wordcloud').appendChild(worcloud);
+                worcloud.setAttribute('class', 'single-chart');
+                col.appendChild(worcloud);
+
+                document.getElementById('wordcloud').appendChild(row);
+            }
+        })
+    })
+}
+
+function set_subcharts_svg(params){
+    let headers = new Headers();
+    let init = {
+        method : 'GET',
+        headers : headers
+    };
+    let url = getWebAppBackendUrl('/get_svg')+'/'+JSON.stringify(params);
+
+    fetch(url, init)
+    .then(function(response){
+        response.json()
+        .then(function(data){
+            for (var chart of data) {
+                
+                var row = document.createElement('div');
+                row.setAttribute('class', 'row subcharts')
+
+                var title = document.createElement('div');
+                title.innerHTML = chart.subchart;
+                title.setAttribute('class', 'col-md-2 align-self-center');
+                row.appendChild(title);
+                
+                var worcloud = document.createElement('div');
+                worcloud.innerHTML = chart.svg;
+                worcloud.setAttribute('class', 'col-md-10 py-4');
+                row.appendChild(worcloud);
+
+                document.getElementById('wordcloud').appendChild(row);
             }
         })
     })
@@ -44,7 +81,8 @@ window.addEventListener('message', function(event) {
             dataset_name: webAppConfig['dataset'],
             text_column: webAppConfig['text_column'],
             language: webAppConfig['language'],
-            subchart_column: webAppConfig['subchart_column']
+            subchart_column: webAppConfig['subchart_column'],
+            lemmatize: webAppConfig['lemmatize']
         }
 
         console.log(webAppConfig);
@@ -66,9 +104,16 @@ window.addEventListener('message', function(event) {
 		/*
 		// Add loader
 		div.setAttribute('class', 'dku-loader');
-		*/
+        */
 
         // Load new webapp HTML
-        set_simple_svg(params);
+        if (params.subchart_column) {
+            set_subcharts_svg(params);
+        } else {
+            set_simple_svg(params);
+        }
+
+
+        
     } 
  });
