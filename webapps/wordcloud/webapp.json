@@ -40,19 +40,50 @@
             },
 
             {
-                "name": "subchart_column",
-                "type": "DATASET_COLUMN",
-                "datasetParamName": "dataset",
-                "label": "Subcharts",
-                "description": "Categorical column used to create subcharts",
-                "mandatory": false
-            },
-
-            {
                 "name": "lemmatize",
                 "type": "BOOLEAN",
                 "label": "Lematize text",
                 "description": "",
+                "mandatory": false
+            },
+
+            {
+                "name": "tokens_filter",
+                "label": "Filter tokens",
+                "type": "MULTISELECT",
+                "description": "Select token types to filter",
+                "selectChoices": [
+                    { "value": "is_space", "label": "Space"},
+                    { "value": "is_punct", "label": "Punctuation"},
+                    { "value": "is_digit", "label": "Digit"},
+                    { "value": "is_currency", "label": "Currency"},
+                    { "value": "is_stop", "label": "Stopword"},
+                    { "value": "like_url", "label": "Url"},
+                    { "value": "like_email", "label": "Email"},
+                    { "value": "like_num", "label": "Number"},
+                    { "value": "is_emoji", "label": "Emoji"},
+                    { "value": "is_hashtag", "label": "Hashtag"},
+                    { "value": "is_username", "label": "Username"},
+                    { "value": "is_symbol", "label": "Symbol"},
+                    { "value": "is_unit", "label": "Unit"},
+                    { "value": "is_time", "label": "Time"}
+                ],
+                "defaultValue": ["is_space", "is_punct", "is_digit", "is_currency", "is_stop", "like_url", "like_email",
+                     "like_num", "is_username", "is_symbol", "is_unit", "is_time"]
+            },
+            
+            {
+                "name": "sep1",
+                "label": "Subcharts",
+                "type": "SEPARATOR"
+            },
+
+            {
+                "name": "subchart_column",
+                "type": "DATASET_COLUMN",
+                "datasetParamName": "dataset",
+                "label": "Subcharts column",
+                "description": "Categorical column used to create subcharts",
                 "mandatory": false
             }
 

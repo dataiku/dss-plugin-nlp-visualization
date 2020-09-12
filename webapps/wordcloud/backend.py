@@ -26,13 +26,15 @@ DEFAULT_FILTER_TOKEN_ATTRIBUTES = (
         "like_url",
         "like_email",
         "like_num",
-        "is_emoji",
-        "is_hashtag",
+        #"is_emoji",
+        #"is_hashtag",
         "is_username",
         "is_symbol",
         "is_unit",
         "is_time",
 )
+
+max_words = 100
 
 
 def exclude(token, token_attributes: List[AnyStr] = DEFAULT_FILTER_TOKEN_ATTRIBUTES):
@@ -52,7 +54,7 @@ def color_func(word, font_size, position, orientation, random_state=None, **kwar
 
 def get_wordcloud_svg(frequencies, colour_func, scale=1.7):
     # Return a wordcloud as a svg file
-    wordcloud = WordCloud(background_color='white', scale=scale, margin=4)\
+    wordcloud = WordCloud(background_color='white', scale=scale, margin=4, max_words=max_words)\
     .generate_from_frequencies(frequencies).recolor(color_func=color_func, random_state=3)
     
     svg = wordcloud.to_svg(embed_font=True)
@@ -113,7 +115,7 @@ def get_svg(params):
             filtered_count = {}
             sorted_count = counts.most_common()
             i = 0
-            while len(filtered_count) < 100:
+            while len(filtered_count) < max_words:
                 if not exclude(nlp(sorted_count[i][0])[0]):
                     filtered_count[sorted_count[i][0]] = sorted_count[i][1]
                 i+=1
@@ -177,7 +179,7 @@ def get_svg(params):
                 nlp = tokenizer.spacy_nlp_dict[language]
                 sorted_counter = counter.most_common()
                 i = 0
-                while len(filtered_counter) < 100:
+                while len(filtered_counter) < max_words:
                     if not exclude(nlp(sorted_counter[i][0])[0]):
                         filtered_counter[sorted_counter[i][0]] = sorted_counter[i][1]
                     i+=1
