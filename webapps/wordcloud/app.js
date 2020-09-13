@@ -82,7 +82,8 @@ window.addEventListener('message', function(event) {
             text_column: webAppConfig['text_column'],
             language: webAppConfig['language'],
             subchart_column: webAppConfig['subchart_column'],
-            lemmatize: webAppConfig['lemmatize']
+            lemmatize: webAppConfig['lemmatize'],
+            tokens_filter: webAppConfig['tokens_filter']
         }
 
         console.log(webAppConfig);

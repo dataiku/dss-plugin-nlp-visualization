@@ -77,6 +77,13 @@ def get_svg(params):
         language = params_dict.get('language', None)
         subchart_column = params_dict.get('subchart_column', None)
         lemmatize = params_dict.get('lemmatize', None)
+        tokens_filter = params_dict.get('tokens_filter', None)
+
+        if tokens_filter == None:
+            token_attributes = DEFAULT_FILTER_TOKEN_ATTRIBUTES
+        else:
+            token_attributes = tokens_filter
+
 
         language_column = None
         if language == 'language_column':
@@ -116,7 +123,7 @@ def get_svg(params):
             sorted_count = counts.most_common()
             i = 0
             while len(filtered_count) < max_words:
-                if not exclude(nlp(sorted_count[i][0])[0]):
+                if not exclude(nlp(sorted_count[i][0])[0], token_attributes=token_attributes):
                     filtered_count[sorted_count[i][0]] = sorted_count[i][1]
                 i+=1
             logging.info('Token filtering successful')
@@ -180,7 +187,7 @@ def get_svg(params):
                 sorted_counter = counter.most_common()
                 i = 0
                 while len(filtered_counter) < max_words:
-                    if not exclude(nlp(sorted_counter[i][0])[0]):
+                    if not exclude(nlp(sorted_counter[i][0])[0], token_attributes=token_attributes):
                         filtered_counter[sorted_counter[i][0]] = sorted_counter[i][1]
                     i+=1
 
