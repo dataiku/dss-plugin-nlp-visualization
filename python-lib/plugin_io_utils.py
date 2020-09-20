@@ -6,6 +6,39 @@ from typing import List, AnyStr, Union
 import pandas as pd
 import numpy as np
 
+import dataiku
+import logging
+
+
+def count_records(dataset: dataiku.Dataset) -> int:
+    """Count the number of records of a dataset using the Dataiku dataset metrics API
+    Args:
+        dataset: dataiku.Dataset instance
+    Returns:
+        Number of records
+    """
+    metric_id = "records:COUNT_RECORDS"
+    dataset_name = dataset.short_name
+    partitions = dataset.read_partitions
+    client = dataiku.api_client()
+    project = client.get_project(dataiku.default_project_key())
+    record_count = 0
+    logging.info("Counting records of dataset: {}".format(dataset_name))
+    if partitions is None or len(partitions) == 0:
+        project.get_dataset(dataset_name).compute_metrics(metric_ids=[metric_id])
+        metric = dataset.get_last_metric_values()
+        record_count = dataiku.ComputedMetrics.get_value_from_data(metric.get_global_data(metric_id=metric_id))
+        logging.info("Dataset contains {:d} records and is not partitioned".format(record_count))
+    else:
+        for partition in partitions:
+            project.get_dataset(dataset_name).compute_metrics(partition=partition, metric_ids=[metric_id])
+            metric = dataset.get_last_metric_values()
+            record_count += dataiku.ComputedMetrics.get_value_from_data(
+                metric.get_partition_data(partition=partition, metric_id=metric_id)
+            )
+        logging.info("Dataset contains {:d} records in partition(s) {}".format(record_count, partitions))
+    return record_count
+
 
 def clean_empty_list(sequence: List) -> Union[List, AnyStr]:
     """If the input sequence is a valid non-empty list, return list, else an empty string

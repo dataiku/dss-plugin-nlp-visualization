@@ -4,72 +4,74 @@ let webAppDesc = dataiku.getWebAppDesc()['chart']
 
 window.parent.postMessage("sendConfig", "*");
 
-function set_simple_svg(params){
+function set_simple_svg(params) {
     let headers = new Headers();
     let init = {
-        method : 'GET',
-        headers : headers
+        method: 'GET',
+        headers: headers
     };
-    let url = getWebAppBackendUrl('/get_svg')+'/'+JSON.stringify(params);
+    let url = getWebAppBackendUrl('/get_svg') + '/' + JSON.stringify(params);
 
     fetch(url, init)
-    .then(function(response){
-        response.json()
-        .then(function(data){
-            for (var chart of data) {
-                
-                var row = document.createElement('div');
-                row.setAttribute('class', 'row')
+        .then(function (response) {
+            response.json()
+                .then(function (data) {
+                    document.getElementById("spinner").style.display = "none";
+                    for (var chart of data) {
 
-                var col = document.createElement('div');
-                col.setAttribute('class', 'col')
-                row.appendChild(col)
-                
-                var worcloud = document.createElement('div');
-                worcloud.innerHTML = chart.svg;
-                worcloud.setAttribute('class', 'single-chart');
-                col.appendChild(worcloud);
+                        var row = document.createElement('div');
+                        row.setAttribute('class', 'row')
 
-                document.getElementById('wordcloud').appendChild(row);
-            }
+                        var col = document.createElement('div');
+                        col.setAttribute('class', 'col')
+                        row.appendChild(col)
+
+                        var worcloud = document.createElement('div');
+                        worcloud.innerHTML = chart.svg;
+                        worcloud.setAttribute('class', 'single-chart');
+                        col.appendChild(worcloud);
+
+                        document.getElementById('wordcloud').appendChild(row);
+                    }
+                })
         })
-    })
 }
 
-function set_subcharts_svg(params){
+function set_subcharts_svg(params) {
     let headers = new Headers();
     let init = {
-        method : 'GET',
-        headers : headers
+        method: 'GET',
+        headers: headers
     };
-    let url = getWebAppBackendUrl('/get_svg')+'/'+JSON.stringify(params);
+    let url = getWebAppBackendUrl('/get_svg') + '/' + JSON.stringify(params);
 
     fetch(url, init)
-    .then(function(response){
-        response.json()
-        .then(function(data){
-            for (var chart of data) {
-                
-                var row = document.createElement('div');
-                row.setAttribute('class', 'row subcharts')
+        .then(function (response) {
+            response.json()
+                .then(function (data) {
+                    document.getElementById("spinner").style.display = "none";
+                    for (var chart of data) {
 
-                var title = document.createElement('div');
-                title.innerHTML = chart.subchart;
-                title.setAttribute('class', 'col-md-2 align-self-center');
-                row.appendChild(title);
-                
-                var worcloud = document.createElement('div');
-                worcloud.innerHTML = chart.svg;
-                worcloud.setAttribute('class', 'col-md-10 py-4');
-                row.appendChild(worcloud);
+                        var row = document.createElement('div');
+                        row.setAttribute('class', 'row subcharts')
 
-                document.getElementById('wordcloud').appendChild(row);
-            }
+                        var title = document.createElement('div');
+                        title.innerHTML = chart.subchart;
+                        title.setAttribute('class', 'col-md-2 align-self-center');
+                        row.appendChild(title);
+
+                        var worcloud = document.createElement('div');
+                        worcloud.innerHTML = chart.svg;
+                        worcloud.setAttribute('class', 'col-md-10 py-4');
+                        row.appendChild(worcloud);
+
+                        document.getElementById('wordcloud').appendChild(row);
+                    }
+                })
         })
-    })
 }
 
-window.addEventListener('message', function(event) {
+window.addEventListener('message', function (event) {
     if (event.data) {
 
         event_data = JSON.parse(event.data);
@@ -98,14 +100,12 @@ window.addEventListener('message', function(event) {
 
         // Clear previous webapp HTML
         var div = document.getElementById('wordcloud');
-        while(div.firstChild){
+        while (div.firstChild) {
             div.removeChild(div.firstChild);
         };
-		
-		/*
-		// Add loader
-		div.setAttribute('class', 'dku-loader');
-        */
+
+        // Add loader
+        document.getElementById("spinner").style.display = "block"
 
         // Load new webapp HTML
         if (params.subchart_column) {
@@ -115,6 +115,6 @@ window.addEventListener('message', function(event) {
         }
 
 
-        
-    } 
- });
+
+    }
+});
