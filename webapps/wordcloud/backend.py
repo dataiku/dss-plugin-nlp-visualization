@@ -213,11 +213,11 @@ def generate_multiple_charts(
     return response
 
 
-# config = get_webapp_config().get("webAppConfig")
-# dataset_name = config.get("dataset")
-# dataset = dataiku.Dataset(dataset_name)
-# if count_records(dataset) >= 100000:
-#    raise Exception("Dataframe is too long (more than 100 000 rows)")
+config = get_webapp_config().get("webAppConfig")
+dataset_name = config.get("dataset")
+dataset = dataiku.Dataset(dataset_name)
+if count_records(dataset) > 100000:
+    raise Exception("Dataframe is too long (more than 100 000 rows)")
 
 tokenizer = MultilingualTokenizer()
 
@@ -249,7 +249,7 @@ def get_svg(params):
         necessary_columns = [
             column for column in set([text_column, language_column, subchart_column]) if column != None
         ]
-        df = dataiku.Dataset(dataset_name).get_dataframe(columns=necessary_columns, limit=10000)
+        df = dataiku.Dataset(dataset_name).get_dataframe(columns=necessary_columns, limit=100000)
 
         if df.empty:
             raise Exception("Dataframe is empty")
@@ -277,6 +277,7 @@ def get_svg(params):
                 lemmatize,
                 language_column,
             )
+
             return json.dumps(response)
 
     except:

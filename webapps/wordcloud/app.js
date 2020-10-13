@@ -50,23 +50,127 @@ function set_subcharts_svg(params) {
             response.json()
                 .then(function (data) {
                     document.getElementById("spinner").style.display = "none";
-                    for (var chart of data) {
+                    var progress_total = data.length
+                    var progress_state = 0
+                    var progress = 0
+                    /*
+                                        function some_3secs_function(progress_state, progress_total, progress, callback) {
+                                            function progress_loop() {         //  create a loop function
+                                                setTimeout(function () {   //  call a 3s setTimeout when the loop is called
+                                                    console.log('hello');   //  your code here
+                                                    progress_state++;
+                                                    progress = parseInt((progress_state / progress_total) * 100);
+                                                    $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress);
+                                                    $('.progress-bar-label').text(progress + '%');                  //  increment the counter
+                                                    if (progress_state < progress_total) {           //  if the counter < 10, call the loop function
+                                                        progress_loop();             //  ..  again which will trigger another 
+                                                    }                       //  ..  setTimeout()
+                                                }, 2000)
+                                            }
+                    
+                                            progress_loop();
+                                            callback();
+                                        };
+                                        function some_5secs_function(data) {
+                                            for (var chart of data) {
+                    
+                                                var row = document.createElement('div');
+                                                row.setAttribute('class', 'row subcharts')
+                    
+                                                var title = document.createElement('div');
+                                                title.innerHTML = chart.subchart;
+                                                title.setAttribute('class', 'col-md-2 align-self-center');
+                                                row.appendChild(title);
+                    
+                                                var worcloud = document.createElement('div');
+                                                worcloud.innerHTML = chart.svg;
+                                                worcloud.setAttribute('class', 'col-md-10 py-4');
+                                                row.appendChild(worcloud);
+                    
+                                                document.getElementById('wordcloud').appendChild(row);
+                                            }
+                                        };
+                    
+                                        some_3secs_function(progress_state, progress_total, progress, function () {
+                                            some_5secs_function(data);
+                                        });
+                    
+                    
+                                        /*
+                                                            some_3secs_function(data, function () {
+                                                                function progress_loop() {         //  create a loop function
+                                                                    setTimeout(function () {   //  call a 3s setTimeout when the loop is called
+                                                                        console.log('hello');   //  your code here
+                                                                        progress_state++;
+                                                                        progress = parseInt((progress_state / progress_total) * 100);
+                                                                        $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress);
+                                                                        $('.progress-bar-label').text(progress + '%');                  //  increment the counter
+                                                                        if (progress_state < progress_total) {           //  if the counter < 10, call the loop function
+                                                                            progress_loop();             //  ..  again which will trigger another 
+                                                                        }                       //  ..  setTimeout()
+                                                                    }, 1000)
+                                                                }
+                                        
+                                                                progress_loop();
+                                                                some_5secs_function(data, function () {
+                                                                    for (var chart of data) {
+                                        
+                                                                        var row = document.createElement('div');
+                                                                        row.setAttribute('class', 'row subcharts')
+                                        
+                                                                        var title = document.createElement('div');
+                                                                        title.innerHTML = chart.subchart;
+                                                                        title.setAttribute('class', 'col-md-2 align-self-center');
+                                                                        row.appendChild(title);
+                                        
+                                                                        var worcloud = document.createElement('div');
+                                                                        worcloud.innerHTML = chart.svg;
+                                                                        worcloud.setAttribute('class', 'col-md-10 py-4');
+                                                                        row.appendChild(worcloud);
+                                        
+                                                                        document.getElementById('wordcloud').appendChild(row);
+                                                                    }
+                                                                });
+                                                            });
+                                                            /*
+                                                                                var i = 1;                  //  set your counter to 1
+                                                            */
 
-                        var row = document.createElement('div');
-                        row.setAttribute('class', 'row subcharts')
+                    function progress_loop() {         //  create a loop function
+                        setTimeout(function () {   //  call a 3s setTimeout when the loop is called
+                            console.log('hello');   //  your code here
+                            progress_state++;
+                            progress = parseInt((progress_state / progress_total) * 100);
+                            $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress);
+                            $('.progress-bar-label').text(progress + '%');                  //  increment the counter
+                            if (progress_state < progress_total) {           //  if the counter < 10, call the loop function
+                                progress_loop();             //  ..  again which will trigger another 
+                            }                       //  ..  setTimeout()
+                        }, 3000)
+                    };
 
-                        var title = document.createElement('div');
-                        title.innerHTML = chart.subchart;
-                        title.setAttribute('class', 'col-md-2 align-self-center');
-                        row.appendChild(title);
+                    function generate_charts(data) {
+                        for (var chart of data) {
 
-                        var worcloud = document.createElement('div');
-                        worcloud.innerHTML = chart.svg;
-                        worcloud.setAttribute('class', 'col-md-10 py-4');
-                        row.appendChild(worcloud);
+                            var row = document.createElement('div');
+                            row.setAttribute('class', 'row subcharts')
 
-                        document.getElementById('wordcloud').appendChild(row);
-                    }
+                            var title = document.createElement('div');
+                            title.innerHTML = chart.subchart;
+                            title.setAttribute('class', 'col-md-2 align-self-center');
+                            row.appendChild(title);
+
+                            var worcloud = document.createElement('div');
+                            worcloud.innerHTML = chart.svg;
+                            worcloud.setAttribute('class', 'col-md-10 py-4');
+                            row.appendChild(worcloud);
+
+                            document.getElementById('wordcloud').appendChild(row);
+                        }
+                    };
+                    progress_loop();
+                    generate_charts(data);
+
                 })
         })
 }
@@ -90,6 +194,7 @@ window.addEventListener('message', function (event) {
 
         console.log(webAppConfig);
 
+
         // Check webapp config
         try {
             checkWebAppParameters(webAppConfig, webAppDesc);
@@ -105,7 +210,7 @@ window.addEventListener('message', function (event) {
         };
 
         // Add loader
-        document.getElementById("spinner").style.display = "block"
+        document.getElementById("spinner").style.display = "block";
 
         // Load new webapp HTML
         if (params.subchart_column) {
