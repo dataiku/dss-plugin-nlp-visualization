@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import dataiku
 from dataiku.customrecipe import *
 import logging
@@ -16,11 +18,11 @@ import spacy.lang
 import os
 from wordcloud import WordCloud
 from collections import Counter
-import datetime
+from time import time
 from spacy_tokenizer import MultilingualTokenizer
 from plugin_io_utils import count_records
 import random
-from wordcloud_generator import wordcloud_generator
+from wordcloud_generator import WordcloudGenerator
 
 
 # Load config
@@ -57,7 +59,7 @@ output_path = dataiku.Folder(output_folder_name).get_path()
 tokenizer = MultilingualTokenizer()
 
 # Load wordcloud generator
-generator = wordcloud_generator(df, tokenizer, text_column, language, language_column, subchart_column, output_path)
+generator = WordcloudGenerator(df, tokenizer, text_column, output_path, language, language_column, subchart_column)
 
 # Generate wordclouds and save to folder
 generator.generate()

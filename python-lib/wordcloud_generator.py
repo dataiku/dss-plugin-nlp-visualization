@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Module with a class to generate a wordcloud based on cleaned text"""
+"""Module with a class to generate wordclouds based on cleaned text"""
 
 import logging
 
@@ -17,22 +17,23 @@ import spacy.lang
 import os
 from wordcloud import WordCloud
 from collections import Counter
-import datetime
+from time import time
 from spacy_tokenizer import MultilingualTokenizer
 from plugin_io_utils import count_records
 import random
 
 
-class wordcloud_generator:
-    """Class to generate a multilingual wordcloud based on text data
+class WordcloudGenerator:
+    """Class to generate multilingual wordclouds based on text data and save them as png images
     Attributes:
-        default_language (str): Fallback language code in ISO 639-1 format
-        use_models (bool): If True, load spaCy models for available languages.
-            Slower but adds additional tagging capabilities to the pipeline.
-        hashtags_as_token (bool): Treat hashtags as one token instead of two
-        batch_size (int): Number of documents to process in spaCy pipelines
-        spacy_nlp_dict (dict): Dictionary holding spaCy Language instances (value) by language code (key)
-        tokenized_column (str): Name of the dataframe column storing tokenized documents
+        df (pandas.DataFrame): Dataframe containing text data
+        tokenizer (MultilingualTokenizer): Tokenizer used for text processing
+        text_column (str): Name of the df column on which to compute wordclouds
+        language (str, optional): Language in which to tokenize data (for monolingual wordcloud), defaults to english.
+            Use "Detected language column" for multilingual tokenization
+        language_column (str, optional): Name of the language column
+        subchart_column (str, optional): Name of the subcharts column to compute wordclouds on, defaults to None
+        max_words (int, optional): Maximum number of words to display in wordcloud, defaults to 100
     """
 
     DEFAULT_MAX_WORDS = 100
@@ -43,23 +44,14 @@ class wordcloud_generator:
         df: pd.DataFrame,
         tokenizer: MultilingualTokenizer,
         text_column: AnyStr,
-        language: AnyStr,
-        language_column: AnyStr,
-        subchart_column: AnyStr,
         path: AnyStr,
+        language: AnyStr = "en",
+        language_column: AnyStr = None,
+        subchart_column: AnyStr = None,
         max_words: int = DEFAULT_MAX_WORDS,
     ):
-        """Initialization method for the MultilingualTokenizer class, with optional arguments
-        Args:
-            default_language (str, optional): Fallback language code in ISO 639-1 format.
-                Default is the "multilingual language code": https://spacy.io/models/xx
-            use_models: If True, loads spaCy models, which is slower but allows to retrieve
-                Part-of-Speech and Entities tags for downstream tasks
-            hashtags_as_token (bool, optional): Treat hashtags as one token instead of two
-                Default is True, which overrides the spaCy default behavior
-            batch_size (int, optional): Number of documents to process in spaCy pipelines
-                Default is set by the DEFAULT_BATCH_SIZE class constant
-        """
+        # Initialization method for the MultilingualTokenizer class, with optional arguments etailed above
+
         self.df = df
         self.tokenizer = tokenizer
         self.text_column = text_column
@@ -93,6 +85,8 @@ class wordcloud_generator:
         return wordcloud
 
     def _prepare_data(self):
+        start = time()
+        logging.info("Preparing data")
         if self.subchart_column != None:
             # Group data per language and subchart for tokenization
             group_columns = [col for col in [self.language_column, self.subchart_column] if col != None]
@@ -101,15 +95,21 @@ class wordcloud_generator:
         else:
             # Simply format data similarly
             self.df_grouped = [(self.language, self.df)]
+        logging.info("Data preparation: Done in {:.2f} seconds.".format(time() - start))
 
     def _tokenize_texts(self):
-        logging.info("Initializing multiple tokenizations")
+        # Tokenize each group of observations in its correct language
+        start = time()
+        logging.info("Initializing tokenization")
+
+        # Get language and subchart name for each group
         self.texts = []
         self.group_names = []
         for name, group in self.df_grouped:
             self.texts.append([group[self.text_column].str.cat(sep=" ")])
             self.group_names.append(name)
 
+        # Get tokenization languages differently depending on language/subchart settings combinations
         if self.language_column == None and self.subchart_column == None:
             self.languages = [self.language]
         elif self.language_column != None and self.subchart_column != None:
@@ -122,17 +122,21 @@ class wordcloud_generator:
         else:
             self.languages = self.group_names
 
+        # Tokenize
         self.docs = [
             self.tokenizer.tokenize_list(text, language)[0] for text, language in zip(self.texts, self.languages)
         ]
+        logging.info("Tokenization done in {:.2f} seconds.".format(time() - start))
 
     def _count_tokens(self):
+        # Count tokens in each group
+        start = time()
         logging.info("Initializing count")
         self.counters = []
         for doc in self.docs:
             counter = Counter()
             for token in doc:
-                counter[(token.text)] += 1  # Equivalently, token.text
+                counter[(token.text)] += 1  # Equivalently, token.lemma_
             self.counters.append(counter)
         logging.info("Count successful, aggregating counters according to chart settings")
 
@@ -143,7 +147,6 @@ class wordcloud_generator:
                 self.counts.update(d)
 
             self.counts = dict(self.counts)
-            logging.info("Counter aggregation successful")
         else:
             self.counts_df = pd.DataFrame(
                 list(zip(self.subcharts, self.counters)),
@@ -152,9 +155,12 @@ class wordcloud_generator:
             self.counts_df = self.counts_df.groupby(by=["subchart"]).agg({"count": "sum"})
             # remove subcharts emptied by filter
             self.counts_df = self.counts_df.loc[self.counts_df["count"] != {}, :]
-            logging.info("Counter aggregation successful")
+
+        logging.info("Counter aggregation successful, counting done in {:.2f} seconds.".format(time() - start))
 
     def _generate_wordclouds(self):
+        # Generate wordclouds and save them as png images
+        start = time()
         logging.info("Generating wordclouds")
         if self.subchart_column != None:
             for name, row in self.counts_df.iterrows():
@@ -167,7 +173,7 @@ class wordcloud_generator:
                 plt.imshow(wc, interpolation="bilinear")
                 path_fig = os.path.join(self.path, "wordcloud_" + name)
                 plt.savefig(path_fig, bbox_inches="tight", pad_inches=0, dpi=fig.dpi)
-            logging.info("Wordclouds generation successful")
+            logging.info("Wordclouds generation done in {:.2f} seconds.".format(time() - start))
         else:
             plt.close()
             wc = self._get_wordcloud(self.counts)
@@ -177,7 +183,7 @@ class wordcloud_generator:
             plt.imshow(wc, interpolation="bilinear")
             path_fig = os.path.join(self.path, "wordcloud")
             plt.savefig(path_fig, bbox_inches="tight", pad_inches=0, dpi=fig.dpi)
-            logging.info("Wordcloud generation successful")
+            logging.info("Wordcloud generation done in {:.2f} seconds.".format(time() - start))
 
     def generate(self):
         self._prepare_data()
