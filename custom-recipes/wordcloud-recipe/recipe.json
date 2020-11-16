@@ -40,7 +40,6 @@
             "type": "COLUMN",
             "columnRole": "input",
             "label": "Text column",
-            "description": "Text column used to generate the wordclouds",
             "mandatory": true
         },
         {
@@ -48,7 +47,6 @@
             "type": "SELECT",
             "getChoicesFromPython": true,
             "label": "Language",
-            "description": "Language used to process text",
             "mandatory": false,
             "defaultValue": "en"
         },

@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """Module with a class to generate wordclouds based on cleaned text"""
 
+import dataiku
+from dataiku.core import dkuio
 import logging
-
-logger = logging.getLogger(__name__)
-
 import matplotlib
 import matplotlib.pyplot as plt
 
@@ -37,18 +36,26 @@ class WordcloudGenerator:
     """
 
     DEFAULT_MAX_WORDS = 100
-    DEFAULT_NUM_PROCESS = 2
+    DEFAULT_COLOR_LIST = [
+        "hsl(205,71%,41%)",
+        "hsl(214,56%,80%)",
+        "hsl(28,100%,53%)",
+        "hsl(30,100%,74%)",
+        "hsl(120,57%,40%)",
+        "hsl(110,57%,71%)",
+    ]
 
     def __init__(
         self,
         df: pd.DataFrame,
         tokenizer: MultilingualTokenizer,
         text_column: AnyStr,
-        path: AnyStr,
+        output_folder: dataiku.core.managed_folder.Folder,
         language: AnyStr = "en",
         language_column: AnyStr = None,
         subchart_column: AnyStr = None,
         max_words: int = DEFAULT_MAX_WORDS,
+        color_list: list = DEFAULT_COLOR_LIST,
     ):
         # Initialization method for the MultilingualTokenizer class, with optional arguments etailed above
 
@@ -58,21 +65,13 @@ class WordcloudGenerator:
         self.language = language
         self.language_column = language_column
         self.subchart_column = subchart_column
-        self.path = path
+        self.output_folder = output_folder
         self.max_words = max_words
+        self.color_list = color_list
 
     def _color_func(self, word, font_size, position, orientation, random_state=None, **kwargs):
         # Return the color function used in the wordcloud
-        color_list = [
-            "hsl(205,71%,41%)",
-            "hsl(214,56%,80%)",
-            "hsl(28,100%,53%)",
-            "hsl(30,100%,74%)",
-            "hsl(120,57%,40%)",
-            "hsl(110,57%,71%)",
-        ]
-
-        return random.choice(color_list)
+        return random.choice(self.color_list)
 
     def _get_wordcloud(self, frequencies, scale=6.8):
         # Return a wordcloud as a svg file
@@ -95,7 +94,7 @@ class WordcloudGenerator:
         else:
             # Simply format data similarly
             self.df_grouped = [(self.language, self.df)]
-        logging.info("Data preparation: Done in {:.2f} seconds.".format(time() - start))
+        logging.info(f"Data preparation: Done in {(time() - start):.2f} seconds.")
 
     def _tokenize_texts(self):
         # Tokenize each group of observations in its correct language
@@ -126,7 +125,7 @@ class WordcloudGenerator:
         self.docs = [
             self.tokenizer.tokenize_list(text, language)[0] for text, language in zip(self.texts, self.languages)
         ]
-        logging.info("Tokenization done in {:.2f} seconds.".format(time() - start))
+        logging.info(f"Tokenization done in {(time() - start):.2f} seconds.")
 
     def _count_tokens(self):
         # Count tokens in each group
@@ -156,7 +155,7 @@ class WordcloudGenerator:
             # remove subcharts emptied by filter
             self.counts_df = self.counts_df.loc[self.counts_df["count"] != {}, :]
 
-        logging.info("Counter aggregation successful, counting done in {:.2f} seconds.".format(time() - start))
+        logging.info(f"Counter aggregation successful, counting done in {(time() - start):.2f} seconds.")
 
     def _generate_wordclouds(self):
         # Generate wordclouds and save them as png images
@@ -164,26 +163,31 @@ class WordcloudGenerator:
         logging.info("Generating wordclouds")
         if self.subchart_column != None:
             for name, row in self.counts_df.iterrows():
-                print(name, row)
+                # Generate chart
                 plt.close()
                 wc = self._get_wordcloud(row["count"])
                 fig = plt.figure(figsize=(38.4, 21.6), dpi=100)
                 fig.tight_layout()
                 plt.axis("off")
                 plt.imshow(wc, interpolation="bilinear")
-                path_fig = os.path.join(self.path, "wordcloud_" + name)
-                plt.savefig(path_fig, bbox_inches="tight", pad_inches=0, dpi=fig.dpi)
-            logging.info("Wordclouds generation done in {:.2f} seconds.".format(time() - start))
+                # Save chart
+                temp = dkuio.new_bytesoriented_io()
+                fig.savefig(temp, bbox_inches="tight", pad_inches=0, dpi=fig.dpi)
+                self.output_folder.upload_data("wordcloud_" + name + ".png", temp.getvalue())
+            logging.info(f"Wordclouds generation done in {(time() - start):.2f} seconds.")
         else:
+            # Generate chart
             plt.close()
             wc = self._get_wordcloud(self.counts)
             fig = plt.figure(figsize=(38.4, 21.6), dpi=100)
             fig.tight_layout()
             plt.axis("off")
             plt.imshow(wc, interpolation="bilinear")
-            path_fig = os.path.join(self.path, "wordcloud")
-            plt.savefig(path_fig, bbox_inches="tight", pad_inches=0, dpi=fig.dpi)
-            logging.info("Wordcloud generation done in {:.2f} seconds.".format(time() - start))
+            # Save chart
+            temp = dkuio.new_bytesoriented_io()
+            fig.savefig(temp, bbox_inches="tight", pad_inches=0, dpi=fig.dpi)
+            self.output_folder.upload_data("wordcloud.png", temp.getvalue())
+            logging.info(f"Wordcloud generation done in {(time() - start):.2f} seconds.")
 
     def generate(self):
         self._prepare_data()
