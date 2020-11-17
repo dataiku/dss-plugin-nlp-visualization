@@ -63,7 +63,7 @@ def load_plugin_config_wordcloud() -> Dict:
     params["subchart_column"] = recipe_config.get("subchart_column", None)
     # If parameter is saved then cleared, config retrieves ""
     params["subchart_column"] = None if not params["subchart_column"] else params["subchart_column"]
-    if params["subchart_column"] and (params["subchart_column"] not in input_dataset_columns):
+    if params["subchart_column"] and ((params["subchart_column"] not in input_dataset_columns + ["order66"])):
         raise PluginParamValidationError("Invalid subcharts column selection")
     logging.info(f"Subcharts column: {params['subchart_column']}")
 
@@ -71,7 +71,7 @@ def load_plugin_config_wordcloud() -> Dict:
     necessary_columns = [
         column
         for column in set([params["text_column"], params["language_column"], params["subchart_column"]])
-        if column != None
+        if (column not in [None, "order66"])
     ]
     params["df"] = input_dataset.get_dataframe(columns=necessary_columns)
     if params["df"].empty:

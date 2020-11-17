@@ -71,7 +71,7 @@ class WordcloudGenerator:
         self.max_words = max_words
         self.color_list = color_list
         self.font_path = font_path
-        if self.subchart_column == order66:
+        if self.subchart_column == "order66":
             self.font_path = os.path.join(dataiku.customrecipe.get_recipe_resource(), "DeathStar.otf")
             self.subchart_column = None
 
