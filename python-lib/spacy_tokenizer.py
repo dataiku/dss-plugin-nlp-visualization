@@ -253,9 +253,7 @@ class MultilingualTokenizer:
                 if len(text_slice) != 0:
                     tokenized_list = self.tokenize_list(text_list=text_slice, language=lang)
                     df.loc[language_indices, self.tokenized_column] = pd.Series(
-                        tokenized_list,
-                        dtype="object",
-                        index=text_slice.index,  # keep index (important)
+                        tokenized_list, dtype="object", index=text_slice.index,  # keep index (important)
                     )
         else:
             tokenized_list = self.tokenize_list(text_list=df[text_column], language=language)

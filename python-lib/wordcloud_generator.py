@@ -147,10 +147,7 @@ class WordcloudGenerator:
 
             self.counts = dict(self.counts)
         else:
-            self.counts_df = pd.DataFrame(
-                list(zip(self.subcharts, self.counters)),
-                columns=["subchart", "count"],
-            )
+            self.counts_df = pd.DataFrame(list(zip(self.subcharts, self.counters)), columns=["subchart", "count"],)
             self.counts_df = self.counts_df.groupby(by=["subchart"]).agg({"count": "sum"})
             # remove subcharts emptied by filter
             self.counts_df = self.counts_df.loc[self.counts_df["count"] != {}, :]
