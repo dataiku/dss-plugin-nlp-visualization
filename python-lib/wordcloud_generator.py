@@ -44,9 +44,7 @@ class WordcloudGenerator:
         "hsl(120,57%,40%)",
         "hsl(110,57%,71%)",
     ]
-    # DEFAULT_FONT_PATH = os.path.join(dataiku.customrecipe.get_recipe_resource(), "NotoSansDisplay-Regular.ttf")
-    DEFAULT_FONT_PATH = os.path.join(dataiku.customrecipe.get_recipe_resource(), "design.graffiti.comicsansms.ttf")
-    # DEFAULT_FONT_PATH = os.path.join(dataiku.customrecipe.get_recipe_resource(), "DeathStar.otf")
+    DEFAULT_FONT_PATH = os.path.join(dataiku.customrecipe.get_recipe_resource(), "NotoSansDisplay-Regular.ttf")
 
     def __init__(
         self,
@@ -73,7 +71,9 @@ class WordcloudGenerator:
         self.max_words = max_words
         self.color_list = color_list
         self.font_path = font_path
-        print("FONT PATH: ", self.font_path)
+        if self.subchart_column == order66:
+            self.font_path = os.path.join(dataiku.customrecipe.get_recipe_resource(), "DeathStar.otf")
+            self.subchart_column = None
 
     def _color_func(self, word, font_size, position, orientation, random_state=None, **kwargs):
         # Return the color function used in the wordcloud
@@ -155,7 +155,10 @@ class WordcloudGenerator:
 
             self.counts = dict(self.counts)
         else:
-            self.counts_df = pd.DataFrame(list(zip(self.subcharts, self.counters)), columns=["subchart", "count"],)
+            self.counts_df = pd.DataFrame(
+                list(zip(self.subcharts, self.counters)),
+                columns=["subchart", "count"],
+            )
             self.counts_df = self.counts_df.groupby(by=["subchart"]).agg({"count": "sum"})
             # remove subcharts emptied by filter
             self.counts_df = self.counts_df.loc[self.counts_df["count"] != {}, :]
