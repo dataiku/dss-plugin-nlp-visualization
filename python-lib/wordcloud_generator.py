@@ -2,7 +2,6 @@
 """Module with a class to generate wordclouds based on cleaned text"""
 
 import dataiku
-from dataiku.core import dkuio
 import logging
 import matplotlib
 import matplotlib.pyplot as plt
@@ -13,13 +12,14 @@ import traceback
 from typing import List, AnyStr
 import pandas as pd
 import spacy.lang
-import os
+from io import BytesIO
 from wordcloud import WordCloud
 from collections import Counter
 from time import time
 from spacy_tokenizer import MultilingualTokenizer
 from plugin_io_utils import count_records
 import random
+import os
 
 
 class WordcloudGenerator:
@@ -44,6 +44,9 @@ class WordcloudGenerator:
         "hsl(120,57%,40%)",
         "hsl(110,57%,71%)",
     ]
+    # DEFAULT_FONT_PATH = os.path.join(dataiku.customrecipe.get_recipe_resource(), "NotoSansDisplay-Regular.ttf")
+    DEFAULT_FONT_PATH = os.path.join(dataiku.customrecipe.get_recipe_resource(), "design.graffiti.comicsansms.ttf")
+    # DEFAULT_FONT_PATH = os.path.join(dataiku.customrecipe.get_recipe_resource(), "DeathStar.otf")
 
     def __init__(
         self,
@@ -56,6 +59,7 @@ class WordcloudGenerator:
         subchart_column: AnyStr = None,
         max_words: int = DEFAULT_MAX_WORDS,
         color_list: list = DEFAULT_COLOR_LIST,
+        font_path: str = DEFAULT_FONT_PATH,
     ):
         # Initialization method for the MultilingualTokenizer class, with optional arguments etailed above
 
@@ -68,6 +72,8 @@ class WordcloudGenerator:
         self.output_folder = output_folder
         self.max_words = max_words
         self.color_list = color_list
+        self.font_path = font_path
+        print("FONT PATH: ", self.font_path)
 
     def _color_func(self, word, font_size, position, orientation, random_state=None, **kwargs):
         # Return the color function used in the wordcloud
@@ -76,7 +82,9 @@ class WordcloudGenerator:
     def _get_wordcloud(self, frequencies, scale=6.8):
         # Return a wordcloud as a svg file
         wordcloud = (
-            WordCloud(background_color="white", scale=scale, margin=4, max_words=self.max_words)
+            WordCloud(
+                background_color="white", scale=scale, margin=4, max_words=self.max_words, font_path=self.font_path
+            )
             .generate_from_frequencies(frequencies)
             .recolor(color_func=self._color_func, random_state=3)
         )
@@ -168,7 +176,7 @@ class WordcloudGenerator:
                 plt.axis("off")
                 plt.imshow(wc, interpolation="bilinear")
                 # Save chart
-                temp = dkuio.new_bytesoriented_io()
+                temp = BytesIO()
                 fig.savefig(temp, bbox_inches="tight", pad_inches=0, dpi=fig.dpi)
                 self.output_folder.upload_data("wordcloud_" + name + ".png", temp.getvalue())
             logging.info(f"Wordclouds generation done in {(time() - start):.2f} seconds.")
@@ -181,7 +189,7 @@ class WordcloudGenerator:
             plt.axis("off")
             plt.imshow(wc, interpolation="bilinear")
             # Save chart
-            temp = dkuio.new_bytesoriented_io()
+            temp = BytesIO()
             fig.savefig(temp, bbox_inches="tight", pad_inches=0, dpi=fig.dpi)
             self.output_folder.upload_data("wordcloud.png", temp.getvalue())
             logging.info(f"Wordcloud generation done in {(time() - start):.2f} seconds.")

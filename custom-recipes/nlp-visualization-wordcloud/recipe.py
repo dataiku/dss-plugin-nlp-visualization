@@ -12,7 +12,7 @@ import traceback
 from typing import List, AnyStr
 import pandas as pd
 import spacy.lang
-import os
+from io import BytesIO
 from wordcloud import WordCloud
 from collections import Counter
 from time import time
