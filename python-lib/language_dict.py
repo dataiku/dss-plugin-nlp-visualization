@@ -1,47 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Module with constants defining the language support of underlying NLP libraries: spaCy and SymSpell"""
-
-SUPPORTED_LANGUAGES_SYMSPELL = {
-    "ar": "Arabic",
-    "bg": "Bulgarian",
-    "ca": "Catalan",
-    "cs": "Czech",
-    "da": "Danish",
-    "de": "German",
-    "el": "Greek",
-    "en": "English",
-    "es": "Spanish",
-    "et": "Estonian",
-    "fa": "Persian",
-    "fi": "Finnish",
-    "fr": "French",
-    "he": "Hebrew",
-    "hr": "Croatian",
-    "hu": "Hungarian",
-    "id": "Indonesian",
-    "is": "Icelandic",
-    "it": "Italian",
-    "ja": "Japanese",
-    "lt": "Lithuanian",
-    "lv": "Latvian",
-    "nl": "Dutch",
-    "pl": "Polish",
-    "pt": "Portuguese",
-    "ro": "Romanian",
-    "ru": "Russian",
-    "sk": "Slovak",
-    "sl": "Slovenian",
-    "sq": "Albanian",
-    "sr": "Serbian",
-    "sv": "Swedish",
-    "th": "Thai",
-    "tr": "Turkish",
-    "vi": "Vietnamese",
-    "zh": "Chinese (simplified)",
-}
-"""dict: SymSpell dictionaries included in this plugin
-Dictionary with ISO 639-1 language code (key) and language name (value)
-"""
+"""Module with constants defining the language support of underlying NLP libraries: spaCy"""
 
 SUPPORTED_LANGUAGES_SPACY = {
     "af": "Afrikaans",

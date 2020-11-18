@@ -1,21 +1,16 @@
-// This file is the descriptor for the Custom code recipe wordcloud-recipe
 {
-    // Meta data for display purposes
     "meta": {
-        // label: name of the recipe as displayed, should be short
-        "label": "Wordcloud",
-        // description: longer string to help end users understand what this recipe does
+        "label": "Word Cloud",
         "description": "Generate wordclouds based on a text column",
-        // icon: must be one of the FontAwesome 3.2.1 icons, complete list here at https://fontawesome.com/v3.2.1/icons/
         "icon": "icon-cloud"
     },
     "kind": "PYTHON",
-    "selectableFromDataset": "input",
+    "selectableFromDataset": "input_dataset",
     "inputRoles": [
         {
-            "name": "input",
+            "name": "input_dataset",
             "label": "Input dataset",
-            "description": "Dataset on which to compute the wordclouds",
+            "description": "Dataset with a cleaned text column",
             "arity": "UNARY",
             "required": true,
             "acceptsDataset": true,
@@ -24,9 +19,9 @@
     ],
     "outputRoles": [
         {
-            "name": "output",
+            "name": "output_folder",
             "label": "Output folder",
-            "description": "Folder to store the wordclouds images",
+            "description": "Folder where the word clouds will be saved as images",
             "arity": "UNARY",
             "required": true,
             "acceptsDataset": false,
@@ -36,9 +31,17 @@
     "paramsPythonSetup": "get_language_list.py",
     "params": [
         {
+            "name": "separator_params",
+            "label": "Input Parameters",
+            "type": "SEPARATOR"
+        },
+        {
             "name": "text_column",
             "type": "COLUMN",
-            "columnRole": "input",
+            "columnRole": "input_dataset",
+            "allowedColumnTypes": [
+                "string"
+            ],
             "label": "Text column",
             "mandatory": true
         },
@@ -51,23 +54,32 @@
             "defaultValue": "en"
         },
         {
-            "name": "sep1",
+            "name": "language_column",
+            "label": "Language column",
+            "type": "COLUMN",
+            "description": "Column containing ISO 639-1 language codes",
+            "columnRole": "input_dataset",
+            "allowedColumnTypes": [
+                "string"
+            ],
+            "visibilityCondition": "model.language == 'language_column'",
+            "mandatory": false
+        },
+        {
+            "name": "separator_subcharts",
             "label": "Subcharts",
             "type": "SEPARATOR"
         },
         {
             "name": "subchart_column",
             "type": "COLUMN",
-            "columnRole": "input",
-            "label": "Subcharts column",
-            "description": "Categorical column used to create subcharts",
+            "columnRole": "input_dataset",
+            "allowedColumnTypes": [
+                "string"
+            ],
+            "label": "Categorical column",
             "mandatory": false
         }
     ],
-    // The field "resourceKeys" holds a list of keys that allows to limit the number
-    // of concurrent executions and activities triggered by this recipe.
-    //
-    // Administrators can configure the limit per resource key in the Administration > Settings > Flow build
-    // screen.
     "resourceKeys": []
 }

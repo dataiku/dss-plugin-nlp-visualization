@@ -18,3 +18,4 @@ tqdm==4.50.2
 matplotlib==3.3.1
 wordcloud==1.8.0
 fonttools==4.14.0
+pathvalidate==2.3.0
