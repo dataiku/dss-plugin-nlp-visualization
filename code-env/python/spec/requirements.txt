@@ -11,7 +11,6 @@ pythainlp==2.2.4
 pyvi==0.1
 regex==2020.10.28
 spacy==2.3.2
-symspellpy==6.7.0
 tqdm==4.50.2
 matplotlib==3.3.1
 wordcloud==1.8.0
