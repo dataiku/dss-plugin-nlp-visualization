@@ -5,21 +5,19 @@ import dataiku
 import logging
 import matplotlib
 import matplotlib.pyplot as plt
-
-matplotlib.use("agg")
-
 from typing import List, AnyStr
 import pandas as pd
 from io import BytesIO
 from wordcloud import WordCloud
 from collections import Counter
-from time import time
 from spacy_tokenizer import MultilingualTokenizer
 import random
 import os
 from utils import time_logging
 from pathvalidate import sanitize_filename
 from font_exceptions_dict import FONT_EXCEPTIONS_DICT
+
+matplotlib.use("agg")
 
 
 class WordcloudGenerator:

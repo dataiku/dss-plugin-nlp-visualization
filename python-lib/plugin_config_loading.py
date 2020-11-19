@@ -2,16 +2,12 @@
 """Module with utility functions for loading, resolving and validating plugin parameters"""
 
 import logging
-import re
-import os
-from typing import Dict, Set
-
+from typing import Dict
 import dataiku
 from dataiku.customrecipe import (
     get_recipe_config,
     get_input_names_for_role,
     get_output_names_for_role,
-    get_recipe_resource,
 )
 
 from language_dict import SUPPORTED_LANGUAGES_SPACY
