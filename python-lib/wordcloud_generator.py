@@ -19,6 +19,7 @@ import random
 import os
 from utils import time_logging
 from pathvalidate import sanitize_filename
+from font_exceptions_dict import FONT_EXCEPTIONS_DICT
 
 
 class WordcloudGenerator:
@@ -43,15 +44,15 @@ class WordcloudGenerator:
         "hsl(120,57%,40%)",
         "hsl(110,57%,71%)",
     ]
-    DEFAULT_FONT_PATH = os.path.join(dataiku.customrecipe.get_recipe_resource(), "NotoSansDisplay-Regular.ttf")
+    DEFAULT_FONT = "NotoSansDisplay-Regular.ttf"
     DEFAULT_SCALE = 6.8
     DEFAULT_MARGIN = 4
     DEFAULT_RANDOM_STATE = 3
     DEFAULT_FIGSIZE = (38.4, 21.6)
     DEFAULT_DPI = 100
-    DEFAULT_PAD_INCHES = 0
-    DEFAULT_TITLEPAD = 30
-    DEFAULT_TITLESIZE = 30
+    DEFAULT_PAD_INCHES = 1
+    DEFAULT_TITLEPAD = 60
+    DEFAULT_TITLESIZE = 60
 
     def __init__(
         self,
@@ -64,7 +65,7 @@ class WordcloudGenerator:
         subchart_column: AnyStr = None,
         max_words: int = DEFAULT_MAX_WORDS,
         color_list: List = DEFAULT_COLOR_LIST,
-        font_path: str = DEFAULT_FONT_PATH,
+        font: str = DEFAULT_FONT,
         scale: float = DEFAULT_SCALE,
         margin: float = DEFAULT_MARGIN,
         random_state: int = DEFAULT_RANDOM_STATE,
@@ -82,10 +83,11 @@ class WordcloudGenerator:
         self.language = language
         self.language_column = language_column
         self.subchart_column = subchart_column
+        self.language_as_subchart = self.language_column == self.subchart_column
         self.output_folder = output_folder
         self.max_words = max_words
         self.color_list = color_list
-        self.font_path = font_path
+        self.font = font
         self.scale = scale
         self.margin = margin
         self.random_state = random_state
@@ -95,14 +97,18 @@ class WordcloudGenerator:
         self.titlepad = titlepad
         self.titlesize = titlesize
         if self.subchart_column == "order66":
-            self.font_path = os.path.join(dataiku.customrecipe.get_recipe_resource(), "DeathStar.otf")
+            self.font = "DeathStar.otf"
             self.subchart_column = None
 
     def _color_func(self, word, font_size, position, orientation, random_state=None, **kwargs):
         """Return the color function used in the wordcloud"""
         return random.choice(self.color_list)
 
-    def _get_wordcloud(self, frequencies):
+    def _retrieve_font(self, language):
+        """Return the font to use for a given language"""
+        return FONT_EXCEPTIONS_DICT.get(language, self.font)
+
+    def _get_wordcloud(self, frequencies, font_path):
         """Return a wordcloud file"""
         wordcloud = (
             WordCloud(
@@ -110,7 +116,7 @@ class WordcloudGenerator:
                 scale=self.scale,
                 margin=self.margin,
                 max_words=self.max_words,
-                font_path=self.font_path,
+                font_path=font_path,
             )
             .generate_from_frequencies(frequencies)
             .recolor(color_func=self._color_func, random_state=self.random_state)
@@ -118,9 +124,13 @@ class WordcloudGenerator:
 
         return wordcloud
 
-    def _generate_wordcloud(self, frequencies, title):
+    def _generate_wordcloud(self, frequencies, title, language):
         """Return a wordcloud as a matplotlib figure"""
-        wc = self._get_wordcloud(frequencies)
+        # Manage font exceptions based on language
+        font = self._retrieve_font(language)
+        font_path = os.path.join(dataiku.customrecipe.get_recipe_resource(), font)
+        # Generate wordcloud
+        wc = self._get_wordcloud(frequencies, font_path)
         fig = plt.figure(figsize=self.figsize, dpi=self.dpi)
         fig.tight_layout()
         plt.axis("off")
@@ -205,7 +215,10 @@ class WordcloudGenerator:
                 output_file_name = sanitize_filename(f"wordcloud_{self.subchart_column}_{name}.png").lower()
                 wordcloud_title = output_file_name[:-4]
                 # Generate chart
-                fig = self._generate_wordcloud(row["count"], wordcloud_title)
+                if self.language_as_subchart:
+                    fig = self._generate_wordcloud(row["count"], wordcloud_title, name)
+                else:
+                    fig = self._generate_wordcloud(row["count"], wordcloud_title, self.language)
                 # Save chart
                 temp = BytesIO()
                 fig.savefig(temp, bbox_inches="tight", pad_inches=self.pad_inches, dpi=fig.dpi)
@@ -213,7 +226,7 @@ class WordcloudGenerator:
                 plt.close()
         else:
             # Generate chart
-            fig = self._generate_wordcloud(self.counts, "wordcloud")
+            fig = self._generate_wordcloud(self.counts, "wordcloud", self.language)
             # Save chart
             temp = BytesIO()
             fig.savefig(temp, bbox_inches="tight", pad_inches=self.pad_inches, dpi=fig.dpi)
