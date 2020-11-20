@@ -28,7 +28,7 @@ SUPPORTED_LANGUAGES_SPACY = {
     "id": "Indonesian",
     "is": "Icelandic",
     "it": "Italian",
-    "ja": "Japanese",
+    # "ja": "Japanese",
     "kn": "Kannada",
     "lb": "Luxembourgish",
     "lt": "Lithuanian",
@@ -59,8 +59,9 @@ SUPPORTED_LANGUAGES_SPACY = {
     "zh": "Chinese (simplified)",
 }
 """dict: Languages supported by spaCy: https://spacy.io/usage/models#languages
+
 Dictionary with ISO 639-1 language code (key) and language name (value).
-Korean and Ukrainian not included because they require system-level package installations
+Japanese, Korean and Ukrainian not included because they require system-level package installations
 """
 
 SPACY_LANGUAGE_MODELS = {
@@ -73,5 +74,6 @@ SPACY_LANGUAGE_MODELS = {
     "de": "de_core_news_sm",  # OntoNotes
 }
 """dict: Mapping between ISO 639-1 language code and spaCy model identifiers
+
 Models with Creative Commons licenses are not included because this plugin is licensed under Apache-2
 """

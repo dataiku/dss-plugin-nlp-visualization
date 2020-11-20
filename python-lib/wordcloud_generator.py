@@ -22,6 +22,7 @@ matplotlib.use("agg")
 
 class WordcloudGenerator:
     """Class to generate multilingual wordclouds based on text data and save them as png images
+
     Attributes:
         df (pandas.DataFrame): Dataframe containing text data
         tokenizer (MultilingualTokenizer): Tokenizer used for text processing
@@ -31,6 +32,7 @@ class WordcloudGenerator:
         language_column (str, optional): Name of the language column
         subchart_column (str, optional): Name of the subcharts column to compute wordclouds on, defaults to None
         max_words (int, optional): Maximum number of words to display in wordcloud, defaults to 100
+
     """
 
     DEFAULT_MAX_WORDS = 100
@@ -140,7 +142,7 @@ class WordcloudGenerator:
 
     @time_logging(log_message="Preparing data")
     def _prepare_data(self):
-        if self.subchart_column != None:
+        if self.subchart_column:
             # Group data per language and subchart for tokenization
             group_columns = [col for col in [self.language_column, self.subchart_column] if col]
             self.df.dropna(subset=group_columns, inplace=True)
@@ -149,7 +151,6 @@ class WordcloudGenerator:
             # Simply format data similarly
             self.df_grouped = [(self.language, self.df)]
 
-    @time_logging(log_message="Tokenizing texts")
     def _tokenize_texts(self):
         """Tokenize each group of observations in its correct language"""
         # Get language and subchart name for each group
@@ -196,13 +197,10 @@ class WordcloudGenerator:
 
             self.counts = dict(self.counts)
         else:
-            self.counts_df = pd.DataFrame(
-                list(zip(self.subcharts, self.counters)),
-                columns=["subchart", "count"],
-            )
+            self.counts_df = pd.DataFrame(list(zip(self.subcharts, self.counters)), columns=["subchart", "count"],)
             self.counts_df = self.counts_df.groupby(by=["subchart"]).agg({"count": "sum"})
             # remove subcharts emptied by filter
-            self.counts_df = self.counts_df.loc[self.counts_df["count"] != {}, :]
+            self.counts_df = self.counts_df.loc[self.counts_df["count"] != {}, :]  # noqa
 
     @time_logging(log_message="Generating wordclouds")
     def _generate_wordclouds(self):
