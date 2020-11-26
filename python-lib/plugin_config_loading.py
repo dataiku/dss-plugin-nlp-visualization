@@ -14,7 +14,7 @@ from language_dict import SUPPORTED_LANGUAGES_SPACY
 
 
 class PluginParamValidationError(ValueError):
-    """Custom exception raised when the the plugin parameters chosen by the user are invalid"""
+    """Custom exception raised when the plugin parameters chosen by the user are invalid"""
 
     pass
 

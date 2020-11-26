@@ -3,6 +3,7 @@
 
 import dataiku
 import logging
+import warnings
 import matplotlib
 import matplotlib.pyplot as plt
 from typing import List, AnyStr
@@ -16,8 +17,15 @@ import os
 from utils import time_logging
 from pathvalidate import sanitize_filename
 from font_exceptions_dict import FONT_EXCEPTIONS_DICT
+from language_dict import SUPPORTED_LANGUAGES_SPACY
 
 matplotlib.use("agg")
+
+
+class PluginUnsupportedLanguageWarning(Warning):
+    """Custom warning raised when an unsupported language is detected in a language column"""
+
+    pass
 
 
 class WordcloudGenerator:
@@ -140,11 +148,26 @@ class WordcloudGenerator:
 
     @time_logging(log_message="Preparing data")
     def _prepare_data(self):
-        if self.subchart_column != None:
+        if self.subchart_column:
             # Group data per language and subchart for tokenization
             group_columns = [col for col in [self.language_column, self.subchart_column] if col]
             self.df.dropna(subset=group_columns, inplace=True)
             self.df_grouped = self.df.groupby(group_columns)
+            # Filter unsupported languages contained in detected language column
+            if self.language_as_subchart:
+                temp = []
+                unsupported_lang = []
+                for group_name, group in self.df_grouped:
+                    if group_name[0] in SUPPORTED_LANGUAGES_SPACY:
+                        temp.append((group_name, group))
+                    else:
+                        unsupported_lang.append(group_name[0])
+                self.df_grouped = temp
+                if unsupported_lang:
+                    logging.warn(
+                        f"Found {len(unsupported_lang)} unsupported languages: {', '.join(unsupported_lang)}. No wordcloud will be generated for these languages"
+                    )
+
         else:
             # Simply format data similarly
             self.df_grouped = [(self.language, self.df)]
@@ -210,6 +233,7 @@ class WordcloudGenerator:
         if self.subchart_column:
             for name, row in self.counts_df.iterrows():
                 # Generate file name and chart title
+                print("name: ", name)
                 output_file_name = sanitize_filename(f"wordcloud_{self.subchart_column}_{name}.png").lower()
                 wordcloud_title = output_file_name[:-4]
                 # Generate chart

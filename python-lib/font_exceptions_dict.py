@@ -3,7 +3,15 @@
 
 FONT_EXCEPTIONS_DICT = {
     "ar": "NotoSansArabic-Regular.ttf",
-    "ja": "NotoSansCJKjp-Regular.otf",
+    "bn": "NotoSansBengali-Regular.ttf",
+    "fa": "NotoSansArabic-Regular.ttf",
+    "he": "NotoSansHebrew-Regular.ttf",
+    "hi": "NotoSansDevanagari-Regular.ttf",
+    "hy": "NotoSansArmenian-Regular.ttf",
+    "kn": "NotoSansKannada-Regular.ttf",
+    "mr": "NotoSansDevanagari-Regular.ttf",
+    "ta": "NotoSansTamil-Regular.ttf",
+    "ur": "NotoSansArabic-Regular.ttf",
     "zh": "NotoSansCJKsc-Regular.otf",
     "language_column": "Arial Unicode.ttf",
 }
