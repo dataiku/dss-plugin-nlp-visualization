@@ -1,6 +1,6 @@
 # Text Visualization Plugin
 
-This Dataiku DSS plugin provides a chart to visualize text data as word clouds.
+This Dataiku DSS plugin provides a recipe to visualize text data as word clouds.
 
 Documentation: https://www.dataiku.com/product/plugins/nlp-visualization/
 

@@ -21,8 +21,10 @@ class PluginParamValidationError(ValueError):
 
 def load_plugin_config_wordcloud() -> Dict:
     """Utility function to validate and load language detection parameters into a clean dictionary
+
     Returns:
         Dictionary of parameter names (key) and values
+
     """
     params = {}
     # Input dataset

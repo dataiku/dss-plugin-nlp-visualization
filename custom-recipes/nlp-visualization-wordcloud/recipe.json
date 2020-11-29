@@ -1,6 +1,6 @@
 {
     "meta": {
-        "label": "Word Cloud",
+        "label": "Word Clouds",
         "description": "Generate wordclouds based on a text column",
         "icon": "icon-cloud"
     },
@@ -77,7 +77,7 @@
             "allowedColumnTypes": [
                 "string"
             ],
-            "label": "Categorical column",
+            "label": "Categorical column (optional)",
             "mandatory": false
         }
     ],

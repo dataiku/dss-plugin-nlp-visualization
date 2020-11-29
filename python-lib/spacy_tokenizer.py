@@ -72,6 +72,7 @@ Token.set_extension(
 
 class MultilingualTokenizer:
     """Wrapper class to handle tokenization with spaCy for multiple languages
+
     Attributes:
         default_language (str): Fallback language code in ISO 639-1 format
         use_models (bool): If True, load spaCy models for available languages.
@@ -80,6 +81,7 @@ class MultilingualTokenizer:
         batch_size (int): Number of documents to process in spaCy pipelines
         spacy_nlp_dict (dict): Dictionary holding spaCy Language instances (value) by language code (key)
         tokenized_column (str): Name of the dataframe column storing tokenized documents
+
     """
 
     DEFAULT_BATCH_SIZE = 1000
@@ -100,6 +102,7 @@ class MultilingualTokenizer:
         "is_emoji": "Emoji",
     }
     """dict: Available native and custom spaCy token attributes for filtering
+
     Key: name of the token attribute defined on spacy Token objects
     Value: label to designate the token attribute in the user interface
     """
@@ -113,6 +116,7 @@ class MultilingualTokenizer:
         batch_size: int = DEFAULT_BATCH_SIZE,
     ):
         """Initialization method for the MultilingualTokenizer class, with optional arguments
+
         Args:
             default_language (str, optional): Fallback language code in ISO 639-1 format.
                 Default is the "multilingual language code": https://spacy.io/models/xx
@@ -122,6 +126,7 @@ class MultilingualTokenizer:
                 Default is True, which overrides the spaCy default behavior
             batch_size (int, optional): Number of documents to process in spaCy pipelines
                 Default is set by the DEFAULT_BATCH_SIZE class constant
+
         """
         store_attr()
         self.spacy_nlp_dict = {}
@@ -131,10 +136,13 @@ class MultilingualTokenizer:
 
     def _create_spacy_tokenizer(self, language: AnyStr) -> Language:
         """Private method to create a custom spaCy tokenizer for a given language
+
         Args:
             language: Language code in ISO 639-1 format, cf. https://spacy.io/usage/models#languages
+
         Returns:
             spaCy Language instance with the tokenizer
+
         """
         start = time()
         logging.info(f"Loading tokenizer for language '{language}'...")
@@ -174,15 +182,20 @@ class MultilingualTokenizer:
 
     def _add_spacy_tokenizer(self, language: AnyStr) -> bool:
         """Private method to add a spaCy tokenizer for a given language to the `spacy_nlp_dict` attribute
+
         This method only adds the tokenizer if the language code is valid and recognized among
         the list of supported languages (`SUPPORTED_LANGUAGES_SPACY` constant),
         else it will raise a ValueError exception.
+
         Args:
             language: Language code in ISO 639-1 format, cf. https://spacy.io/usage/models#languages
+
         Returns:
             True if the tokenizer was added, else False
+
         Raises:
             ValueError: If the language code is missing or not in SUPPORTED_LANGUAGES_SPACY
+
         """
         added_tokenizer = False
         if pd.isnull(language) or language == "":
@@ -196,16 +209,20 @@ class MultilingualTokenizer:
 
     def tokenize_list(self, text_list: List[AnyStr], language: AnyStr) -> List[Doc]:
         """Public method to tokenize a list of strings for a given language
+
         This method calls `_add_spacy_tokenizer` in case the requested language has not already been added.
         In case of an error in `_add_spacy_tokenizer`, it falls back to the default tokenizer.
+
         Args:
             text_list: List of strings
             language: Language code in ISO 639-1 format, cf. https://spacy.io/usage/models#languages
+
         Returns:
             List of tokenized spaCy documents
+
         """
         start = time()
-        logging.info(f"Tokenizing {len(text_list)} texts in language '{language}'...")
+        logging.info(f"Tokenizing {len(text_list)} text(s) in language '{language}'...")
         text_list = [str(t) if pd.notnull(t) else "" for t in text_list]
         try:
             self._add_spacy_tokenizer(language)
@@ -215,7 +232,7 @@ class MultilingualTokenizer:
                 )
             )
             logging.info(
-                f"Tokenizing {len(tokenized)} texts in language '{language}': Done in {time() - start:.2f} seconds."
+                f"Tokenizing {len(tokenized)} text(s) in language '{language}': Done in {time() - start:.2f} seconds."
             )
         except ValueError as e:
             truncated_text_list = truncate_text_list(text_list)
@@ -224,7 +241,7 @@ class MultilingualTokenizer:
             )
             tokenized = list(self.spacy_nlp_dict[self.default_language].pipe(text_list, batch_size=self.batch_size))
             logging.info(
-                f"Tokenizing {len(tokenized)} texts using fallback tokenizer: Done in {time() - start:.2f} seconds."
+                f"Tokenizing {len(tokenized)} text(s) using fallback tokenizer: Done in {time() - start:.2f} seconds."
             )
         return tokenized
 
@@ -232,15 +249,19 @@ class MultilingualTokenizer:
         self, df: pd.DataFrame, text_column: AnyStr, language_column: AnyStr = "", language: AnyStr = "language_column"
     ) -> pd.DataFrame:
         """Public method to tokenize a text column in a pandas DataFrame, given language information
+
         This methods adds a new column to the DataFrame, whose name is saved as the `tokenized_column` attribute
+
         Args:
             df: Input pandas DataFrame
             text_column: Name of the column containing text data
             language_column: Name of the column with language codes in ISO 639-1 format
             language: Language code in ISO 639-1 format, cf. https://spacy.io/usage/models#languages
                 if equal to "language_column" this parameter is ignored in favor of language_column
+
         Returns:
             DataFrame with all columns from the input, plus a new column with tokenized spaCy documents
+
         """
         self.tokenized_column = generate_unique("tokenized", df.keys(), text_column)
         # Initialize the tokenized column to empty documents

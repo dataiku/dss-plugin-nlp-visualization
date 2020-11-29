@@ -30,6 +30,7 @@ class PluginUnsupportedLanguageWarning(Warning):
 
 class WordcloudGenerator:
     """Class to generate multilingual wordclouds based on text data and save them as png images
+
     Attributes:
         df (pandas.DataFrame): Dataframe containing text data
         tokenizer (MultilingualTokenizer): Tokenizer used for text processing
@@ -39,6 +40,7 @@ class WordcloudGenerator:
         language_column (str, optional): Name of the language column
         subchart_column (str, optional): Name of the subcharts column to compute wordclouds on, defaults to None
         max_words (int, optional): Maximum number of words to display in wordcloud, defaults to 100
+
     """
 
     DEFAULT_MAX_WORDS = 100
@@ -172,7 +174,6 @@ class WordcloudGenerator:
             # Simply format data similarly
             self.df_grouped = [(self.language, self.df)]
 
-    @time_logging(log_message="Tokenizing texts")
     def _tokenize_texts(self):
         """Tokenize each group of observations in its correct language"""
         # Get language and subchart name for each group
@@ -225,7 +226,7 @@ class WordcloudGenerator:
             )
             self.counts_df = self.counts_df.groupby(by=["subchart"]).agg({"count": "sum"})
             # remove subcharts emptied by filter
-            self.counts_df = self.counts_df.loc[self.counts_df["count"] != {}, :]
+            self.counts_df = self.counts_df.loc[self.counts_df["count"] != {}, :]  # noqa
 
     @time_logging(log_message="Generating wordclouds")
     def _generate_wordclouds(self):
