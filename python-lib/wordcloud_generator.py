@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Module with a class to generate wordclouds based on cleaned text"""
 
-import dataiku
 import logging
 import warnings
 import matplotlib
@@ -58,7 +57,6 @@ class WordcloudGenerator:
     DEFAULT_RANDOM_STATE = 3
     DEFAULT_FIGSIZE = (38.4, 21.6)
     DEFAULT_DPI = 100
-    DEFAULT_PAD_INCHES = 1
     DEFAULT_TITLEPAD = 60
     DEFAULT_TITLESIZE = 60
 
@@ -67,7 +65,7 @@ class WordcloudGenerator:
         df: pd.DataFrame,
         tokenizer: MultilingualTokenizer,
         text_column: AnyStr,
-        output_folder: dataiku.Folder,
+        font_path: AnyStr,
         language: AnyStr = "en",
         language_column: AnyStr = None,
         subchart_column: AnyStr = None,
@@ -79,7 +77,6 @@ class WordcloudGenerator:
         random_state: int = DEFAULT_RANDOM_STATE,
         figsize: tuple = DEFAULT_FIGSIZE,
         dpi: int = DEFAULT_DPI,
-        pad_inches: int = DEFAULT_PAD_INCHES,
         titlepad: int = DEFAULT_TITLEPAD,
         titlesize: int = DEFAULT_TITLESIZE,
     ):
@@ -88,11 +85,11 @@ class WordcloudGenerator:
         self.df = df
         self.tokenizer = tokenizer
         self.text_column = text_column
+        self.font_path = font_path
         self.language = language
         self.language_column = language_column
         self.subchart_column = subchart_column
         self.language_as_subchart = self.language_column == self.subchart_column
-        self.output_folder = output_folder
         self.max_words = max_words
         self.color_list = color_list
         self.font = font
@@ -101,7 +98,6 @@ class WordcloudGenerator:
         self.random_state = random_state
         self.figsize = figsize
         self.dpi = dpi
-        self.pad_inches = pad_inches
         self.titlepad = titlepad
         self.titlesize = titlesize
         if self.subchart_column == "order66":
@@ -136,7 +132,7 @@ class WordcloudGenerator:
         """Return a wordcloud as a matplotlib figure"""
         # Manage font exceptions based on language
         font = self._retrieve_font(language)
-        font_path = os.path.join(dataiku.customrecipe.get_recipe_resource(), font)
+        font_path = os.path.join(self.font_path, font)
         # Generate wordcloud
         wc = self._get_wordcloud(frequencies, font_path)
         fig = plt.figure(figsize=self.figsize, dpi=self.dpi)
@@ -242,22 +238,17 @@ class WordcloudGenerator:
                     fig = self._generate_wordcloud(row["count"], wordcloud_title, name)
                 else:
                     fig = self._generate_wordcloud(row["count"], wordcloud_title, self.language)
-                # Save chart
-                temp = BytesIO()
-                fig.savefig(temp, bbox_inches="tight", pad_inches=self.pad_inches, dpi=fig.dpi)
-                self.output_folder.upload_data(output_file_name, temp.getvalue())
+                # Return chart
+                yield (fig, output_file_name)
                 plt.close()
         else:
             # Generate chart
             fig = self._generate_wordcloud(self.counts, "wordcloud", self.language)
-            # Save chart
-            temp = BytesIO()
-            fig.savefig(temp, bbox_inches="tight", pad_inches=self.pad_inches, dpi=fig.dpi)
-            self.output_folder.upload_data("wordcloud.png", temp.getvalue())
+            # Return chart
+            yield (fig, "wordcloud.png")
             plt.close()
 
     def generate(self):
         self._prepare_data()
         self._tokenize_texts()
         self._count_tokens()
-        self._generate_wordclouds()
