@@ -12,6 +12,8 @@ from dataiku.customrecipe import (
 
 from language_dict import SUPPORTED_LANGUAGES_SPACY
 
+# from plugin_io_utils import get_partition_root
+
 
 class PluginParamValidationError(ValueError):
     """Custom exception raised when the plugin parameters chosen by the user are invalid"""
@@ -33,6 +35,8 @@ def load_plugin_config_wordcloud() -> Dict:
         raise PluginParamValidationError("Please specify one input dataset")
     input_dataset = dataiku.Dataset(input_dataset_names[0])
     input_dataset_columns = [p["name"] for p in input_dataset.read_schema()]
+    # partition loading - TO DO -
+    # params["partition_root"] = get_partition_root(input_dataset)
 
     # Output folder
     output_folder_names = get_output_names_for_role("output_folder")
@@ -42,6 +46,7 @@ def load_plugin_config_wordcloud() -> Dict:
 
     # Recipe parameters
     recipe_config = get_recipe_config()
+
     # Text column
     params["text_column"] = recipe_config.get("text_column", None)
     if params["text_column"] not in input_dataset_columns:

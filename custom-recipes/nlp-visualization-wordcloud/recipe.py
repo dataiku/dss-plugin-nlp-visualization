@@ -2,19 +2,15 @@
 import dataiku
 from spacy_tokenizer import MultilingualTokenizer
 from wordcloud_generator import WordcloudGenerator
-from wordcloud_exporter import WordcloudExporter
 from plugin_config_loading import load_plugin_config_wordcloud
-
 
 # Load config
 params = load_plugin_config_wordcloud()
 resource_path = dataiku.customrecipe.get_recipe_resource()
+output_folder = params["output_folder"]
 
 # Load tokenizer
 tokenizer = MultilingualTokenizer()
-
-# Load exporter
-exporter = WordcloudExporter()
 
 # Load wordcloud generator
 generator = WordcloudGenerator(
@@ -31,5 +27,5 @@ generator = WordcloudGenerator(
 generator.generate()
 
 # Save wordclouds to folder
-for fig, output_file_name in generator._generate_wordclouds():
-    exporter.upload_to_folder(fig, params["output_folder"], output_file_name)
+for temp, output_file_name in generator._generate_wordclouds():
+    output_folder.upload_data(output_file_name, temp.getvalue())

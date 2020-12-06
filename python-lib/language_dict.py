@@ -28,19 +28,21 @@ SUPPORTED_LANGUAGES_SPACY = {
     "id": "Indonesian",
     "is": "Icelandic",
     "it": "Italian",
-    # "ja": "Japanese",
     "kn": "Kannada",
     "lb": "Luxembourgish",
     "lt": "Lithuanian",
     "lv": "Latvian",
+    "mk": "Macedonian",
     "ml": "Malayalam",
     "mr": "Marathi",
     "nb": "Norwegian Bokmål",
+    "ne": "Nepali",
     "nl": "Dutch",
     "pl": "Polish",
     "pt": "Portuguese",
     "ro": "Romanian",
     "ru": "Russian",
+    "sa": "Sanskrit",
     "si": "Sinhala",
     "sk": "Slovak",
     "sl": "Slovenian",
@@ -53,15 +55,15 @@ SUPPORTED_LANGUAGES_SPACY = {
     "tl": "Tagalog",
     "tr": "Turkish",
     "tt": "Tatar",
+    "uk": "Ukrainian",
     "ur": "Urdu",
     "vi": "Vietnamese",
     "yo": "Yoruba",
     "zh": "Chinese (simplified)",
 }
 """dict: Languages supported by spaCy: https://spacy.io/usage/models#languages
-
-Dictionary with ISO 639-1 language code (key) and language name (value).
-Japanese, Korean and Ukrainian not included because they require system-level package installations
+Dictionary with ISO 639-1 language code (key) and language name (value)
+Japanese and Korean were excluded for now because of system installation issues
 """
 
 SPACY_LANGUAGE_MODELS = {
@@ -74,6 +76,5 @@ SPACY_LANGUAGE_MODELS = {
     "de": "de_core_news_sm",  # OntoNotes
 }
 """dict: Mapping between ISO 639-1 language code and spaCy model identifiers
-
 Models with Creative Commons licenses are not included because this plugin is licensed under Apache-2
 """
