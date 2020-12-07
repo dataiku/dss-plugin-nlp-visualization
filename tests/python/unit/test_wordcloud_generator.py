@@ -47,6 +47,9 @@ def test_wordcloud_multilingual():
         subchart_column="language",
     )
     generator.compute()
+    num_wordclouds = 0
     for temp, name in generator.save_wordclouds():
         assert temp is not None
         assert "wordcloud_" in name
+        num_wordclouds += 1
+    assert num_wordclouds == 3
