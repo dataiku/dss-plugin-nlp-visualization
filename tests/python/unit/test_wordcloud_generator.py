@@ -3,18 +3,26 @@
 # pytest automatically runs all the function starting with "test_"
 # see https://docs.pytest.org for more information
 
+import os
+
 import pandas as pd
 
 from spacy_tokenizer import MultilingualTokenizer
 from wordcloud_generator import WordcloudGenerator
 
+font_path = os.getenv("RESOURCE_FOLDER_PATH", "path_is_no_good")
+
 
 def test_wordcloud_english():
     input_df = pd.DataFrame({"input_text": ["I hope nothing. I fear nothing. I am free. 💩 😂 #OMG"]})
     tokenizer = MultilingualTokenizer()
-    output_df = tokenizer.tokenize_df(df=input_df, text_column="input_text", language="en")
-    tokenized_document = output_df[tokenizer.tokenized_column][0]
-    assert len(tokenized_document) == 15
+    generator = WordcloudGenerator(
+        df=input_df, tokenizer=tokenizer, text_column="input_text", font_path=font_path, language="en"
+    )
+    generator.compute()
+    for temp, name in generator.save_wordclouds():
+        assert temp is not None
+        assert name == "wordcloud.png"
 
 
 def test_wordcloud_multilingual():
@@ -29,7 +37,16 @@ def test_wordcloud_multilingual():
         }
     )
     tokenizer = MultilingualTokenizer()
-    output_df = tokenizer.tokenize_df(df=input_df, text_column="input_text", language_column="language")
-    tokenized_documents = output_df[tokenizer.tokenized_column]
-    tokenized_documents_length = [len(doc) for doc in tokenized_documents]
-    assert tokenized_documents_length == [12, 8, 13]
+    generator = WordcloudGenerator(
+        df=input_df,
+        tokenizer=tokenizer,
+        text_column="input_text",
+        font_path=font_path,
+        language="language_column",
+        language_column="language",
+        subchart_column="language",
+    )
+    generator.compute()
+    for temp, name in generator.save_wordclouds():
+        assert temp is not None
+        assert "wordcloud_" in name
