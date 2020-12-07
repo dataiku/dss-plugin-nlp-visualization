@@ -1,27 +1,29 @@
 # -*- coding: utf-8 -*-
 """Module with a class to generate wordclouds based on cleaned text"""
 
-import logging
-import matplotlib
-import matplotlib.pyplot as plt
-from typing import List, AnyStr
-import pandas as pd
-from io import BytesIO
-from wordcloud import WordCloud
-from collections import Counter
-from spacy_tokenizer import MultilingualTokenizer
 import random
 import os
-from utils import time_logging
+from typing import List, AnyStr
+from collections import Counter
+from io import BytesIO
+
+import matplotlib
+import matplotlib.pyplot as plt
+import pandas as pd
+from wordcloud import WordCloud
 from pathvalidate import sanitize_filename
+from fastcore.utils import store_attr
+
+from spacy_tokenizer import MultilingualTokenizer
 from font_exceptions_dict import FONT_EXCEPTIONS_DICT
 from language_dict import SUPPORTED_LANGUAGES_SPACY
+from utils import time_logging
 
 matplotlib.use("agg")
 
 
-class PluginUnsupportedLanguageWarning(Warning):
-    """Custom warning raised when an unsupported language is detected in a language column"""
+class UnsupportedLanguage(RuntimeError):
+    """Custom exception raised when an unsupported language is detected in a language column"""
 
     pass
 
@@ -60,6 +62,7 @@ class WordcloudGenerator:
     DEFAULT_TITLESIZE = 60
     DEFAULT_PAD_INCHES = 1
     DEFAULT_BBOX_INCHES = "tight"
+    DEFAULT_BACKGROUND_COLOR = "white"
 
     def __init__(
         self,
@@ -82,29 +85,12 @@ class WordcloudGenerator:
         titlesize: int = DEFAULT_TITLESIZE,
         pad_inches: int = DEFAULT_PAD_INCHES,
         bbox_inches: str = DEFAULT_BBOX_INCHES,
+        background_color: str = DEFAULT_BACKGROUND_COLOR,
     ):
         """Initialization method for the MultilingualTokenizer class, with optional arguments etailed above"""
 
-        self.df = df
-        self.tokenizer = tokenizer
-        self.text_column = text_column
-        self.font_path = font_path
-        self.language = language
-        self.language_column = language_column
-        self.subchart_column = subchart_column
+        store_attr()
         self.language_as_subchart = self.language_column == self.subchart_column
-        self.max_words = max_words
-        self.color_list = color_list
-        self.font = font
-        self.scale = scale
-        self.margin = margin
-        self.random_state = random_state
-        self.figsize = figsize
-        self.dpi = dpi
-        self.titlepad = titlepad
-        self.titlesize = titlesize
-        self.pad_inches = pad_inches
-        self.bbox_inches = bbox_inches
         if self.subchart_column == "order66":
             self.font = "DeathStar.otf"
             self.subchart_column = None
@@ -121,7 +107,7 @@ class WordcloudGenerator:
         """Return a wordcloud file"""
         wordcloud = (
             WordCloud(
-                background_color="white",
+                background_color=self.background_color,
                 scale=self.scale,
                 margin=self.margin,
                 max_words=self.max_words,
@@ -167,9 +153,8 @@ class WordcloudGenerator:
                         unsupported_lang.append(group_name[0])
                 self.df_grouped = temp
                 if unsupported_lang:
-                    logging.warn(
-                        f"Found {len(unsupported_lang)} unsupported languages: {', '.join(unsupported_lang)}.\
-                             No wordcloud will be generated for these languages"
+                    raise UnsupportedLanguage(
+                        f"Found {len(unsupported_lang)} unsupported languages: {set(unsupported_lang)}"
                     )
 
         else:
@@ -196,10 +181,7 @@ class WordcloudGenerator:
             self.subcharts = self.group_names
             self.languages = [self.language] * len(self.subcharts)
         else:
-            print("GROUP_NAMES: ", self.group_names)
             self.languages = self.group_names
-
-        print("LANGUAGES: ", self.languages)
 
         # Tokenize
         self.docs = [
@@ -215,7 +197,6 @@ class WordcloudGenerator:
             for token in doc:
                 counter[(token.text)] += 1  # Equivalently, token.lemma_
             self.counters.append(counter)
-        logging.info("Count successful, aggregating counters according to chart settings")
 
         if not self.subchart_column:
             # sum the values with same keys
@@ -225,16 +206,13 @@ class WordcloudGenerator:
 
             self.counts = dict(self.counts)
         else:
-            self.counts_df = pd.DataFrame(
-                list(zip(self.subcharts, self.counters)),
-                columns=["subchart", "count"],
-            )
+            self.counts_df = pd.DataFrame(list(zip(self.subcharts, self.counters)), columns=["subchart", "count"],)
             self.counts_df = self.counts_df.groupby(by=["subchart"]).agg({"count": "sum"})
             # remove subcharts emptied by filter
             self.counts_df = self.counts_df.loc[self.counts_df["count"] != {}, :]  # noqa
 
     @time_logging(log_message="Generating wordclouds")
-    def _generate_wordclouds(self):
+    def save_wordclouds(self):
         """Generate wordclouds and save them as png images"""
         if self.subchart_column:
             for name, row in self.counts_df.iterrows():
@@ -260,7 +238,7 @@ class WordcloudGenerator:
             yield (temp, "wordcloud.png")
             plt.close()
 
-    def generate(self):
+    def compute(self):
         self._prepare_data()
         self._tokenize_texts()
         self._count_tokens()

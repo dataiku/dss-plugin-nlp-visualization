@@ -1,7 +1,7 @@
 {
     "meta": {
         "label": "Word Clouds",
-        "description": "Generate wordclouds based on a text column",
+        "description": "Generate Word Clouds in 58 languages",
         "icon": "icon-cloud"
     },
     "kind": "PYTHON",
@@ -77,7 +77,8 @@
             "allowedColumnTypes": [
                 "string"
             ],
-            "label": "Categorical column (optional)",
+            "label": "Categorical column",
+            "description": "Optional column to generate one Word Cloud per category",
             "mandatory": false
         }
     ],

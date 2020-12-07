@@ -62,6 +62,7 @@ SUPPORTED_LANGUAGES_SPACY = {
     "zh": "Chinese (simplified)",
 }
 """dict: Languages supported by spaCy: https://spacy.io/usage/models#languages
+
 Dictionary with ISO 639-1 language code (key) and language name (value)
 Japanese and Korean were excluded for now because of system installation issues
 """
@@ -76,5 +77,6 @@ SPACY_LANGUAGE_MODELS = {
     "de": "de_core_news_sm",  # OntoNotes
 }
 """dict: Mapping between ISO 639-1 language code and spaCy model identifiers
+
 Models with Creative Commons licenses are not included because this plugin is licensed under Apache-2
 """
