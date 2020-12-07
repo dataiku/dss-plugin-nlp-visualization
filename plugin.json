@@ -4,7 +4,7 @@
     "meta": {
         "label": "Text Visualization",
         "category": "Natural Language Processing",
-        "description": "Visualize text data as word clouds",
+        "description": "Visualize text data as Word Clouds",
         "author": "Dataiku (Alex LANDEAU, Alex COMBESSIE)",
         "icon": "icon-quote-left",
         "tags": [
