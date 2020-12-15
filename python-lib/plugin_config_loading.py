@@ -12,7 +12,7 @@ from dataiku.customrecipe import (
 
 from language_dict import SUPPORTED_LANGUAGES_SPACY
 
-# from plugin_io_utils import get_partition_root
+# from dku_partitioned_folder_handling import get_partition_root
 
 
 class PluginParamValidationError(ValueError):
@@ -48,16 +48,16 @@ def load_plugin_config_wordcloud() -> Dict:
     recipe_config = get_recipe_config()
 
     # Text column
-    params["text_column"] = recipe_config.get("text_column", None)
+    params["text_column"] = recipe_config.get("text_column")
     if params["text_column"] not in input_dataset_columns:
-        raise PluginParamValidationError("Invalid text column selection")
+        raise PluginParamValidationError(f"Invalid text column selection: {params['text_column']}")
     logging.info(f"Text column: {params['text_column']}")
     # Language selection
-    params["language"] = recipe_config.get("language", None)
+    params["language"] = recipe_config.get("language")
     if params["language"] == "language_column":
-        params["language_column"] = recipe_config.get("language_column", None)
+        params["language_column"] = recipe_config.get("language_column")
         if params["language_column"] not in input_dataset_columns:
-            raise PluginParamValidationError("Invalid language column selection")
+            raise PluginParamValidationError(f"Invalid language column selection: {params['language_column']}")
         logging.info(f"Language column: {params['language_column']}")
     else:
         if not params["language"]:
@@ -67,11 +67,11 @@ def load_plugin_config_wordcloud() -> Dict:
         params["language_column"] = None
         logging.info(f"Language: {params['language']}")
     # Subcharts
-    params["subchart_column"] = recipe_config.get("subchart_column", None)
+    params["subchart_column"] = recipe_config.get("subchart_column")
     # If parameter is saved then cleared, config retrieves ""
     params["subchart_column"] = None if not params["subchart_column"] else params["subchart_column"]
     if params["subchart_column"] and ((params["subchart_column"] not in input_dataset_columns + ["order66"])):
-        raise PluginParamValidationError("Invalid categorical column selection")
+        raise PluginParamValidationError(f"Invalid categorical column selection: {params['subchart_column']}")
     logging.info(f"Subcharts column: {params['subchart_column']}")
 
     # Input dataframe

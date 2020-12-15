@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-import dataiku
-
+from dataiku.customrecipe import get_recipe_resource
 from spacy_tokenizer import MultilingualTokenizer
 from wordcloud_generator import WordcloudVisualizer
 from plugin_config_loading import load_plugin_config_wordcloud
 
 # Load config
 params = load_plugin_config_wordcloud()
-resource_path = dataiku.customrecipe.get_recipe_resource()
+resource_path = get_recipe_resource()
 output_folder = params["output_folder"]
 df = params["df"]
 
