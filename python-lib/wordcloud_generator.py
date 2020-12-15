@@ -2,18 +2,20 @@
 """Module with a class to generate wordclouds based on cleaned text"""
 
 import logging
-import matplotlib
-import matplotlib.pyplot as plt
 from typing import List, AnyStr
 import pandas as pd
 from io import BytesIO
-from wordcloud import WordCloud
 from collections import Counter
-from spacy_tokenizer import MultilingualTokenizer
 import random
 import os
+import pathvalidate
+
+import matplotlib
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+
+from spacy_tokenizer import MultilingualTokenizer
 from utils import time_logging
-from pathvalidate import sanitize_filename
 from font_exceptions_dict import FONT_EXCEPTIONS_DICT
 from language_dict import SUPPORTED_LANGUAGES_SPACY
 
@@ -26,7 +28,7 @@ class PluginUnsupportedLanguageWarning(Warning):
     pass
 
 
-class WordcloudGenerator:
+class WordcloudVisualizer:
     """Class to generate multilingual wordclouds based on text data and save them as png images
 
     Attributes:
@@ -63,7 +65,6 @@ class WordcloudGenerator:
 
     def __init__(
         self,
-        df: pd.DataFrame,
         tokenizer: MultilingualTokenizer,
         text_column: AnyStr,
         font_path: AnyStr,
@@ -85,7 +86,6 @@ class WordcloudGenerator:
     ):
         """Initialization method for the MultilingualTokenizer class, with optional arguments etailed above"""
 
-        self.df = df
         self.tokenizer = tokenizer
         self.text_column = text_column
         self.font_path = font_path
@@ -150,22 +150,22 @@ class WordcloudGenerator:
         return fig
 
     @time_logging(log_message="Preparing data")
-    def _prepare_data(self):
+    def _prepare_data(self, df: pd.DataFrame):
         if self.subchart_column or self.language_column:
             # Group data per language and subchart for tokenization
             group_columns = [col for col in [self.language_column, self.subchart_column] if col]
-            self.df.dropna(subset=group_columns, inplace=True)
-            self.df_grouped = self.df.groupby(group_columns)
+            df.dropna(subset=group_columns, inplace=True)
+            df_grouped = df.groupby(group_columns)
             # Filter unsupported languages contained in detected language column
             if self.language_as_subchart:
                 temp = []
                 unsupported_lang = []
-                for group_name, group in self.df_grouped:
+                for group_name, group in df_grouped:
                     if group_name[0] in SUPPORTED_LANGUAGES_SPACY:
                         temp.append((group_name, group))
                     else:
                         unsupported_lang.append(group_name[0])
-                self.df_grouped = temp
+                df_grouped = temp
                 if unsupported_lang:
                     logging.warn(
                         f"Found {len(unsupported_lang)} unsupported languages: {', '.join(unsupported_lang)}.\
@@ -174,72 +174,78 @@ class WordcloudGenerator:
 
         else:
             # Simply format data similarly
-            self.df_grouped = [(self.language, self.df)]
+            df_grouped = [(self.language, df)]
 
-    def _tokenize_texts(self):
+        return df_grouped
+
+    def _tokenize_texts(self, df_grouped: list):
         """Tokenize each group of observations in its correct language"""
         # Get language and subchart name for each group
-        self.texts = []
-        self.group_names = []
-        for name, group in self.df_grouped:
-            self.texts.append([group[self.text_column].str.cat(sep=" ")])
-            self.group_names.append(name)
+        texts = []
+        group_names = []
+        for name, group in df_grouped:
+            texts.append([group[self.text_column].str.cat(sep=" ")])
+            group_names.append(name)
 
         # Get tokenization languages differently depending on language/subchart settings combinations
         if not self.language_column and not self.subchart_column:
-            self.languages = [self.language]
+            languages = [self.language]
         elif self.language_column and self.subchart_column:
-            languages, subcharts = zip(*self.group_names)
-            self.languages = list(languages)
+            languages, subcharts = zip(*group_names)
+            languages = list(languages)
             self.subcharts = list(subcharts)
         elif self.subchart_column:
-            self.subcharts = self.group_names
-            self.languages = [self.language] * len(self.subcharts)
+            self.subcharts = group_names
+            languages = [self.language] * len(self.subcharts)
         else:
-            print("GROUP_NAMES: ", self.group_names)
-            self.languages = self.group_names
+            print("GROUP_NAMES: ", group_names)
+            languages = group_names
 
-        print("LANGUAGES: ", self.languages)
+        print("LANGUAGES: ", languages)
 
         # Tokenize
-        self.docs = [
-            self.tokenizer.tokenize_list(text, language)[0] for text, language in zip(self.texts, self.languages)
-        ]
+        docs = [self.tokenizer.tokenize_list(text, language)[0] for text, language in zip(texts, languages)]
+
+        return docs
 
     @time_logging(log_message="Counting tokens")
-    def _count_tokens(self):
+    def _count_tokens(self, docs: list):
         """Count tokens in each group"""
-        self.counters = []
-        for doc in self.docs:
+        counters = []
+        for doc in docs:
             counter = Counter()
             for token in doc:
                 counter[(token.text)] += 1  # Equivalently, token.lemma_
-            self.counters.append(counter)
+            counters.append(counter)
         logging.info("Count successful, aggregating counters according to chart settings")
 
         if not self.subchart_column:
             # sum the values with same keys
-            self.counts = Counter()
-            for d in self.counters:
-                self.counts.update(d)
+            counts = Counter()
+            for d in counters:
+                counts.update(d)
 
-            self.counts = dict(self.counts)
+            counts = dict(counts)
+            return counts
         else:
-            self.counts_df = pd.DataFrame(
-                list(zip(self.subcharts, self.counters)),
+            counts_df = pd.DataFrame(
+                list(zip(self.subcharts, counters)),
                 columns=["subchart", "count"],
             )
-            self.counts_df = self.counts_df.groupby(by=["subchart"]).agg({"count": "sum"})
+            counts_df = counts_df.groupby(by=["subchart"]).agg({"count": "sum"})
             # remove subcharts emptied by filter
-            self.counts_df = self.counts_df.loc[self.counts_df["count"] != {}, :]  # noqa
+            counts_df = counts_df.loc[counts_df["count"] != {}, :]
+            return counts_df
 
     @time_logging(log_message="Generating wordclouds")
-    def _generate_wordclouds(self):
-        """Generate wordclouds and save them as png images"""
+    def generate_wordclouds(self, counts):
+        """Generate wordclouds and yield them as png images"""
         if self.subchart_column:
-            for name, row in self.counts_df.iterrows():
+            for name, row in counts.iterrows():
                 # Generate file name and chart title
-                output_file_name = sanitize_filename(f"wordcloud_{self.subchart_column}_{name}.png").lower()
+                output_file_name = pathvalidate.sanitize_filename(
+                    f"wordcloud_{self.subchart_column}_{name}.png"
+                ).lower()
                 wordcloud_title = output_file_name[:-4]
                 # Generate chart
                 if self.language_as_subchart:
@@ -253,14 +259,15 @@ class WordcloudGenerator:
                 plt.close()
         else:
             # Generate chart
-            fig = self._generate_wordcloud(self.counts, "wordcloud", self.language)
+            fig = self._generate_wordcloud(counts, "wordcloud", self.language)
             # Return chart
             temp = BytesIO()
             fig.savefig(temp, bbox_inches=self.bbox_inches, pad_inches=self.pad_inches, dpi=fig.dpi)
             yield (temp, "wordcloud.png")
             plt.close()
 
-    def generate(self):
-        self._prepare_data()
-        self._tokenize_texts()
-        self._count_tokens()
+    def prepare_and_count(self, df: pd.DataFrame):
+        df_prepared = self._prepare_data(df)
+        docs = self._tokenize_texts(df_prepared)
+        counts = self._count_tokens(docs)
+        return counts
