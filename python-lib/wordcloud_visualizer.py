@@ -16,16 +16,9 @@ from fastcore.utils import store_attr
 
 from spacy_tokenizer import MultilingualTokenizer
 from font_exceptions_dict import FONT_EXCEPTIONS_DICT
-from language_dict import SUPPORTED_LANGUAGES_SPACY
 from utils import time_logging
 
 matplotlib.use("agg")
-
-
-class UnsupportedLanguage(RuntimeError):
-    """Custom exception raised when an unsupported language is detected in a language column"""
-
-    pass
 
 
 class WordcloudVisualizer:
@@ -89,16 +82,17 @@ class WordcloudVisualizer:
         """Initialization method for the MultilingualTokenizer class, with optional arguments etailed above"""
 
         store_attr()
+        random.seed(self.random_state)
         self.language_as_subchart = self.language_column == self.subchart_column
         if self.subchart_column == "order66":
             self.font = "DeathStar.otf"
             self.subchart_column = None
 
-    def _color_func(self, word, font_size, position, orientation, random_state=None, **kwargs):
+    def _color_func(self, word, font_size, position, orientation, random_state=None, **kwargs) -> str:
         """Return the color function used in the wordcloud"""
         return random.choice(self.color_list)
 
-    def _retrieve_font(self, language):
+    def _retrieve_font(self, language: str) -> str:
         """Return the font to use for a given language"""
         return FONT_EXCEPTIONS_DICT.get(language, self.font)
 
@@ -118,7 +112,7 @@ class WordcloudVisualizer:
 
         return wordcloud
 
-    def _generate_wordcloud(self, frequencies, title, language):
+    def _generate_wordcloud(self, frequencies: dict, title: str, language: str) -> matplotlib.pyplot.figure:
         """Return a wordcloud as a matplotlib figure"""
         # Manage font exceptions based on language
         font = self._retrieve_font(language)
@@ -135,34 +129,19 @@ class WordcloudVisualizer:
         return fig
 
     @time_logging(log_message="Preparing data")
-    def _prepare_data(self, df: pd.DataFrame):
+    def _prepare_data(self, df: pd.DataFrame) -> list:
         if self.subchart_column or self.language_column:
             # Group data per language and subchart for tokenization
             group_columns = [col for col in [self.language_column, self.subchart_column] if col]
             df.dropna(subset=group_columns, inplace=True)
             df_grouped = df.groupby(group_columns)
-            # Filter unsupported languages contained in detected language column
-            if self.language_as_subchart:
-                temp = []
-                unsupported_lang = []
-                for group_name, group in df_grouped:
-                    if group_name[0] in SUPPORTED_LANGUAGES_SPACY:
-                        temp.append((group_name, group))
-                    else:
-                        unsupported_lang.append(group_name[0])
-                df_grouped = temp
-                if unsupported_lang:
-                    raise UnsupportedLanguage(
-                        f"Found {len(unsupported_lang)} unsupported languages: {set(unsupported_lang)}"
-                    )
-
         else:
             # Simply format data similarly
             df_grouped = [(self.language, df)]
 
         return df_grouped
 
-    def _tokenize_texts(self, df_grouped: list):
+    def _tokenize_texts(self, df_grouped: list) -> list:
         """Tokenize each group of observations in its correct language"""
         # Get language and subchart name for each group
         texts = []
@@ -197,7 +176,7 @@ class WordcloudVisualizer:
             counter = Counter()
             for token in doc:
                 counter[(token.text)] += 1  # Equivalently, token.lemma_
-            self.counters.append(counter)
+            counters.append(counter)
 
         if not self.subchart_column:
             # sum the values with same keys

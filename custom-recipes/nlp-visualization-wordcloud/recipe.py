@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from dataiku.customrecipe import get_recipe_resource
 from spacy_tokenizer import MultilingualTokenizer
-from wordcloud_generator import WordcloudVisualizer
+from wordcloud_visualizer import WordcloudVisualizer
 from plugin_config_loading import load_plugin_config_wordcloud
 
 # Load config

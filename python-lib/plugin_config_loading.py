@@ -83,7 +83,15 @@ def load_plugin_config_wordcloud() -> Dict:
     params["df"] = input_dataset.get_dataframe(columns=necessary_columns)
     if params["df"].empty:
         raise PluginParamValidationError("Dataframe is empty")
-    else:
-        logging.info(f"Read dataset of shape: {params['df'].shape}")
+    # Check if unsupported languages in multilingual case
+    elif params["language_column"]:
+        languages = set(params["df"][params["language_column"]].unique())
+        unsupported_lang = languages - SUPPORTED_LANGUAGES_SPACY.keys()
+        if unsupported_lang:
+            raise PluginParamValidationError(
+                f"Found {len(unsupported_lang)} unsupported languages: {', '.join(unsupported_lang)}"
+            )
+
+    logging.info(f"Read dataset of shape: {params['df'].shape}")
 
     return params
