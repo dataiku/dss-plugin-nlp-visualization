@@ -79,7 +79,7 @@ class WordcloudVisualizer:
         bbox_inches: str = DEFAULT_BBOX_INCHES,
         background_color: str = DEFAULT_BACKGROUND_COLOR,
     ):
-        """Initialization method for the MultilingualTokenizer class, with optional arguments etailed above"""
+        """Initialization method for the WordcloudVisualizer class, with optional arguments etailed above"""
 
         store_attr()
         random.seed(self.random_state)
@@ -196,7 +196,6 @@ class WordcloudVisualizer:
             counts_df = counts_df.loc[counts_df["count"] != {}, :]
             return counts_df
 
-    @time_logging(log_message="Generating wordclouds")
     def generate_wordclouds(self, counts):
         """Generate wordclouds and save them as png images"""
         if self.subchart_column:
@@ -226,6 +225,13 @@ class WordcloudVisualizer:
             plt.close()
 
     def prepare_and_count(self, df: pd.DataFrame):
+        """
+        Public method to prepare data before generating wordclouds.
+        Preparation consists in tokenizing and reshaping text data according to language and subcharts settings
+        Counting consists in counting tokens per subchart
+        Args:
+            df: DataFrame containing text data, with optional additional columns for language and subchart
+        """
         df_prepared = self._prepare_data(df)
         docs = self._tokenize_texts(df_prepared)
         counts = self._count_tokens(docs)

@@ -1,7 +1,7 @@
 {
     "meta": {
-        "label": "Word Clouds",
-        "description": "Generate Word Clouds in 58 languages",
+        "label": "Word clouds",
+        "description": "Generate word clouds from your text data",
         "icon": "icon-cloud"
     },
     "kind": "PYTHON",
@@ -20,7 +20,7 @@
     "outputRoles": [
         {
             "name": "output_folder",
-            "label": "Output folder",
+            "label": "Word cloud folder",
             "description": "Folder where the word clouds will be saved as images",
             "arity": "UNARY",
             "required": true,
@@ -78,7 +78,7 @@
                 "string"
             ],
             "label": "Categorical column",
-            "description": "Optional column to generate one Word Cloud per category",
+            "description": "Optional column to generate one word cloud per category",
             "mandatory": false
         }
     ],
