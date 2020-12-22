@@ -4,9 +4,9 @@
     "meta": {
         "label": "Text Visualization",
         "category": "Natural Language Processing",
-        "description": "Visualize text data as word clouds",
-        "author": "Dataiku (Alex LANDEAU and Alex COMBESSIE)",
-        "icon": "icon-file-text",
+        "description": "Visualize text data in 58 languages using word clouds",
+        "author": "Dataiku (Alex LANDEAU, Alex COMBESSIE)",
+        "icon": "icon-quote-left",
         "tags": [
             "NLP"
         ],

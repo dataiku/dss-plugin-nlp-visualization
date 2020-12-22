@@ -1,0 +1,86 @@
+{
+    "meta": {
+        "label": "Word clouds",
+        "description": "Generate word clouds from your text data",
+        "icon": "icon-cloud"
+    },
+    "kind": "PYTHON",
+    "selectableFromDataset": "input_dataset",
+    "inputRoles": [
+        {
+            "name": "input_dataset",
+            "label": "Input dataset",
+            "description": "Dataset with a cleaned text column",
+            "arity": "UNARY",
+            "required": true,
+            "acceptsDataset": true,
+            "acceptsManagedFolder": false
+        }
+    ],
+    "outputRoles": [
+        {
+            "name": "output_folder",
+            "label": "Word cloud folder",
+            "description": "Folder where the word clouds will be saved as images",
+            "arity": "UNARY",
+            "required": true,
+            "acceptsDataset": false,
+            "acceptsManagedFolder": true
+        }
+    ],
+    "paramsPythonSetup": "get_language_list.py",
+    "params": [
+        {
+            "name": "separator_params",
+            "label": "Input Parameters",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "text_column",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "allowedColumnTypes": [
+                "string"
+            ],
+            "label": "Text column",
+            "mandatory": true
+        },
+        {
+            "name": "language",
+            "type": "SELECT",
+            "getChoicesFromPython": true,
+            "label": "Language",
+            "mandatory": false,
+            "defaultValue": "en"
+        },
+        {
+            "name": "language_column",
+            "label": "Language column",
+            "type": "COLUMN",
+            "description": "Column containing ISO 639-1 language codes",
+            "columnRole": "input_dataset",
+            "allowedColumnTypes": [
+                "string"
+            ],
+            "visibilityCondition": "model.language == 'language_column'",
+            "mandatory": false
+        },
+        {
+            "name": "separator_subcharts",
+            "label": "Subcharts",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "subchart_column",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "allowedColumnTypes": [
+                "string"
+            ],
+            "label": "Categorical column",
+            "description": "Optional column to generate one word cloud per category",
+            "mandatory": false
+        }
+    ],
+    "resourceKeys": []
+}
