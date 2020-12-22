@@ -12,6 +12,8 @@ FONT_EXCEPTIONS_DICT = {
     "kn": "NotoSansKannada-Regular.ttf",
     "ml": "NotoSansMalayalam-Regular.ttf",
     "mr": "NotoSansDevanagari-Regular.ttf",
+    "ne": "NotoSansDevanagari-Regular.ttf",
+    "sa": "NotoSansDevanagari-Regular.ttf",
     "si": "NotoSansSinhala-Regular.ttf",
     "ta": "NotoSansTamil-Regular.ttf",
     "te": "NotoSansTelugu-Regular.ttf",

@@ -12,8 +12,6 @@ from dataiku.customrecipe import (
 
 from language_dict import SUPPORTED_LANGUAGES_SPACY
 
-# from dku_partitioned_folder_handling import get_partition_root
-
 
 class PluginParamValidationError(ValueError):
     """Custom exception raised when the plugin parameters chosen by the user are invalid"""
@@ -35,14 +33,23 @@ def load_plugin_config_wordcloud() -> Dict:
         raise PluginParamValidationError("Please specify one input dataset")
     input_dataset = dataiku.Dataset(input_dataset_names[0])
     input_dataset_columns = [p["name"] for p in input_dataset.read_schema()]
-    # partition loading - TO DO -
-    # params["partition_root"] = get_partition_root(input_dataset)
 
     # Output folder
     output_folder_names = get_output_names_for_role("output_folder")
     if len(output_folder_names) != 1:
         raise PluginParamValidationError("Please specify one output folder")
     params["output_folder"] = dataiku.Folder(output_folder_names[0])
+
+    # Partition handling
+    partitioned_objects = []
+    if input_dataset.list_partitions() != ["NP"]:
+        partitioned_objects.append("input dataset")
+    if params["output_folder"].is_partitioning_directory_based():
+        partitioned_objects.append("output folder")
+    if partitioned_objects:
+        raise NotImplementedError(
+            f"Partitioning is not yet supported by this recipe, please disable partitioning from {' and '.join(partitioned_objects)}"
+        )
 
     # Recipe parameters
     recipe_config = get_recipe_config()
@@ -83,7 +90,15 @@ def load_plugin_config_wordcloud() -> Dict:
     params["df"] = input_dataset.get_dataframe(columns=necessary_columns)
     if params["df"].empty:
         raise PluginParamValidationError("Dataframe is empty")
-    else:
-        logging.info(f"Read dataset of shape: {params['df'].shape}")
+    # Check if unsupported languages in multilingual case
+    elif params["language_column"]:
+        languages = set(params["df"][params["language_column"]].unique())
+        unsupported_lang = languages - SUPPORTED_LANGUAGES_SPACY.keys()
+        if unsupported_lang:
+            raise PluginParamValidationError(
+                f"Found {len(unsupported_lang)} unsupported languages: {', '.join(sorted(unsupported_lang))}"
+            )
+
+    logging.info(f"Read dataset of shape: {params['df'].shape}")
 
     return params
