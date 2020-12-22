@@ -105,9 +105,9 @@ def test_wordcloud_multilingual():
         language_column="language",
         subchart_column="language",
     )
-    worcloud_visualizer.tokenize_and_count(input_df)
+    frequencies = worcloud_visualizer.tokenize_and_count(input_df)
     num_wordclouds = 0
-    for temp, name in worcloud_visualizer.generate_wordclouds():
+    for temp, name in worcloud_visualizer.generate_wordclouds(frequencies):
         assert temp is not None
         assert "wordcloud_" in name
         num_wordclouds += 1
