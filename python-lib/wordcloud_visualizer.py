@@ -3,7 +3,7 @@
 
 import random
 import os
-from typing import List, AnyStr
+from typing import List, AnyStr, Tuple, Dict, Generator, BinaryIO
 from collections import Counter
 from io import BytesIO
 
@@ -13,6 +13,7 @@ import pandas as pd
 from wordcloud import WordCloud
 import pathvalidate
 from fastcore.utils import store_attr
+from spacy.tokens import Doc
 
 from spacy_tokenizer import MultilingualTokenizer
 from font_exceptions_dict import FONT_EXCEPTIONS_DICT
@@ -88,11 +89,11 @@ class WordcloudVisualizer:
             self.font = "DeathStar.otf"
             self.subchart_column = None
 
-    def _color_func(self, word, font_size, position, orientation, random_state=None, **kwargs) -> str:
+    def _color_func(self, word, font_size, position, orientation, random_state=None, **kwargs) -> AnyStr:
         """Return the color function used in the wordcloud"""
         return random.choice(self.color_list)
 
-    def _retrieve_font(self, language: str) -> str:
+    def _retrieve_font(self, language: AnyStr) -> AnyStr:
         """Return the font to use for a given language"""
         return FONT_EXCEPTIONS_DICT.get(language, self.font)
 
@@ -112,7 +113,7 @@ class WordcloudVisualizer:
 
         return wordcloud
 
-    def _generate_wordcloud(self, frequencies: dict, title: str, language: str) -> matplotlib.pyplot.figure:
+    def _generate_wordcloud(self, frequencies: Dict, title: AnyStr, language: AnyStr) -> matplotlib.pyplot.figure:
         """Return a wordcloud as a matplotlib figure"""
         # Manage font exceptions based on language
         font = self._retrieve_font(language)
@@ -129,7 +130,7 @@ class WordcloudVisualizer:
         return fig
 
     @time_logging(log_message="Preparing data")
-    def _prepare_data(self, df: pd.DataFrame) -> list:
+    def _prepare_data(self, df: pd.DataFrame) -> List:
         """Private method to reshape data depending on language and subcharts settings
         Args:
             df: dataframe containing a text column and, optionally, language and subcharts columns
@@ -147,7 +148,7 @@ class WordcloudVisualizer:
 
         return df_grouped
 
-    def _tokenize_texts(self, df_grouped: list) -> list:
+    def _tokenize_texts(self, df_grouped: List) -> List:
         """Private method to tokenize each group of observations in its correct language
         Args:
             df_grouped: list of pandas dataframes with one dataframe per language per subchart
@@ -180,7 +181,7 @@ class WordcloudVisualizer:
         return docs
 
     @time_logging(log_message="Counting tokens")
-    def _count_tokens(self, docs: list) -> list:
+    def _count_tokens(self, docs: List[Doc]) -> List[Tuple[AnyStr, Dict]]:
         """Private method to count tokens for each document in corpus
         Args:
             docs: list of spacy docs on which to count tokens
@@ -217,7 +218,7 @@ class WordcloudVisualizer:
             counts = [(subchart, count) for subchart, count in counts if count != {}]
             return counts
 
-    def generate_wordclouds(self, counts: list):
+    def generate_wordclouds(self, counts: List[Tuple[AnyStr, Dict]]) -> Generator[Tuple[BinaryIO, AnyStr], None, None]:
         """Public method to generate wordclouds and yield them as bytes-like objects
         Args:
             counts: list of tuples( subchart, counter) where subchart is the subchart the counter belongs to
@@ -240,7 +241,6 @@ class WordcloudVisualizer:
                 temp = BytesIO()
                 fig.savefig(temp, bbox_inches=self.bbox_inches, pad_inches=self.pad_inches, dpi=fig.dpi)
                 yield (temp, output_file_name)
-                plt.close()
 
         else:
             # Generate chart
@@ -250,9 +250,8 @@ class WordcloudVisualizer:
             temp = BytesIO()
             fig.savefig(temp, bbox_inches=self.bbox_inches, pad_inches=self.pad_inches, dpi=fig.dpi)
             yield (temp, "wordcloud.png")
-            plt.close()
 
-    def prepare_and_count(self, df: pd.DataFrame):
+    def tokenize_and_count(self, df: pd.DataFrame) -> List[Tuple]:
         """Public method to prepare data before generating wordclouds.
         Preparation consists in tokenizing and reshaping text data according to language and subcharts settings
         Counting consists in counting tokens per subchart

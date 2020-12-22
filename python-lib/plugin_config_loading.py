@@ -48,7 +48,7 @@ def load_plugin_config_wordcloud() -> Dict:
         partitioned_objects.append("output folder")
     if partitioned_objects:
         raise NotImplementedError(
-            f"Partitioning isn't supported, please remove partitioning from {' and '.join(partitioned_objects)}"
+            f"Partitioning is not yet supported by this recipe, please disable partitioning from {' and '.join(partitioned_objects)}"
         )
 
     # Recipe parameters
@@ -96,7 +96,7 @@ def load_plugin_config_wordcloud() -> Dict:
         unsupported_lang = languages - SUPPORTED_LANGUAGES_SPACY.keys()
         if unsupported_lang:
             raise PluginParamValidationError(
-                f"Found {len(unsupported_lang)} unsupported languages: {', '.join(unsupported_lang)}"
+                f"Found {len(unsupported_lang)} unsupported languages: {', '.join(sorted(unsupported_lang))}"
             )
 
     logging.info(f"Read dataset of shape: {params['df'].shape}")

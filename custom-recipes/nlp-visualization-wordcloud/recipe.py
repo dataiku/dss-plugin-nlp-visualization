@@ -29,7 +29,7 @@ worcloud_visualizer = WordcloudVisualizer(
 )
 
 # Prepare data and count tokens for each subchart
-frequencies = worcloud_visualizer.prepare_and_count(df)
+frequencies = worcloud_visualizer.tokenize_and_count(df)
 
 # Save wordclouds to folder
 start = perf_counter()
