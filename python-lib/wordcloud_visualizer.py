@@ -251,7 +251,7 @@ class WordcloudVisualizer:
             fig.savefig(temp, bbox_inches=self.bbox_inches, pad_inches=self.pad_inches, dpi=fig.dpi)
             yield (temp, "wordcloud.png")
 
-    def tokenize_and_count(self, df: pd.DataFrame) -> List[Tuple]:
+    def tokenize_and_count(self, df: pd.DataFrame) -> List[Tuple[AnyStr, Dict]]:
         """Public method to prepare data before generating wordclouds.
         Preparation consists in tokenizing and reshaping text data according to language and subcharts settings
         Counting consists in counting tokens per subchart
