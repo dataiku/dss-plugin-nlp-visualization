@@ -32,8 +32,7 @@ unit-tests:
 		pip3 install --no-cache-dir -r tests/python/unit/requirements.txt; \
 		pip3 install --no-cache-dir -r code-env/python/spec/requirements.txt; \
 		export PYTHONPATH="$(PYTHONPATH):$(PWD)/python-lib"; \
-		export DICTIONARY_FOLDER_PATH="$(PWD)/resource/dictionaries"; \
-		export STOPWORDS_FOLDER_PATH="$(PWD)/resource/stopwords"; \
+		export RESOURCE_FOLDER_PATH="$(PWD)/resource"; \
 		pytest tests/python/unit --alluredir=tests/allure_report; \
 		deactivate; \
 	)
