@@ -11,6 +11,7 @@ from dataiku.customrecipe import (
 )
 
 from language_dict import SUPPORTED_LANGUAGES_SPACY
+from plugin_partitioning_utils import get_output_partition_path
 
 
 class PluginParamValidationError(ValueError):
@@ -41,15 +42,8 @@ def load_plugin_config_wordcloud() -> Dict:
     params["output_folder"] = dataiku.Folder(output_folder_names[0])
 
     # Partition handling
-    partitioned_objects = []
-    if input_dataset.list_partitions() != ["NP"]:
-        partitioned_objects.append("input dataset")
-    if params["output_folder"].is_partitioning_directory_based():
-        partitioned_objects.append("output folder")
-    if partitioned_objects:
-        raise NotImplementedError(
-            f"Partitioning is not yet supported by this recipe, please disable partitioning from {' and '.join(partitioned_objects)}"
-        )
+    output_folder_id = output_folder_names[0].split(".")[-1]
+    params["output_partition_path"] = get_output_partition_path(output_folder_id)
 
     # Recipe parameters
     recipe_config = get_recipe_config()

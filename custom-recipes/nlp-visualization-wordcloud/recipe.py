@@ -13,6 +13,7 @@ from plugin_config_loading import load_plugin_config_wordcloud
 params = load_plugin_config_wordcloud()
 resource_path = get_recipe_resource()
 output_folder = params["output_folder"]
+output_partition_path = params["output_partition_path"]
 df = params["df"]
 
 # Load tokenizer
@@ -36,7 +37,7 @@ start = perf_counter()
 logging.info("Generating wordclouds...")
 
 for temp, output_file_name in worcloud_visualizer.generate_wordclouds(frequencies):
-    output_folder.upload_data(output_file_name, temp.getvalue())
+    output_folder.upload_data(output_partition_path + output_file_name, temp.getvalue())
 
 end = perf_counter()
 logging.info(f"Generating wordclouds: Done in {end - start:.2f} seconds.")
