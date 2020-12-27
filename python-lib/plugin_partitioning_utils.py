@@ -2,17 +2,14 @@
 """Module to get paths of necessary input/output folders partitions"""
 
 import dataiku
-import re
 import itertools
 from typing import List, AnyStr, Dict, Generator
 
 from utils import time_logging
 
-PARTITION_PATH_PATTERN = "(%Y|%M|%D|%H|%{.*})"
-DISCRETE_DIMENSION_PATTERN = "%{(.*)}"
 DEFAULT_NR_TIME_COMPONENTS = 4
-INPUT_DEFAULT_FLOW_VARIABLES_DICT = {"%Y": None, "%M": None, "%D": None, "%H": None}
-OUTPUT_DEFAULT_FLOW_VARIABLES_DICT = {
+DEFAULT_INPUT_PATH_REPLACEMENT_DICT = {"%Y": None, "%M": None, "%D": None, "%H": None}
+DEFAULT_OUTPUT_PATH_REPLACEMENT_DICT = {
     "%Y": "DKU_DST_YEAR",
     "%M": "DKU_DST_MONTH",
     "%D": "DKU_DST_DAY",
@@ -37,21 +34,25 @@ def get_output_partition_path(folder_id: AnyStr) -> AnyStr:
     if not folder.get_definition().get("partitioning"):
         return ""
 
-    # Get partitioning settings
+    # Get partitioning file path pattern
     file_path_pattern = folder.get_definition().get("partitioning").get("filePathPattern")
-    partiton_dimensions = re.findall(PARTITION_PATH_PATTERN, file_path_pattern)
 
-    # Get all necessary values per partitioning dimension
-    flow_variables_dict = OUTPUT_DEFAULT_FLOW_VARIABLES_DICT.copy()
-    for dimension in partiton_dimensions:
-        if dimension not in flow_variables_dict.keys():
-            flow_variables_dict[dimension] = "DKU_DST_" + re.findall(DISCRETE_DIMENSION_PATTERN, dimension)[0]
+    # Get discrete partitioning dimensions
+    dimensions = folder.get_definition().get("partitioning").get("dimensions")
+    discrete_dimensions = [dimension.get("name") for dimension in dimensions if dimension.get("type") != "time"]
+
+    # Generate path placeholders replacements dictionnary
+    path_replacement_dict = DEFAULT_OUTPUT_PATH_REPLACEMENT_DICT.copy()
+    for dimension in discrete_dimensions:
+        replacement_key = f"%{{{dimension}}}"
+        # Get flow variable containing dimension's value
+        replacement_value = dataiku.get_flow_variables()["DKU_DST_" + dimension]
+        path_replacement_dict[replacement_key] = replacement_value
 
     # Generate path
     dst_file_path = file_path_pattern
-    for dimension in partiton_dimensions:
-        variable = flow_variables_dict[dimension]
-        dst_file_path = dst_file_path.replace(dimension, dataiku.get_flow_variables()[variable])
+    for dimension_placeholder in path_replacement_dict.keys():
+        dst_file_path = dst_file_path.replace(dimension_placeholder, path_replacement_dict[dimension_placeholder])
 
     dst_file_path = "".join(dst_file_path.rsplit(".*"))
 
@@ -78,48 +79,55 @@ def get_input_partitions_paths(folder_id: AnyStr) -> List[AnyStr]:
     # Instanciate result
     src_file_paths = []
 
-    # Get partitioning settings
+    # Get partitioning file path pattern
     file_path_pattern = folder.get_definition().get("partitioning").get("filePathPattern")
-    partiton_dimensions = re.findall(PARTITION_PATH_PATTERN, file_path_pattern)
+
+    # Get partitioning dimensions
+    dimensions = folder.get_definition().get("partitioning").get("dimensions")
 
     # Get time dimension name if defined
-    dimensions = folder.get_definition().get("partitioning").get("dimensions")
     try:
         time_dimension = [dimension.get("name") for dimension in dimensions if dimension.get("type") == "time"][0]
     except IndexError:
         time_dimension = None
 
+    # Get discrete partitioning dimensions
+    discrete_dimensions = [dimension.get("name") for dimension in dimensions if dimension.get("type") != "time"]
+
     # Get all necessary values per partitioning dimension
     dimension_names = [dimension.get("name") for dimension in dimensions]
     values_per_dimension = {
-        dimension: dataiku.get_flow_variables()[f"DKU_SRC_{dimension}_VALUES"].replace("'", "").split(", ")
-        for dimension in dimension_names
+        dimension_name: dataiku.get_flow_variables()[f"DKU_SRC_{dimension_name}_VALUES"].replace("'", "").split(", ")
+        for dimension_name in dimension_names
     }
 
     # Iterate over values combinations:
     for combination in dict_product(values_per_dimension):
-        flow_variables_dict = INPUT_DEFAULT_FLOW_VARIABLES_DICT.copy()
+        # Generate path placeholders replacements dictionnary
+        path_replacement_dict = DEFAULT_INPUT_PATH_REPLACEMENT_DICT.copy()
 
         # Get time dimension components
         if time_dimension:
             time_components = combination.get(time_dimension).split("-")
             time_components += [None] * (DEFAULT_NR_TIME_COMPONENTS - len(time_components))
             (
-                flow_variables_dict["%Y"],
-                flow_variables_dict["%M"],
-                flow_variables_dict["%D"],
-                flow_variables_dict["%H"],
+                path_replacement_dict["%Y"],
+                path_replacement_dict["%M"],
+                path_replacement_dict["%D"],
+                path_replacement_dict["%H"],
             ) = time_components
 
         # Get discrete dimensions values
-        for dimension in partiton_dimensions:
-            if dimension not in flow_variables_dict.keys():
-                flow_variables_dict[dimension] = combination.get(re.findall(DISCRETE_DIMENSION_PATTERN, dimension)[0])
+        for dimension in discrete_dimensions:
+            replacement_key = f"%{{{dimension}}}"
+            # Get flow variable containing dimension's value
+            replacement_value = combination.get(dimension)[0]
+            path_replacement_dict[replacement_key] = replacement_value
 
         # Generate path
         src_file_path = file_path_pattern
-        for dimension in partiton_dimensions:
-            src_file_path = src_file_path.replace(dimension, flow_variables_dict[dimension])
+        for dimension_placeholder in path_replacement_dict.keys():
+            src_file_path = src_file_path.replace(dimension_placeholder, path_replacement_dict[dimension_placeholder])
             src_file_path = "".join(src_file_path.rsplit(".*"))
 
         # Add path to result
