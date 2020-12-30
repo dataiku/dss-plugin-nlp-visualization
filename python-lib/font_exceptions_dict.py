@@ -2,7 +2,12 @@
 """Module with constants defining the wordcloud font exceptions for languages not supported by Noto Sans Display"""
 
 FONT_EXCEPTIONS_DICT = {
-    "language_column": "SourceSansPro-Regular.ttf",
+    "gu": "NotoSansMerged-Regular-2048upem.ttf",
+    "kn": "NotoSansMerged-Regular-2048upem.ttf",
+    "ml": "NotoSansMerged-Regular-2048upem.ttf",
+    "te": "NotoSansMerged-Regular-2048upem.ttf",
+    "zh": "NotoSansCJKsc-Regular.otf",
+    "language_column": "NotoSansMerged-Regular-1000upem.ttf",
 }
 
 FONT_EXCEPTIONS_DICT2 = {

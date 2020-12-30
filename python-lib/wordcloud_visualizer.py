@@ -47,7 +47,7 @@ class WordcloudVisualizer:
         "hsl(110,57%,71%)",
     ]
     # DEFAULT_FONT = "NotoSansDisplay-Regular.ttf"
-    DEFAULT_FONT = "SourceSansPro-Regular.ttf"
+    DEFAULT_FONT = "NotoSansMerged-Regular-1000upem.ttf"
     DEFAULT_SCALE = 6.8
     DEFAULT_MARGIN = 4
     DEFAULT_RANDOM_STATE = 3
@@ -120,6 +120,8 @@ class WordcloudVisualizer:
         font = self._retrieve_font(language)
         font_path = os.path.join(self.font_path, font)
         # Generate wordcloud
+        print("TITLE: ", title)
+        print("FREQUENCIES :", frequencies)
         wc = self._get_wordcloud(frequencies, font_path)
         fig = plt.figure(figsize=self.figsize, dpi=self.dpi)
         fig.tight_layout()
