@@ -1,5 +1,25 @@
 # -*- coding: utf-8 -*-
-"""Module with constants defining the wordcloud font exceptions for languages not supported by Noto Sans Display"""
+"""Module with constants defining the wordcloud font exceptions for languages not supported by the default font.
+- Default font is NotoSansMerged-Regular-1000upem.ttf, which is a merged font based on various NotoSans fonts:
+    - NotoSansDisplay-Regular
+    - NotoSansArabic-Regular
+    - NotoSansArmenian-Regular
+    - NotoSansBengali-Regular
+    - NotoSansDevanagari-Regular
+    - NotoSansHebrew-Regular
+    - NotoSansSinhala-Regular
+    - NotoSansTamil-Regular
+    - NotoSansThai-Regular
+
+- NotoSansMerged-Regular-2048upem.ttf is a similar font containing fonts that couldn't be merged with precited ones:
+    - NotoSansGujarati-Regular
+    - NotoSansKannada-Regular
+    - NotoSansMalayalam-Regular
+    - NotoSansTelugu-Regular
+
+- NotoSansCJKsc-Regular.otf couldn't be merged with other fonts as it contains too many different characters
+- Arial Unicode MS is the font used in the multilingual case because of optimal language support
+"""
 
 FONT_EXCEPTIONS_DICT = {
     "gu": "NotoSansMerged-Regular-2048upem.ttf",
