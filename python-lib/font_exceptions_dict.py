@@ -31,7 +31,6 @@ FONT_EXCEPTIONS_DICT = {
 }
 
 
-"""dict: Languages supported by spaCy: https://spacy.io/usage/models#languages
 
 Dictionary with ISO 639-1 language code (key) and associated font (value).
 """
