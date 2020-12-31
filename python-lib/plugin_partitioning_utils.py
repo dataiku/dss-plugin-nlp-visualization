@@ -28,7 +28,7 @@ def get_output_partition_path(folder_id: AnyStr) -> AnyStr:
     """
     # Create folder handle
     client = dataiku.api_client()
-    folder = client.get_default_project().get_managed_folder(folder_id)
+    folder = client.get_project(dataiku.default_project_key()).get_managed_folder(folder_id)
 
     # Check partitioning
     if not folder.get_definition().get("partitioning"):
@@ -70,7 +70,7 @@ def get_input_partitions_paths(folder_id: AnyStr) -> List[AnyStr]:
     """
     # Create folder handle
     client = dataiku.api_client()
-    folder = client.get_default_project().get_managed_folder(folder_id)
+    folder = client.get_project(dataiku.default_project_key()).get_managed_folder(folder_id)
 
     # Check partitioning
     if not folder.get_definition().get("partitioning"):
