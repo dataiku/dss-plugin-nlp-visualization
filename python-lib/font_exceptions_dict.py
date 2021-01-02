@@ -27,10 +27,10 @@ FONT_EXCEPTIONS_DICT = {
     "ml": "NotoSansMerged-Regular-2048upem.ttf",
     "te": "NotoSansMerged-Regular-2048upem.ttf",
     "zh": "NotoSansCJKsc-Regular.otf",
-    "language_column": "Arial Unicode.ttf",
+    "language_column": "canada1500-rg.ttf",
 }
 
 
-
+"""
 Dictionary with ISO 639-1 language code (key) and associated font (value).
 """
