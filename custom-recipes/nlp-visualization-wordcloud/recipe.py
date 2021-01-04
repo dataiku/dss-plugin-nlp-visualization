@@ -32,6 +32,9 @@ worcloud_visualizer = WordcloudVisualizer(
 # Prepare data and count tokens for each subchart
 frequencies = worcloud_visualizer.tokenize_and_count(df)
 
+# Clear output folder's target partition
+output_folder.clear_path(output_partition_path)
+
 # Save wordclouds to folder
 start = perf_counter()
 logging.info("Generating wordclouds...")
