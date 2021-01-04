@@ -33,7 +33,7 @@ worcloud_visualizer = WordcloudVisualizer(
 frequencies = worcloud_visualizer.tokenize_and_count(df)
 
 # Clear output folder's target partition
-output_folder.clear_path(output_partition_path)
+output_folder.delete_path(output_partition_path)
 
 # Save wordclouds to folder
 start = perf_counter()
