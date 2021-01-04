@@ -46,7 +46,7 @@ class WordcloudVisualizer:
         "hsl(120,57%,40%)",
         "hsl(110,57%,71%)",
     ]
-    DEFAULT_FONT = "NotoSansMerged-all2048upem.ttf"
+    DEFAULT_FONT = "NotoSansMerged-ar1000upem.ttf"
     DEFAULT_SCALE = 6.8
     DEFAULT_MARGIN = 4
     DEFAULT_RANDOM_STATE = 3
