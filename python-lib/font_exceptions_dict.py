@@ -22,12 +22,12 @@
 """
 
 FONT_EXCEPTIONS_DICT = {
-    "gu": "NotoSansMerged-ar1000upem.ttf",
-    "kn": "NotoSansMerged-ar1000upem.ttf",
-    "ml": "NotoSansMerged-ar1000upem.ttf",
-    "te": "NotoSansMerged-ar1000upem.ttf",
-    "zh": "NotoSansMerged-ar1000upem.ttf",
-    "language_column": "NotoSansMerged-ar1000upem.ttf",
+    "gu": "NotoSansMerged-Regular1000upem.ttf",
+    "kn": "NotoSansMerged-Regular1000upem.ttf",
+    "ml": "NotoSansMerged-Regular1000upem.ttf",
+    "te": "NotoSansMerged-Regular1000upem.ttf",
+    "zh": "NotoSansMerged-Regular1000upem.ttf",
+    "language_column": "NotoSansMerged-Regular1000upem.ttf",
 }
 
 
