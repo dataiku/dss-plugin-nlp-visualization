@@ -41,7 +41,7 @@ def test_tokenize_multilingual():
     worcloud_visualizer = WordcloudVisualizer(
         tokenizer=tokenizer,
         text_column="input_text",
-        font_path="toto",
+        font_folder_path="toto",
         language="language_column",
         language_column="language",
         subchart_column="language",
