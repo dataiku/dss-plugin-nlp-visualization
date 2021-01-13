@@ -11,14 +11,14 @@ from collections import Counter
 from spacy_tokenizer import MultilingualTokenizer
 from wordcloud_visualizer import WordcloudVisualizer
 
-font_path = os.getenv("RESOURCE_FOLDER_PATH", "path_is_no_good")
+font_folder_path = os.getenv("FONT_FOLDER_PATH", "path_is_no_good")
 
 
 def test_tokenize_english():
     input_df = pd.DataFrame({"input_text": ["I hope nothing. I fear nothing. I am free. 💩 😂 #OMG"]})
     tokenizer = MultilingualTokenizer()
     worcloud_visualizer = WordcloudVisualizer(
-        tokenizer=tokenizer, text_column="input_text", font_path=font_path, language="en"
+        tokenizer=tokenizer, text_column="input_text", font_folder_path=font_folder_path, language="en"
     )
     frequencies = worcloud_visualizer.tokenize_and_count(input_df)
     assert frequencies == [
@@ -77,7 +77,7 @@ def test_wordcloud_english():
     input_df = pd.DataFrame({"input_text": ["I hope nothing. I fear nothing. I am free. 💩 😂 #OMG"]})
     tokenizer = MultilingualTokenizer()
     worcloud_visualizer = WordcloudVisualizer(
-        tokenizer=tokenizer, text_column="input_text", font_path=font_path, language="en"
+        tokenizer=tokenizer, text_column="input_text", font_folder_path=font_folder_path, language="en"
     )
     frequencies = worcloud_visualizer.tokenize_and_count(input_df)
     for temp, output_file_name in worcloud_visualizer.generate_wordclouds(frequencies):
@@ -100,7 +100,7 @@ def test_wordcloud_multilingual():
     worcloud_visualizer = WordcloudVisualizer(
         tokenizer=tokenizer,
         text_column="input_text",
-        font_path=font_path,
+        font_folder_path=font_folder_path,
         language="language_column",
         language_column="language",
         subchart_column="language",

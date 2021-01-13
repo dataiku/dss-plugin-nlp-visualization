@@ -16,7 +16,6 @@ from fastcore.utils import store_attr
 from spacy.tokens import Doc
 
 from spacy_tokenizer import MultilingualTokenizer
-from font_exceptions_dict import FONT_EXCEPTIONS_DICT
 from utils import time_logging
 
 matplotlib.use("agg")
@@ -46,7 +45,6 @@ class WordcloudVisualizer:
         "hsl(120,57%,40%)",
         "hsl(110,57%,71%)",
     ]
-    DEFAULT_FONT = "NotoSansMerged-Regular1000upem.ttf"
     DEFAULT_SCALE = 6.8
     DEFAULT_MARGIN = 4
     DEFAULT_RANDOM_STATE = 3
@@ -58,11 +56,32 @@ class WordcloudVisualizer:
     DEFAULT_BBOX_INCHES = "tight"
     DEFAULT_BACKGROUND_COLOR = "white"
 
+    DEFAULT_FONT = "NotoSansMerged-Regular1000upem.ttf"
+    """Multilingual font created by the fusion of the following NotoSans fonts:
+        - NotoSansDisplay-Regular
+        - NotoSansArabic-Regular
+        - NotoSansArmenian-Regular
+        - NotoSansBengali-Regular
+        - NotoSansDevanagari-Regular
+        - NotoSansHebrew-Regular
+        - NotoSansSinhala-Regular
+        - NotoSansTamil-Regular
+        - NotoSansThai-Regular
+    """
+    FONT_EXCEPTIONS_DICT = {
+        "gu": "NotoSansMerged-Regular1000upem.ttf",
+        "kn": "NotoSansMerged-Regular1000upem.ttf",
+        "ml": "NotoSansMerged-Regular1000upem.ttf",
+        "te": "NotoSansMerged-Regular1000upem.ttf",
+        "zh": "NotoSansMerged-Regular1000upem.ttf"
+    }
+    """Dictionary with ISO 639-1 language code (key) and associated font (value)"""
+
     def __init__(
         self,
         tokenizer: MultilingualTokenizer,
         text_column: AnyStr,
-        font_path: AnyStr,
+        font_folder_path: AnyStr,
         language: AnyStr = "en",
         language_column: AnyStr = None,
         subchart_column: AnyStr = None,
@@ -95,7 +114,7 @@ class WordcloudVisualizer:
 
     def _retrieve_font(self, language: AnyStr) -> AnyStr:
         """Return the font to use for a given language"""
-        return FONT_EXCEPTIONS_DICT.get(language, self.font)
+        return self.FONT_EXCEPTIONS_DICT.get(language, self.font)
 
     def _get_wordcloud(self, frequencies, font_path):
         """Return a wordcloud object"""
@@ -117,7 +136,7 @@ class WordcloudVisualizer:
         """Return a wordcloud as a matplotlib figure"""
         # Manage font exceptions based on language
         font = self._retrieve_font(language)
-        font_path = os.path.join(self.font_path, font)
+        font_path = os.path.join(self.font_folder_path, font)
         # Generate wordcloud
         wc = self._get_wordcloud(frequencies, font_path)
         fig = plt.figure(figsize=self.figsize, dpi=self.dpi)
