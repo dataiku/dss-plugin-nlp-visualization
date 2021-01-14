@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 import logging
 from time import perf_counter
 
@@ -11,7 +12,7 @@ from plugin_config_loading import load_plugin_config_wordcloud
 
 # Load config
 params = load_plugin_config_wordcloud()
-resource_path = get_recipe_resource()
+font_folder_path = os.path.join(get_recipe_resource(), "fonts")
 output_folder = params["output_folder"]
 output_partition_path = params["output_partition_path"]
 df = params["df"]
@@ -23,7 +24,7 @@ tokenizer = MultilingualTokenizer()
 worcloud_visualizer = WordcloudVisualizer(
     tokenizer=tokenizer,
     text_column=params["text_column"],
-    font_path=resource_path,
+    font_folder_path=font_folder_path,
     language=params["language"],
     language_column=params["language_column"],
     subchart_column=params["subchart_column"],

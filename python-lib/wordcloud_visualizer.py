@@ -57,7 +57,7 @@ class WordcloudVisualizer:
     DEFAULT_BACKGROUND_COLOR = "white"
 
     DEFAULT_FONT = "NotoSansMerged-Regular1000upem.ttf"
-    """Multilingual font created by the fusion of the following NotoSans fonts:
+    """Multilingual font created from the fusion of the following Noto Sans fonts:
         - NotoSansDisplay-Regular
         - NotoSansArabic-Regular
         - NotoSansArmenian-Regular
@@ -69,13 +69,21 @@ class WordcloudVisualizer:
         - NotoSansThai-Regular
     """
     FONT_EXCEPTIONS_DICT = {
-        "gu": "NotoSansMerged-Regular1000upem.ttf",
-        "kn": "NotoSansMerged-Regular1000upem.ttf",
-        "ml": "NotoSansMerged-Regular1000upem.ttf",
-        "te": "NotoSansMerged-Regular1000upem.ttf",
-        "zh": "NotoSansMerged-Regular1000upem.ttf"
+        "gu": "NotoSansMerged-Regular-2048upem.ttf",
+        "kn": "NotoSansMerged-Regular-2048upem.ttf",
+        "ml": "NotoSansMerged-Regular-2048upem.ttf",
+        "te": "NotoSansMerged-Regular-2048upem.ttf",
+        "zh": "NotoSansCJKsc-Regular.otf",
+        "language_column": "NotoSansCJKsc-Regular.otf",
     }
-    """Dictionary with ISO 639-1 language code (key) and associated font (value)"""
+    """Dictionary with ISO 639-1 language code (key) and associated font (value)
+
+    NotoSansMerged-Regular-2048upem.ttf results from the fusion of the following Noto Sans fonts:
+        - NotoSansGujarati-Regular
+        - NotoSansKannada-Regular
+        - NotoSansMalayalam-Regular
+        - NotoSansTelugu-Regular
+    """
 
     def __init__(
         self,
@@ -253,9 +261,9 @@ class WordcloudVisualizer:
                 wordcloud_title = output_file_name[:-4]
                 # Generate chart
                 if self.language_as_subchart:
-                    fig = self._generate_wordcloud(count, wordcloud_title, name)
+                    fig = self._generate_wordcloud(frequencies=count, title=wordcloud_title, language=name)
                 else:
-                    fig = self._generate_wordcloud(count, wordcloud_title, self.language)
+                    fig = self._generate_wordcloud(frequencies=count, title=wordcloud_title, language=self.language)
                 # Return chart
                 temp = BytesIO()
                 fig.savefig(temp, bbox_inches=self.bbox_inches, pad_inches=self.pad_inches, dpi=fig.dpi)
