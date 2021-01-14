@@ -17,12 +17,9 @@ output_folder = params["output_folder"]
 output_partition_path = params["output_partition_path"]
 df = params["df"]
 
-# Load tokenizer
-tokenizer = MultilingualTokenizer()
-
 # Load wordcloud visualizer
 worcloud_visualizer = WordcloudVisualizer(
-    tokenizer=tokenizer,
+    tokenizer=MultilingualTokenizer(),
     text_column=params["text_column"],
     font_folder_path=font_folder_path,
     language=params["language"],
@@ -36,9 +33,7 @@ frequencies = worcloud_visualizer.tokenize_and_count(df)
 # Save wordclouds to folder
 start = perf_counter()
 logging.info("Generating wordclouds...")
-
 for temp, output_file_name in worcloud_visualizer.generate_wordclouds(frequencies):
     output_folder.upload_data(output_partition_path + output_file_name, temp.getvalue())
-
 end = perf_counter()
 logging.info(f"Generating wordclouds: Done in {end - start:.2f} seconds.")
