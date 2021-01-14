@@ -41,3 +41,8 @@ def test_wordcloud_multilingual_subcharts_unsupported_languages(user_clients):
 def test_wordcloud_multilingual_subcharts_per_language(user_clients):
     test_kwargs["client"] = user_clients[test_kwargs["user"]]
     dss_scenario.run(scenario_id="subchart_per_language", **test_kwargs)
+
+
+def test_wordcloud_edge_cases_multilingual(user_clients):
+    test_kwargs["client"] = user_clients[test_kwargs["user"]]
+    dss_scenario.run(scenario_id="EDGE_CASES", **test_kwargs)
