@@ -73,8 +73,7 @@ class WordcloudVisualizer:
         "kn": "NotoSansMerged-Regular-2048upem.ttf",
         "ml": "NotoSansMerged-Regular-2048upem.ttf",
         "te": "NotoSansMerged-Regular-2048upem.ttf",
-        "zh": "NotoSansCJKsc-Regular.otf",
-        "language_column": "NotoSansCJKsc-Regular.otf",
+        "zh": "NotoSansCJKsc-Regular.otf"
     }
     """Dictionary with ISO 639-1 language code (key) and associated font (value)
 
