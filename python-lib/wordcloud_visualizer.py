@@ -36,7 +36,7 @@ class WordcloudVisualizer:
 
     """
 
-    DEFAULT_MAX_WORDS = 100
+    DEFAULT_MAX_WORDS = 200
     DEFAULT_COLOR_LIST = [
         "hsl(205,71%,41%)",
         "hsl(214,56%,80%)",
