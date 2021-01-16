@@ -11,7 +11,7 @@ from dataiku.customrecipe import (
 )
 
 from language_dict import SUPPORTED_LANGUAGES_SPACY
-from plugin_partitioning_utils import get_output_partition_path
+from partitions_handling import get_folder_partition_root
 
 
 class PluginParamValidationError(ValueError):
@@ -42,8 +42,7 @@ def load_plugin_config_wordcloud() -> Dict:
     params["output_folder"] = dataiku.Folder(output_folder_names[0])
 
     # Partition handling
-    output_folder_id = output_folder_names[0].split(".")[-1]
-    params["output_partition_path"] = get_output_partition_path(output_folder_id)
+    params["output_partition_path"] = get_folder_partition_root(params["output_folder"])
 
     # Recipe parameters
     recipe_config = get_recipe_config()
