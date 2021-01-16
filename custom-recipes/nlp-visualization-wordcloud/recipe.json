@@ -2,7 +2,7 @@
     "meta": {
         "label": "Word clouds",
         "description": "Generate word clouds from your text data",
-        "icon": "icon-cloud"
+        "icon": "icon-comment"
     },
     "kind": "PYTHON",
     "selectableFromDataset": "input_dataset",
