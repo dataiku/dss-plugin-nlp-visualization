@@ -46,3 +46,28 @@ def test_wordcloud_multilingual_subcharts_per_language(user_clients):
 def test_wordcloud_edge_cases_multilingual(user_clients):
     test_kwargs["client"] = user_clients[test_kwargs["user"]]
     dss_scenario.run(scenario_id="EDGE_CASES", **test_kwargs)
+
+
+def test_wordcloud_partitioned_folder_file(user_clients):
+    test_kwargs["client"] = user_clients[test_kwargs["user"]]
+    dss_scenario.run(scenario_id="partitionned_folder_file", **test_kwargs)
+
+
+def test_wordcloud_partitioned_folder_sql(user_clients):
+    test_kwargs["client"] = user_clients[test_kwargs["user"]]
+    dss_scenario.run(scenario_id="partitionned_folder_sql", **test_kwargs)
+
+
+def test_wordcloud_partitioned_output(user_clients):
+    test_kwargs["client"] = user_clients[test_kwargs["user"]]
+    dss_scenario.run(scenario_id="partitionned_output", **test_kwargs)
+
+
+def test_wordcloud_unpartitioned_folder_file(user_clients):
+    test_kwargs["client"] = user_clients[test_kwargs["user"]]
+    dss_scenario.run(scenario_id="unpartitionned_folder_file", **test_kwargs)
+
+
+def test_wordcloud_unpartitioned_folder_sql(user_clients):
+    test_kwargs["client"] = user_clients[test_kwargs["user"]]
+    dss_scenario.run(scenario_id="unpartitionned_folder_sql", **test_kwargs)
