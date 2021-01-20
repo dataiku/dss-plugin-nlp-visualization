@@ -18,7 +18,7 @@ Please refer to [`nototools`](https://github.com/googlefonts/nototools) README.m
 ## Merge workflow
 
 In order to use `merge_font.py`, you'll need all your different font files in the same folder. You also need to edit `merge_font.py` to select the list of font files to be merged. Finally, the command to run is: 
-    merge_fonts.py -d original_fonts_dir_path -o merged_font_file_path
+    <code>merge_fonts.py -d original_fonts_dir_path -o merged_font_file_path</code>
 
 ## Limitations
 
