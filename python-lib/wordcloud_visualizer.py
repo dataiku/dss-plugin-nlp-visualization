@@ -69,11 +69,11 @@ class WordcloudVisualizer:
         - NotoSansThai-Regular
     """
     FONT_EXCEPTIONS_DICT = {
-        "gu": "NotoSansMerged-Regular-2048upem.ttf",
-        "kn": "NotoSansMerged-Regular-2048upem.ttf",
-        "ml": "NotoSansMerged-Regular-2048upem.ttf",
-        "te": "NotoSansMerged-Regular-2048upem.ttf",
-        "zh": "NotoSansCJKsc-Regular.otf"
+        # "gu": "NotoSansMerged-Regular-2048upem.ttf",
+        # "kn": "NotoSansMerged-Regular-2048upem.ttf",
+        # "ml": "NotoSansMerged-Regular-2048upem.ttf",
+        # "te": "NotoSansMerged-Regular-2048upem.ttf",
+        # "zh": "NotoSansCJKsc-Regular.otf"
     }
     """Dictionary with ISO 639-1 language code (key) and associated font (value)
 

@@ -80,6 +80,17 @@
             "label": "Categorical column",
             "description": "Optional column to generate one word cloud per category",
             "mandatory": false
+        },
+        {
+            "name": "separator_font",
+            "label": "Font",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "font",
+            "type": "STRING",
+            "label": "Font file name",
+            "description": "Name of the font file used to generate the wordclouds"
         }
     ],
     "resourceKeys": []

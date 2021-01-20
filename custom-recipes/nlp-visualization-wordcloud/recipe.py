@@ -26,6 +26,7 @@ worcloud_visualizer = WordcloudVisualizer(
     language=params["language"],
     language_column=params["language_column"],
     subchart_column=params["subchart_column"],
+    font=params["font"],
 )
 
 # Prepare data and count tokens for each subchart

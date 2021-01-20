@@ -74,6 +74,9 @@ def load_plugin_config_wordcloud() -> Dict:
         raise PluginParamValidationError(f"Invalid categorical column selection: {params['subchart_column']}")
     logging.info(f"Subcharts column: {params['subchart_column']}")
 
+    # Font
+    params["font"] = recipe_config.get("font")
+
     # Input dataframe
     necessary_columns = [
         column
