@@ -56,7 +56,7 @@ class WordcloudVisualizer:
     DEFAULT_BBOX_INCHES = "tight"
     DEFAULT_BACKGROUND_COLOR = "white"
 
-    DEFAULT_FONT = "NotoSansMerged-Regular1000upem.ttf"
+    DEFAULT_FONT = "NotoSansMerged-Regular-1000upem.ttf"
     """Multilingual font created from the fusion of the following Noto Sans fonts:
         - NotoSansDisplay-Regular
         - NotoSansArabic-Regular
@@ -73,11 +73,13 @@ class WordcloudVisualizer:
         "kn": "NotoSansMerged-Regular-2048upem.ttf",
         "ml": "NotoSansMerged-Regular-2048upem.ttf",
         "te": "NotoSansMerged-Regular-2048upem.ttf",
-        "zh": "NotoSansCJKsc-Regular.otf"
+        "zh": "NotoSansCJKsc-Regular.otf",
+        "language_column": "NotoSansMerged-Regular-1000upem.ttf",
     }
     """Dictionary with ISO 639-1 language code (key) and associated font (value)
 
     NotoSansMerged-Regular-2048upem.ttf results from the fusion of the following Noto Sans fonts:
+        - NotoSans-Regular
         - NotoSansGujarati-Regular
         - NotoSansKannada-Regular
         - NotoSansMalayalam-Regular
