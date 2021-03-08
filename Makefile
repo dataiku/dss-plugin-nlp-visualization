@@ -33,8 +33,7 @@ unit-tests:
 		pip3 install --no-cache-dir -r code-env/python/spec/requirements.txt; \
 		export PYTHONPATH="$(PYTHONPATH):$(PWD)/python-lib"; \
 		export RESOURCE_FOLDER_PATH="$(PWD)/resource"; \
-		pytest tests/python/unit --alluredir=tests/allure_report; \
-		deactivate; \
+		python3 -m pytest tests/python/unit --alluredir=tests/allure_report; \
 	)
 	@echo "[SUCCESS] Running unit tests: Done!"
 
@@ -46,8 +45,7 @@ integration-tests:
 		source tests/python/integration/env/bin/activate; \
 		pip3 install --upgrade pip;\
 		pip3 install --no-cache-dir -r tests/python/integration/requirements.txt; \
-		pytest tests/python/integration --alluredir=tests/allure_report; \
-		deactivate; \
+		pytest tests/python/integration --alluredir=tests/allure_report --exclude-dss-targets="DSS7"; \
 	)
 	@echo "[SUCCESS] Running integration tests: Done!"
 
