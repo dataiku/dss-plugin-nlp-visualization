@@ -22,7 +22,7 @@ unit-tests:
 	@( \
 		PYTHON_VERSION=`python3 -V 2>&1 | sed 's/[^0-9]*//g' | cut -c 1,2`; \
 		PYTHON_VERSION_IS_CORRECT=`cat code-env/python/desc.json | python3 -c "import sys, json; print(str($$PYTHON_VERSION) in [x[-2:] for x in json.load(sys.stdin)['acceptedPythonInterpreters']]);"`; \
-		if [ ! $$PYTHON_VERSION_IS_CORRECT ]; then echo "Python version $$PYTHON_VERSION is not in acceptedPythonInterpreters"; exit 1; fi; \
+		if [ $$PYTHON_VERSION_IS_CORRECT == "False" ]; then echo "Python version $$PYTHON_VERSION is not in acceptedPythonInterpreters"; exit 1; else echo "Python version $$PYTHON_VERSION is in acceptedPythonInterpreters"; fi; \
 	)
 	@( \
 		rm -rf tests/python/unit/env/; \
@@ -32,9 +32,8 @@ unit-tests:
 		pip3 install --no-cache-dir -r tests/python/unit/requirements.txt; \
 		pip3 install --no-cache-dir -r code-env/python/spec/requirements.txt; \
 		export PYTHONPATH="$(PYTHONPATH):$(PWD)/python-lib"; \
-		export FONT_FOLDER_PATH="$(PWD)/resource/fonts"; \
-		pytest tests/python/unit --alluredir=tests/allure_report; \
-		deactivate; \
+		export RESOURCE_FOLDER_PATH="$(PWD)/resource"; \
+		python3 -m pytest tests/python/unit --alluredir=tests/allure_report; \
 	)
 	@echo "[SUCCESS] Running unit tests: Done!"
 
@@ -46,8 +45,7 @@ integration-tests:
 		source tests/python/integration/env/bin/activate; \
 		pip3 install --upgrade pip;\
 		pip3 install --no-cache-dir -r tests/python/integration/requirements.txt; \
-		pytest tests/python/integration --alluredir=tests/allure_report; \
-		deactivate; \
+		pytest tests/python/integration --alluredir=tests/allure_report --exclude-dss-targets="DSS7"; \
 	)
 	@echo "[SUCCESS] Running integration tests: Done!"
 
