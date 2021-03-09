@@ -29,10 +29,14 @@ def test_wordcloud_multilingual_subcharts_per_language(user_dss_clients):
     dss_scenario.run(user_dss_clients, project_key=TEST_PROJECT_KEY, scenario_id="subchart_per_language")
 
 
+def test_wordcloud_edge_cases_multilingual(user_clients):
+    dss_scenario.run(user_dss_clients, project_key=TEST_PROJECT_KEY, scenario_id="EDGE_CASES")
+
+
 def test_wordcloud_partitioned_folder_file(user_dss_clients):
     dss_scenario.run(user_dss_clients, project_key=TEST_PROJECT_KEY, scenario_id="partitionned_folder_file")
 
-
+    
 def test_wordcloud_partitioned_folder_sql(user_dss_clients):
     dss_scenario.run(user_dss_clients, project_key=TEST_PROJECT_KEY, scenario_id="partitionned_folder_sql")
 

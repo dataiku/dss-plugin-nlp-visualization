@@ -16,7 +16,6 @@ from fastcore.utils import store_attr
 from spacy.tokens import Doc
 
 from spacy_tokenizer import MultilingualTokenizer
-from font_exceptions_dict import FONT_EXCEPTIONS_DICT
 from utils import time_logging
 
 matplotlib.use("agg")
@@ -37,7 +36,7 @@ class WordcloudVisualizer:
 
     """
 
-    DEFAULT_MAX_WORDS = 100
+    DEFAULT_MAX_WORDS = 200
     DEFAULT_COLOR_LIST = [
         "hsl(205,71%,41%)",
         "hsl(214,56%,80%)",
@@ -46,7 +45,6 @@ class WordcloudVisualizer:
         "hsl(120,57%,40%)",
         "hsl(110,57%,71%)",
     ]
-    DEFAULT_FONT = "NotoSansDisplay-Regular.ttf"
     DEFAULT_SCALE = 6.8
     DEFAULT_MARGIN = 4
     DEFAULT_RANDOM_STATE = 3
@@ -58,11 +56,41 @@ class WordcloudVisualizer:
     DEFAULT_BBOX_INCHES = "tight"
     DEFAULT_BACKGROUND_COLOR = "white"
 
+    DEFAULT_FONT = "NotoSansMerged-Regular-1000upem.ttf"
+    """Multilingual font created from the fusion of the following Noto Sans fonts:
+        - NotoSansDisplay-Regular
+        - NotoSansArabic-Regular
+        - NotoSansArmenian-Regular
+        - NotoSansBengali-Regular
+        - NotoSansDevanagari-Regular
+        - NotoSansHebrew-Regular
+        - NotoSansSinhala-Regular
+        - NotoSansTamil-Regular
+        - NotoSansThai-Regular
+    """
+    FONT_EXCEPTIONS_DICT = {
+        "gu": "NotoSansMerged-Regular-2048upem.ttf",
+        "kn": "NotoSansMerged-Regular-2048upem.ttf",
+        "ml": "NotoSansMerged-Regular-2048upem.ttf",
+        "te": "NotoSansMerged-Regular-2048upem.ttf",
+        "zh": "NotoSansCJKsc-Regular.otf",
+        "language_column": "NotoSansMerged-Regular-1000upem.ttf",
+    }
+    """Dictionary with ISO 639-1 language code (key) and associated font (value)
+
+    NotoSansMerged-Regular-2048upem.ttf results from the fusion of the following Noto Sans fonts:
+        - NotoSans-Regular
+        - NotoSansGujarati-Regular
+        - NotoSansKannada-Regular
+        - NotoSansMalayalam-Regular
+        - NotoSansTelugu-Regular
+    """
+
     def __init__(
         self,
         tokenizer: MultilingualTokenizer,
         text_column: AnyStr,
-        font_path: AnyStr,
+        font_folder_path: AnyStr,
         language: AnyStr = "en",
         language_column: AnyStr = None,
         subchart_column: AnyStr = None,
@@ -95,7 +123,7 @@ class WordcloudVisualizer:
 
     def _retrieve_font(self, language: AnyStr) -> AnyStr:
         """Return the font to use for a given language"""
-        return FONT_EXCEPTIONS_DICT.get(language, self.font)
+        return self.FONT_EXCEPTIONS_DICT.get(language, self.font)
 
     def _get_wordcloud(self, frequencies, font_path):
         """Return a wordcloud object"""
@@ -117,7 +145,7 @@ class WordcloudVisualizer:
         """Return a wordcloud as a matplotlib figure"""
         # Manage font exceptions based on language
         font = self._retrieve_font(language)
-        font_path = os.path.join(self.font_path, font)
+        font_path = os.path.join(self.font_folder_path, font)
         # Generate wordcloud
         wc = self._get_wordcloud(frequencies, font_path)
         fig = plt.figure(figsize=self.figsize, dpi=self.dpi)
@@ -234,9 +262,9 @@ class WordcloudVisualizer:
                 wordcloud_title = output_file_name[:-4]
                 # Generate chart
                 if self.language_as_subchart:
-                    fig = self._generate_wordcloud(count, wordcloud_title, name)
+                    fig = self._generate_wordcloud(frequencies=count, title=wordcloud_title, language=name)
                 else:
-                    fig = self._generate_wordcloud(count, wordcloud_title, self.language)
+                    fig = self._generate_wordcloud(frequencies=count, title=wordcloud_title, language=self.language)
                 # Return chart
                 temp = BytesIO()
                 fig.savefig(temp, bbox_inches=self.bbox_inches, pad_inches=self.pad_inches, dpi=fig.dpi)
