@@ -14,6 +14,7 @@ import spacy
 from spacy.language import Language
 from spacy.tokens import Doc, Token
 from spacy.vocab import Vocab
+from spacymoji import Emoji
 from emoji import UNICODE_EMOJI
 from fastcore.utils import store_attr
 
@@ -25,9 +26,7 @@ from plugin_io_utils import generate_unique, truncate_text_list
 Token.set_extension("is_hashtag", getter=lambda token: token.text[0] == "#", force=True)
 Token.set_extension("is_username", getter=lambda token: token.text[0] == "@", force=True)
 Token.set_extension("is_emoji", getter=lambda token: any(c in UNICODE_EMOJI for c in token.text), force=True)
-SYMBOL_CHARS_REGEX = re.compile(
-    r"(\p{M}|\p{S}|\p{P})+"
-)  # matches unicode categories M (marks), S (symbols) and P (punctuations)
+SYMBOL_CHARS_REGEX = re.compile(r"(\p{M}|\p{S})+")  # matches unicode categories M (marks) and S (symbols)
 Token.set_extension(
     "is_symbol",
     getter=lambda token: not token.is_punct
@@ -81,6 +80,7 @@ class TokenizationError(RuntimeError):
 
 class MultilingualTokenizer:
     """Wrapper class to handle tokenization with spaCy for multiple languages
+
     Attributes:
         stopwords_folder_path: Path to a folder with stopword text files (one line per stopword)
             Files should be named "{language_code}.txt" with the code in ISO 639-1 format
@@ -90,6 +90,7 @@ class MultilingualTokenizer:
         batch_size (int): Number of documents to process in spaCy pipelines
         spacy_nlp_dict (dict): Dictionary holding spaCy Language instances (value) by language code (key)
         tokenized_column (str): Name of the dataframe column storing tokenized documents
+
     """
 
     DEFAULT_BATCH_SIZE = 1000
@@ -110,6 +111,7 @@ class MultilingualTokenizer:
         "is_emoji": "Emoji",
     }
     """dict: Available native and custom spaCy token attributes for filtering
+
     Key: name of the token attribute defined on spacy Token objects
     Value: label to designate the token attribute in the user interface
     """
@@ -122,6 +124,7 @@ class MultilingualTokenizer:
         batch_size: int = DEFAULT_BATCH_SIZE,
     ):
         """Initialization method for the MultilingualTokenizer class, with optional arguments
+
         Args:
             stopwords_folder_path (str, optional): Path to a folder with stopword text files (one line per stopword)
                 Files should be named "{language_code}.txt" with the code in ISO 639-1 format
@@ -131,6 +134,7 @@ class MultilingualTokenizer:
                 Default is True, which overrides the spaCy default behavior
             batch_size (int, optional): Number of documents to process in spaCy pipelines
                 Default is set by the DEFAULT_BATCH_SIZE class constant
+
         """
         store_attr()
         self.spacy_nlp_dict = {}
@@ -138,17 +142,21 @@ class MultilingualTokenizer:
 
     def _create_spacy_tokenizer(self, language: AnyStr) -> Language:
         """Private method to create a custom spaCy tokenizer for a given language
+
         Args:
             language: Language code in ISO 639-1 format, cf. https://spacy.io/usage/models#languages
+
         Returns:
             spaCy Language instance with the tokenizer
+
         Raises:
             TokenizationError: If something went wrong with the tokenizer creation
+
         """
         start = perf_counter()
         logging.info(f"Loading tokenizer for language '{language}'...")
         try:
-            if language == "th":  # PyThaiNLP requires an "data directory" even if nothing needs to be downloaded
+            if language == "th":  # PyThaiNLP requires a "data directory" even if nothing needs to be downloaded
                 os.environ["PYTHAINLP_DATA_DIR"] = mkdtemp()  # dummy temp directory
             if language in SPACY_LANGUAGE_MODELS and self.use_models:
                 nlp = spacy.load(SPACY_LANGUAGE_MODELS[language])
@@ -168,16 +176,23 @@ class MultilingualTokenizer:
                 nlp.tokenizer.prefix_search = spacy.util.compile_prefix_regex(_prefixes).search
         if self.stopwords_folder_path and language in SUPPORTED_LANGUAGES_SPACY:
             self._customize_stopwords(nlp, language)
+        try:
+            nlp.add_pipe(Emoji(nlp), first=True)
+        except (AttributeError, ValueError) as e:
+            logging.warning(f"Spacymoji not available for language '{language}' because of error: '{e}'")
         logging.info(f"Loading tokenizer for language '{language}': done in {perf_counter() - start:.2f} seconds")
         return nlp
 
     def _customize_stopwords(self, nlp: Language, language: AnyStr) -> None:
         """Private method to customize stopwords for a given spaCy language
+
         Args:
             nlp: Instanciated spaCy language
             language: Language code in ISO 639-1 format, cf. https://spacy.io/usage/models#languages
+
         Raises:
             TokenizationError: If something went wrong with the stopword customization
+
         """
         try:
             stopwords_file_path = os.path.join(self.stopwords_folder_path, f"{language}.txt")
@@ -198,15 +213,20 @@ class MultilingualTokenizer:
 
     def _add_spacy_tokenizer(self, language: AnyStr) -> bool:
         """Private method to add a spaCy tokenizer for a given language to the `spacy_nlp_dict` attribute
+
         This method only adds the tokenizer if the language code is valid and recognized among
         the list of supported languages (`SUPPORTED_LANGUAGES_SPACY` constant),
-        else it will raise a ValueError exception.
+        else it will raise a TokenizationError exception.
+
         Args:
             language: Language code in ISO 639-1 format, cf. https://spacy.io/usage/models#languages
+
         Returns:
             True if the tokenizer was added, else False
+
         Raises:
             TokenizationError: If the language code is missing or not in SUPPORTED_LANGUAGES_SPACY
+
         """
         added_tokenizer = False
         if pd.isnull(language) or language == "":
@@ -220,13 +240,17 @@ class MultilingualTokenizer:
 
     def tokenize_list(self, text_list: List[AnyStr], language: AnyStr) -> List[Doc]:
         """Public method to tokenize a list of strings for a given language
+
         This method calls `_add_spacy_tokenizer` in case the requested language has not already been added.
         In case of an error in `_add_spacy_tokenizer`, it falls back to the default tokenizer.
+
         Args:
             text_list: List of strings
             language: Language code in ISO 639-1 format, cf. https://spacy.io/usage/models#languages
+
         Returns:
             List of tokenized spaCy documents
+
         """
         start = perf_counter()
         logging.info(f"Tokenizing {len(text_list)} document(s) in language '{language}'...")
@@ -249,15 +273,19 @@ class MultilingualTokenizer:
         self, df: pd.DataFrame, text_column: AnyStr, language_column: AnyStr = "", language: AnyStr = "language_column"
     ) -> pd.DataFrame:
         """Public method to tokenize a text column in a pandas DataFrame, given language information
+
         This methods adds a new column to the DataFrame, whose name is saved as the `tokenized_column` attribute
+
         Args:
             df: Input pandas DataFrame
             text_column: Name of the column containing text data
             language_column: Name of the column with language codes in ISO 639-1 format
             language: Language code in ISO 639-1 format, cf. https://spacy.io/usage/models#languages
                 if equal to "language_column" this parameter is ignored in favor of language_column
+
         Returns:
             DataFrame with all columns from the input, plus a new column with tokenized spaCy documents
+
         """
         self.tokenized_column = generate_unique("tokenized", df.keys(), text_column)
         # Initialize the tokenized column to empty documents
@@ -275,9 +303,7 @@ class MultilingualTokenizer:
                 if len(text_slice) != 0:
                     tokenized_list = self.tokenize_list(text_list=text_slice, language=lang)
                     df.loc[language_indices, self.tokenized_column] = pd.Series(
-                        tokenized_list,
-                        dtype="object",
-                        index=text_slice.index,  # keep index (important)
+                        tokenized_list, dtype="object", index=text_slice.index,  # keep index (important)
                     )
         else:
             tokenized_list = self.tokenize_list(text_list=df[text_column], language=language)
