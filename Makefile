@@ -33,7 +33,7 @@ unit-tests:
 		pip3 install --no-cache-dir -r code-env/python/spec/requirements.txt; \
 		export PYTHONPATH="$(PYTHONPATH):$(PWD)/python-lib"; \
 		export FONT_FOLDER_PATH="$(PWD)/resource/fonts"; \
-        export STOPWORDS_FOLDER_PATH="$(PWD)/resource/stopwords"; \
+		export STOPWORDS_FOLDER_PATH="$(PWD)/resource/stopwords"; \
 		python3 -m pytest tests/python/unit --alluredir=tests/allure_report; \
 	)
 	@echo "[SUCCESS] Running unit tests: Done!"

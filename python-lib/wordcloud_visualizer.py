@@ -233,10 +233,10 @@ class WordcloudVisualizer:
             lowercase_counters.append(lowercase_counter)
 
         if not self.subchart_column:
-            counts = dict(sum(counters, Counter()))
+            counts = sum(counters, Counter())
             if self.case_insensitive:
-                lowercase_counts = dict(sum(lowercase_counters, Counter()))
-            return [("", counts)]
+                lowercase_counts = sum(lowercase_counters, Counter())
+            return [("", dict(counts))]
         else:
             counts = list(zip(self.subcharts, counters))
             # Aggregate counts by subchart
