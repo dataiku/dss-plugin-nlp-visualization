@@ -2,12 +2,14 @@
 """Module with utility functions for loading, resolving and validating plugin parameters"""
 
 import logging
+import os
 from typing import Dict
 import dataiku
 from dataiku.customrecipe import (
     get_recipe_config,
     get_input_names_for_role,
     get_output_names_for_role,
+    get_recipe_resource,
 )
 
 from language_dict import SUPPORTED_LANGUAGES_SPACY
@@ -93,5 +95,11 @@ def load_plugin_config_wordcloud() -> Dict:
             )
 
     logging.info(f"Read dataset of shape: {params['df'].shape}")
+
+    # Text simplification parameters
+    params["remove_stopwords"] = recipe_config.get("remove_stopwords")
+    params["stopwords_folder_path"] = os.path.join(get_recipe_resource(), "stopwords")
+    params["remove_punctuation"] = recipe_config.get("remove_punctuation")
+    params["case_insensitive"] = recipe_config.get("case_insensitive")
 
     return params

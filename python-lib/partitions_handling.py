@@ -72,7 +72,8 @@ def get_partitions(dku_flow_variables, dimensions, input_id=None):
         dimension_value = get_dimension_value_from_flow_variables(dku_flow_variables, input_id, dimension)
         if not dimension_value:
             raise ValueError(
-                f"Partition dimension '{dimension}' not found in output. Please make sure your output has the same partition dimensions as your input."
+                f"Partition dimension '{dimension}' not found in output. "
+                + "Please make sure your output has the same partition dimensions as your input."
             )
         partitions.append(dimension_value)
     return partitions
@@ -157,4 +158,7 @@ def check_only_one_read_partition(partition_root, dku_computable):
                 error_message_prefix = f"Input dataset '{dku_computable.short_name}' has multiple read partitions. "
             if isinstance(dku_computable, dataiku.Folder):
                 error_message_prefix = f"Input folder '{dku_computable.get_name()}' has multiple read partitions. "
-            raise ValueError(error_message_prefix + "Please specify 'Equals' partition dependencies in the Input / Output tab of the recipe.")
+            raise ValueError(
+                error_message_prefix
+                + "Please specify 'Equals' partition dependencies in the Input / Output tab of the recipe."
+            )

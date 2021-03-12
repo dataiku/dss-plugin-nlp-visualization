@@ -93,6 +93,9 @@ class WordcloudVisualizer:
         font_folder_path: AnyStr,
         language: AnyStr = "en",
         language_column: AnyStr = None,
+        remove_stopwords: bool = True,
+        remove_punctuation: bool = True,
+        case_insensitive: bool = False,
         subchart_column: AnyStr = None,
         max_words: int = DEFAULT_MAX_WORDS,
         color_list: List = DEFAULT_COLOR_LIST,
@@ -220,7 +223,10 @@ class WordcloudVisualizer:
         for doc in docs:
             counter = Counter()
             for token in doc:
-                counter[(token.text)] += 1  # Equivalently, token.lemma_
+                token_is_stopwords = self.remove_stopwords and token.is_stop
+                token_is_punctuation = self.remove_punctuation and token.is_punct
+                if not token_is_stopwords and not token_is_punctuation and not token.is_space:
+                    counter[(token.text)] += 1  # Equivalently, token.lemma_
             counters.append(counter)
 
         if not self.subchart_column:

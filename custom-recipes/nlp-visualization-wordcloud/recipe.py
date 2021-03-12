@@ -2,7 +2,6 @@
 
 import os
 import logging
-import os
 from time import perf_counter
 
 from dataiku.customrecipe import get_recipe_resource
@@ -20,12 +19,15 @@ df = params["df"]
 
 # Load wordcloud visualizer
 worcloud_visualizer = WordcloudVisualizer(
-    tokenizer=MultilingualTokenizer(),
+    tokenizer=MultilingualTokenizer(stopwords_folder_path=params["stopwords_folder_path"]),
     text_column=params["text_column"],
     font_folder_path=font_folder_path,
     language=params["language"],
     language_column=params["language_column"],
     subchart_column=params["subchart_column"],
+    remove_stopwords=params["remove_stopwords"],
+    remove_punctuation=params["remove_punctuation"],
+    case_insensitive=params["case_insensitive"],
 )
 
 # Prepare data and count tokens for each subchart
@@ -39,6 +41,4 @@ start = perf_counter()
 logging.info("Generating wordclouds...")
 for temp, output_file_name in worcloud_visualizer.generate_wordclouds(frequencies):
     output_folder.upload_data(os.path.join(output_partition_path, output_file_name), temp.getvalue())
-
-end = perf_counter()
-logging.info(f"Generating wordclouds: Done in {end - start:.2f} seconds.")
+logging.info(f"Generating wordclouds: Done in {perf_counter() - start:.2f} seconds.")

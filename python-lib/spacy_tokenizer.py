@@ -263,7 +263,8 @@ class MultilingualTokenizer:
                 )
             )
             logging.info(
-                f"Tokenizing {len(tokenized)} document(s) in language '{language}': done in {perf_counter() - start:.2f} seconds"
+                f"Tokenizing {len(tokenized)} document(s) in language '{language}': "
+                + f"done in {perf_counter() - start:.2f} seconds"
             )
         except TokenizationError as e:
             raise TokenizationError(f"Tokenization error: {e} for document(s): '{truncate_text_list(text_list)}'")
@@ -295,7 +296,7 @@ class MultilingualTokenizer:
             unsupported_languages = set(languages) - set(SUPPORTED_LANGUAGES_SPACY.keys())
             if unsupported_languages:
                 raise TokenizationError(
-                    f"Found {len(unsupported_languages)} unsupported languages in input dataset: {unsupported_languages}"
+                    f"Found {len(unsupported_languages)} unsupported languages in dataset: {unsupported_languages}"
                 )
             for lang in languages:  # iterate over languages
                 language_indices = df[language_column] == lang
