@@ -101,5 +101,8 @@ def load_plugin_config_wordcloud() -> Dict:
     params["stopwords_folder_path"] = os.path.join(get_recipe_resource(), "stopwords")
     params["remove_punctuation"] = recipe_config.get("remove_punctuation")
     params["case_insensitive"] = recipe_config.get("case_insensitive")
+    logging.info(f"Remove stopwords: {params['remove_stopwords']}")
+    logging.info(f"Remove punctuation: {params['remove_punctuation']}")
+    logging.info(f"Case-insensitive: {params['case_insensitive']}")
 
     return params
