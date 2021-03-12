@@ -230,12 +230,7 @@ class WordcloudVisualizer:
             counters.append(counter)
 
         if not self.subchart_column:
-            # Sum values with same keys
-            counts = Counter()
-            for d in counters:
-                counts.update(d)
-
-            counts = [("", dict(counts))]
+            counts = [("", dict(sum(counters, Counter())))]
             return counts
         else:
             counts = list(zip(self.subcharts, counters))
