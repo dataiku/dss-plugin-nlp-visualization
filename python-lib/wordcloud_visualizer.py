@@ -219,19 +219,24 @@ class WordcloudVisualizer:
         Returns:
             List of tuples (subchart, counter) where subchart is the subchart the counter belongs to
         """
-        counters = []
+        counters, lowercase_counters = ([], [])
         for doc in docs:
-            counter = Counter()
+            counter, lowercase_counter = (Counter(), Counter())
             for token in doc:
                 token_is_stopwords = self.remove_stopwords and token.is_stop
                 token_is_punctuation = self.remove_punctuation and token.is_punct
                 if not token_is_stopwords and not token_is_punctuation and not token.is_space:
-                    counter[(token.text)] += 1  # Equivalently, token.lemma_
+                    counter[token.text] += 1  # Equivalently, token.lemma_
+                    if self.case_insensitive:
+                        lowercase_counter[token.text.lower()] += 1
             counters.append(counter)
+            lowercase_counters.append(lowercase_counter)
 
         if not self.subchart_column:
-            counts = [("", dict(sum(counters, Counter())))]
-            return counts
+            counts = dict(sum(counters, Counter()))
+            if self.case_insensitive:
+                lowercase_counts = dict(sum(lowercase_counters, Counter()))
+            return [("", counts)]
         else:
             counts = list(zip(self.subcharts, counters))
             # Aggregate counts by subchart
@@ -244,7 +249,7 @@ class WordcloudVisualizer:
             counts = list(temp_count.items())
 
             # Remove subcharts emptied by aggregation
-            counts = [(subchart, count) for subchart, count in counts if count != {}]
+            counts = [(subchart, count) for subchart, count in counts if count]
             return counts
 
     def generate_wordclouds(self, counts: List[Tuple[AnyStr, Dict]]) -> Generator[Tuple[BinaryIO, AnyStr], None, None]:
