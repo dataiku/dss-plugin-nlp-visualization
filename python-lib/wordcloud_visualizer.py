@@ -264,14 +264,14 @@ class WordcloudVisualizer:
                     temp_count[subchart].update(count)
                 else:
                     temp_count[subchart] = count
+            if self.case_insensitive:
+                temp_count = {
+                    subchart: self._normalize_case_token_counts(count) for subchart, count in temp_count.items()
+                }
             counts = list(temp_count.items())
 
             # Remove subcharts emptied by aggregation
-            counts = [
-                (subchart, self._normalize_case_token_counts(count) if self.case_insensitive else count)
-                for subchart, count in counts
-                if count
-            ]
+            counts = [(subchart, count) for subchart, count in counts if count]
             return counts
 
     def generate_wordclouds(self, counts: List[Tuple[AnyStr, Dict]]) -> Generator[Tuple[BinaryIO, AnyStr], None, None]:
