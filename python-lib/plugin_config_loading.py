@@ -82,7 +82,7 @@ def load_plugin_config_wordcloud() -> Dict:
         for column in set([params["text_column"], params["language_column"], params["subchart_column"]])
         if (column not in [None, "order66"])
     ]
-    params["df"] = input_dataset.get_dataframe(columns=necessary_columns)
+    params["df"] = input_dataset.get_dataframe(columns=necessary_columns).dropna(subset=necessary_columns)
     if params["df"].empty:
         raise PluginParamValidationError("Dataframe is empty")
     # Check if unsupported languages in multilingual case

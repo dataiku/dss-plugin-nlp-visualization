@@ -29,7 +29,7 @@ def test_tokenize_and_count_multilingual():
     input_df = pd.DataFrame(
         {
             "input_text": [
-                "I hope nothing. I fear nothing. I am free.",
+                "I hope nothing. I fear Nothing. Nothing. I am free.",
                 " Les sanglots longs des violons d'automne",
                 "子曰：“學而不思則罔，思而不學則殆。”",
             ],
@@ -50,7 +50,7 @@ def test_tokenize_and_count_multilingual():
     )
     frequencies = worcloud_visualizer.tokenize_and_count(input_df)
     assert frequencies == [
-        ("en", Counter({"hope": 1, "nothing": 2, "fear": 1, "free": 1})),
+        ("en", Counter({"hope": 1, "Nothing": 3, "fear": 1, "free": 1})),
         ("fr", Counter({"sanglots": 1, "longs": 1, "violons": 1, "automne": 1})),
         ("zh", Counter({"子": 1, "曰": 1, "學而": 1, "不思則": 1, "罔": 1, "思而": 1, "不學則": 1}),),
     ]

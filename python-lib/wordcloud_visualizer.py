@@ -211,6 +211,27 @@ class WordcloudVisualizer:
 
         return docs
 
+    def _normalize_case_token_counts(self, counts: Counter) -> Counter:
+        """Private method to normalize a token counter to make it case-insensitive
+
+        It works by summing the counts of multiple case versions e.g., "The" and "the".
+        It then selects the case version with the highest count to represent the whole group.
+        In case of a tie, the lowercase version is chosen.
+
+        Args:
+            counts: token counter e.g., Counter({"The": 3, "the": 5, "best": 3, "Best": 4})
+        Returns:
+            New token counter with a single case version for each token and the sum of counts across case versions
+                e.g., Counter({"the": 8, "Best": 7})
+        """
+        df_counts = pd.DataFrame.from_dict(counts.items())
+        df_counts.columns = ["token", "token_count"]
+        df_counts["token_lower"] = df_counts.token.str.lower()
+        df_counts_agg = df_counts.groupby("token_lower").token_count.agg(["sum", "idxmax"]).reset_index()
+        df_counts_agg["token_majority_case"] = df_counts_agg["idxmax"].apply(lambda x: df_counts.loc[x, "token"])
+        normalized_counts = Counter(dict(zip(df_counts_agg.token_majority_case, df_counts_agg["sum"])))
+        return normalized_counts
+
     @time_logging(log_message="Counting tokens")
     def _count_tokens(self, docs: List[Doc]) -> List[Tuple[AnyStr, Dict]]:
         """Private method to count tokens for each document in corpus
@@ -219,23 +240,20 @@ class WordcloudVisualizer:
         Returns:
             List of tuples (subchart, counter) where subchart is the subchart the counter belongs to
         """
-        counters, lowercase_counters = ([], [])
+        counters = []
         for doc in docs:
-            counter, lowercase_counter = (Counter(), Counter())
+            counter = Counter()
             for token in doc:
-                token_is_stopwords = self.remove_stopwords and token.is_stop
-                token_is_punctuation = self.remove_punctuation and token.is_punct
+                token_is_stopwords = token.is_stop if self.remove_stopwords else False
+                token_is_punctuation = token.is_punct if self.remove_punctuation else False
                 if not token_is_stopwords and not token_is_punctuation and not token.is_space:
                     counter[token.text] += 1  # Equivalently, token.lemma_
-                    if self.case_insensitive:
-                        lowercase_counter[token.text.lower()] += 1
             counters.append(counter)
-            lowercase_counters.append(lowercase_counter)
 
         if not self.subchart_column:
             counts = sum(counters, Counter())
             if self.case_insensitive:
-                lowercase_counts = sum(lowercase_counters, Counter())
+                counts = self._normalize_case_token_counts(counts)
             return [("", dict(counts))]
         else:
             counts = list(zip(self.subcharts, counters))
@@ -249,7 +267,11 @@ class WordcloudVisualizer:
             counts = list(temp_count.items())
 
             # Remove subcharts emptied by aggregation
-            counts = [(subchart, count) for subchart, count in counts if count]
+            counts = [
+                (subchart, self._normalize_case_token_counts(count) if self.case_insensitive else count)
+                for subchart, count in counts
+                if count
+            ]
             return counts
 
     def generate_wordclouds(self, counts: List[Tuple[AnyStr, Dict]]) -> Generator[Tuple[BinaryIO, AnyStr], None, None]:
