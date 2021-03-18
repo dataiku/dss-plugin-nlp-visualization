@@ -72,7 +72,7 @@
         },
         {
             "name": "remove_stopwords",
-            "label": "Remove stopwords",
+            "label": "Clear stopwords",
             "description": "Remove common words with little meaning e.g., the, a, be, have",
             "type": "BOOLEAN",
             "defaultValue": true,
