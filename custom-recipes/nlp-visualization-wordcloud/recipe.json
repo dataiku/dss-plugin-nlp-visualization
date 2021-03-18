@@ -73,15 +73,15 @@
         {
             "name": "remove_stopwords",
             "label": "Clear stopwords",
-            "description": "Remove so-called 'stop words' (the, I, a, of, ...). This transformation is language-specific",
+            "description": "Remove so-called 'stop words' (the, I, a, of, ...). This transformation is language-specific.",
             "type": "BOOLEAN",
             "defaultValue": true,
             "mandatory": true
         },
         {
             "name": "remove_punctuation",
-            "label": "Remove punctuation",
-            "description": "Remove punctuation characters e.g., ! ? ( ) . ",
+            "label": "Clear punctuation",
+            "description": "Remove punctuation characters e.g., ! ? ( ) . This transformation is language-specific.",
             "type": "BOOLEAN",
             "defaultValue": true,
             "mandatory": true
