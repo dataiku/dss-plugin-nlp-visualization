@@ -12,32 +12,31 @@ from spacy_tokenizer import MultilingualTokenizer
 from wordcloud_visualizer import WordcloudVisualizer
 
 font_folder_path = os.getenv("FONT_FOLDER_PATH", "path_is_no_good")
+stopwords_folder_path = os.getenv("STOPWORDS_FOLDER_PATH", "path_is_no_good")
 
 
-def test_tokenize_english():
+def test_tokenize_and_count_english():
     input_df = pd.DataFrame({"input_text": ["I hope nothing. I fear nothing. I am free. 💩 😂 #OMG"]})
-    tokenizer = MultilingualTokenizer()
+    tokenizer = MultilingualTokenizer(stopwords_folder_path=stopwords_folder_path)
     worcloud_visualizer = WordcloudVisualizer(
         tokenizer=tokenizer, text_column="input_text", font_folder_path=font_folder_path, language="en"
     )
     frequencies = worcloud_visualizer.tokenize_and_count(input_df)
-    assert frequencies == [
-        ("", {"I": 3, "hope": 1, "nothing": 2, ".": 3, "fear": 1, "am": 1, "free": 1, "💩": 1, "😂": 1, "#OMG": 1})
-    ]
+    assert frequencies == [("", {"hope": 1, "nothing": 2, "fear": 1, "free": 1, "💩": 1, "😂": 1, "#OMG": 1})]
 
 
-def test_tokenize_multilingual():
+def test_tokenize_and_count_multilingual():
     input_df = pd.DataFrame(
         {
             "input_text": [
-                "I hope nothing. I fear nothing. I am free.",
+                "I hope nothing. I fear Nothing. Nothing. I am free.",
                 " Les sanglots longs des violons d'automne",
                 "子曰：“學而不思則罔，思而不學則殆。”",
             ],
             "language": ["en", "fr", "zh"],
         }
     )
-    tokenizer = MultilingualTokenizer()
+    tokenizer = MultilingualTokenizer(stopwords_folder_path=stopwords_folder_path)
     worcloud_visualizer = WordcloudVisualizer(
         tokenizer=tokenizer,
         text_column="input_text",
@@ -45,37 +44,21 @@ def test_tokenize_multilingual():
         language="language_column",
         language_column="language",
         subchart_column="language",
+        remove_stopwords=True,
+        remove_punctuation=True,
+        case_insensitive=True,
     )
     frequencies = worcloud_visualizer.tokenize_and_count(input_df)
     assert frequencies == [
-        ("en", Counter({"I": 3, "hope": 1, "nothing": 2, ".": 3, "fear": 1, "am": 1, "free": 1})),
-        ("fr", Counter({" ": 1, "Les": 1, "sanglots": 1, "longs": 1, "des": 1, "violons": 1, "d'": 1, "automne": 1})),
-        (
-            "zh",
-            Counter(
-                {
-                    "子": 1,
-                    "曰": 1,
-                    "：": 1,
-                    "“": 1,
-                    "學而": 1,
-                    "不思則": 1,
-                    "罔": 1,
-                    "，": 1,
-                    "思而": 1,
-                    "不學則": 1,
-                    "殆": 1,
-                    "。": 1,
-                    "”": 1,
-                }
-            ),
-        ),
+        ("en", Counter({"hope": 1, "Nothing": 3, "fear": 1, "free": 1})),
+        ("fr", Counter({"sanglots": 1, "longs": 1, "violons": 1, "automne": 1})),
+        ("zh", Counter({"子": 1, "曰": 1, "學而": 1, "不思則": 1, "罔": 1, "思而": 1, "不學則": 1}),),
     ]
 
 
 def test_wordcloud_english():
     input_df = pd.DataFrame({"input_text": ["I hope nothing. I fear nothing. I am free. 💩 😂 #OMG"]})
-    tokenizer = MultilingualTokenizer()
+    tokenizer = MultilingualTokenizer(stopwords_folder_path=stopwords_folder_path)
     worcloud_visualizer = WordcloudVisualizer(
         tokenizer=tokenizer, text_column="input_text", font_folder_path=font_folder_path, language="en"
     )
@@ -96,7 +79,7 @@ def test_wordcloud_multilingual():
             "language": ["en", "fr", "zh"],
         }
     )
-    tokenizer = MultilingualTokenizer()
+    tokenizer = MultilingualTokenizer(stopwords_folder_path=stopwords_folder_path)
     worcloud_visualizer = WordcloudVisualizer(
         tokenizer=tokenizer,
         text_column="input_text",
@@ -104,6 +87,9 @@ def test_wordcloud_multilingual():
         language="language_column",
         language_column="language",
         subchart_column="language",
+        remove_stopwords=True,
+        remove_punctuation=True,
+        case_insensitive=True,
     )
     frequencies = worcloud_visualizer.tokenize_and_count(input_df)
     num_wordclouds = 0

@@ -10,7 +10,7 @@
         {
             "name": "input_dataset",
             "label": "Input dataset",
-            "description": "Dataset with a cleaned text column",
+            "description": "Dataset with a text column",
             "arity": "UNARY",
             "required": true,
             "acceptsDataset": true,
@@ -32,7 +32,7 @@
     "params": [
         {
             "name": "separator_params",
-            "label": "Input Parameters",
+            "label": "Input parameters",
             "type": "SEPARATOR"
         },
         {
@@ -64,6 +64,35 @@
             ],
             "visibilityCondition": "model.language == 'language_column'",
             "mandatory": false
+        },
+        {
+            "name": "separator_text_handling",
+            "label": "Text simplification",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "remove_stopwords",
+            "label": "Clear stopwords",
+            "description": "Remove so-called 'stop words' (the, I, a, of, ...). This transformation is language-specific.",
+            "type": "BOOLEAN",
+            "defaultValue": true,
+            "mandatory": true
+        },
+        {
+            "name": "remove_punctuation",
+            "label": "Clear punctuation",
+            "description": "Remove punctuation characters e.g., ! ? ( ) . This transformation is language-specific.",
+            "type": "BOOLEAN",
+            "defaultValue": true,
+            "mandatory": true
+        },
+        {
+            "name": "case_insensitive",
+            "label": "Case-insensitive",
+            "description": "Normalize case to count 'You' and 'you' as the same word. The most common case will be displayed.",
+            "type": "BOOLEAN",
+            "defaultValue": false,
+            "mandatory": true
         },
         {
             "name": "separator_subcharts",
