@@ -3,6 +3,7 @@
 
 import logging
 import os
+import re
 from typing import Dict
 import dataiku
 from dataiku.customrecipe import (
@@ -68,6 +69,7 @@ def load_plugin_config_wordcloud() -> Dict:
             raise PluginParamValidationError(f"Unsupported language code: {params['language']}")
         params["language_column"] = None
         logging.info(f"Language: {params['language']}")
+
     # Subcharts
     params["subchart_column"] = recipe_config.get("subchart_column")
     # If parameter is saved then cleared, config retrieves ""
@@ -104,5 +106,21 @@ def load_plugin_config_wordcloud() -> Dict:
     logging.info(f"Remove stopwords: {params['remove_stopwords']}")
     logging.info(f"Remove punctuation: {params['remove_punctuation']}")
     logging.info(f"Case-insensitive: {params['case_insensitive']}")
+
+    # Display parameters:
+    params["max_words"] = recipe_config.get("max_words")
+    if (not params["max_words"]) or not ((isinstance(params["max_words"], int)) & (params["max_words"] >= 1)):
+        raise PluginParamValidationError("Maximum number of words is not a positive integer")
+    logging.info(f"Max number of words: {params['max_words']}")
+
+    params["color_list"] = recipe_config.get("color_list")
+    if not (
+        (isinstance(params["color_list"], list))
+        & (len(params["color_list"]) >= 1)
+        # Check if color list values are valid hexadecimal color codes
+        & all([re.search(r"^#(?:[0-9a-fA-F]{3}){1,2}$", color) for color in params["color_list"]])
+    ):
+        raise PluginParamValidationError("Invalid color list")
+    logging.info(f"Color list: {params['color_list']}")
 
     return params
