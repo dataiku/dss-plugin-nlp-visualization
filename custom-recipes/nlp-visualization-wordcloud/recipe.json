@@ -91,22 +91,8 @@
       "mandatory": true
     },
     {
-      "name": "separator_subcharts",
-      "label": "Subcharts",
-      "type": "SEPARATOR"
-    },
-    {
-      "name": "subchart_column",
-      "type": "COLUMN",
-      "columnRole": "input_dataset",
-      "allowedColumnTypes": ["string"],
-      "label": "Split by column",
-      "description": "Optional column to generate one word cloud per category",
-      "mandatory": false
-    },
-    {
       "name": "separator_display",
-      "label": "Display",
+      "label": "Display parameters",
       "type": "SEPARATOR"
     },
     {
@@ -120,9 +106,23 @@
       "type": "STRINGS",
       "name": "color_list",
       "label": "Color palette",
-      "description": "A list of hexadecimal color codes",
+      "description": "A list of colors to randomly color each word. Supported formats are X11 color names, hexadecimal color codes or matplotlib color shortcuts",
       "allowDuplicates": false,
       "defaultValue": ["#1F75B3", "#FF7F0F", "#2CA02B"]
+    },
+    {
+      "name": "separator_subcharts",
+      "label": "Subcharts",
+      "type": "SEPARATOR"
+    },
+    {
+      "name": "subchart_column",
+      "type": "COLUMN",
+      "columnRole": "input_dataset",
+      "allowedColumnTypes": ["string"],
+      "label": "Split by column",
+      "description": "Optional column to generate one word cloud per category",
+      "mandatory": false
     }
   ],
   "resourceKeys": []
