@@ -4,6 +4,8 @@
 import logging
 import os
 from typing import Dict
+
+import matplotlib
 import dataiku
 from dataiku.customrecipe import (
     get_recipe_config,
@@ -68,6 +70,7 @@ def load_plugin_config_wordcloud() -> Dict:
             raise PluginParamValidationError(f"Unsupported language code: {params['language']}")
         params["language_column"] = None
         logging.info(f"Language: {params['language']}")
+
     # Subcharts
     params["subchart_column"] = recipe_config.get("subchart_column")
     # If parameter is saved then cleared, config retrieves ""
@@ -104,5 +107,20 @@ def load_plugin_config_wordcloud() -> Dict:
     logging.info(f"Remove stopwords: {params['remove_stopwords']}")
     logging.info(f"Remove punctuation: {params['remove_punctuation']}")
     logging.info(f"Case-insensitive: {params['case_insensitive']}")
+
+    # Display parameters:
+    params["max_words"] = recipe_config.get("max_words")
+    if (not params["max_words"]) or not ((isinstance(params["max_words"], int)) & (params["max_words"] >= 1)):
+        raise PluginParamValidationError("Maximum number of words is not a positive integer")
+    logging.info(f"Max number of words: {params['max_words']}")
+
+    params["color_list"] = recipe_config.get("color_list")
+    if not (isinstance(params["color_list"], list) & (len(params["color_list"]) >= 1)):
+        raise PluginParamValidationError("Empty color palette")
+    if not all([matplotlib.colors.is_color_like(color) for color in params["color_list"]]):
+        raise PluginParamValidationError(f"Invalid color palette: {params['color_list']}")
+
+    params["color_list"] = [matplotlib.colors.to_hex(color) for color in params["color_list"]]
+    logging.info(f"Color list: {params['color_list']}")
 
     return params

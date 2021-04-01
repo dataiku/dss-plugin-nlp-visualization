@@ -37,14 +37,7 @@ class WordcloudVisualizer:
     """
 
     DEFAULT_MAX_WORDS = 200
-    DEFAULT_COLOR_LIST = [
-        "hsl(205,71%,41%)",
-        "hsl(214,56%,80%)",
-        "hsl(28,100%,53%)",
-        "hsl(30,100%,74%)",
-        "hsl(120,57%,40%)",
-        "hsl(110,57%,71%)",
-    ]
+    DEFAULT_COLOR_LIST = ["#1F75B3", "#FF7F0F", "#2CA02B"]
     DEFAULT_SCALE = 6.8
     DEFAULT_MARGIN = 4
     DEFAULT_RANDOM_STATE = 3

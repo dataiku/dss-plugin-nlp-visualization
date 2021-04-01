@@ -28,6 +28,8 @@ worcloud_visualizer = WordcloudVisualizer(
     remove_stopwords=params["remove_stopwords"],
     remove_punctuation=params["remove_punctuation"],
     case_insensitive=params["case_insensitive"],
+    max_words=params["max_words"],
+    color_list=params["color_list"],
 )
 
 # Prepare data and count tokens for each subchart
