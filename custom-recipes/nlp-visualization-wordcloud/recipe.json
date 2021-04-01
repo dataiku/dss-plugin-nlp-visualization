@@ -106,7 +106,7 @@
       "type": "STRINGS",
       "name": "color_list",
       "label": "Color palette",
-      "description": "A list of colors to randomly color each word. Supported formats are X11 color names, hexadecimal color codes or matplotlib color shortcuts",
+      "description": "List of colors to randomly color each word. Supported formats are hexadecimal color codes and matplotlib color names.",
       "allowDuplicates": false,
       "defaultValue": ["#1F75B3", "#FF7F0F", "#2CA02B"]
     },
