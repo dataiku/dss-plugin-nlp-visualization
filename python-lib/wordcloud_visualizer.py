@@ -6,6 +6,8 @@ import os
 from typing import List, AnyStr, Tuple, Dict, Generator, BinaryIO
 from collections import Counter
 from io import BytesIO
+from functools import lru_cache
+import zlib
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -113,9 +115,12 @@ class WordcloudVisualizer:
             self.font = "DeathStar.otf"
             self.subchart_column = None
 
-    def _color_func(self, word, font_size, position, orientation, random_state=None, **kwargs) -> AnyStr:
+    @lru_cache(maxsize=1024)
+    def _color_func(self, word: AnyStr, **kwargs) -> AnyStr:
         """Return the color function used in the wordcloud"""
-        return random.choice(self.color_list)
+        word_hash = zlib.adler32(word.encode("utf-8")) & 0xFFFFFFFF
+        color = self.color_list[word_hash % len(self.color_list)]
+        return color
 
     def _retrieve_font(self, language: AnyStr) -> AnyStr:
         """Return the font to use for a given language"""
@@ -130,6 +135,7 @@ class WordcloudVisualizer:
                 margin=self.margin,
                 max_words=self.max_words,
                 font_path=font_path,
+                random_state=self.random_state,
             )
             .generate_from_frequencies(frequencies)
             .recolor(color_func=self._color_func, random_state=self.random_state)
