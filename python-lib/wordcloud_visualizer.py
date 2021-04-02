@@ -6,6 +6,7 @@ import os
 from typing import List, AnyStr, Tuple, Dict, Generator, BinaryIO
 from collections import Counter
 from io import BytesIO
+from functools import lru_cache
 import zlib
 
 import matplotlib
@@ -114,7 +115,8 @@ class WordcloudVisualizer:
             self.font = "DeathStar.otf"
             self.subchart_column = None
 
-    def _color_func(self, word, font_size, position, orientation, random_state=None, **kwargs) -> AnyStr:
+    @lru_cache(maxsize=1024)
+    def _color_func(self, word: AnyStr, **kwargs) -> AnyStr:
         """Return the color function used in the wordcloud"""
         word_hash = zlib.adler32(word.encode("utf-8")) & 0xFFFFFFFF
         color = self.color_list[word_hash % len(self.color_list)]
