@@ -36,6 +36,7 @@ unit-tests:
 	@export PYTHONPATH="$(PYTHONPATH):$(PWD)/python-lib"
 	@export FONT_FOLDER_PATH="$(PWD)/resource/fonts"
 	@export STOPWORDS_FOLDER_PATH="$(PWD)/resource/stopwords"
+	@export TEST_RESOURCE_FOLDER_PATH="$(PWD)/tests/resource"
 	@pytest tests/python/unit --alluredir=tests/allure_report
 	@echo "Running unit tests: Done!"
 
