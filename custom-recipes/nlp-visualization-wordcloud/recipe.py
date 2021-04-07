@@ -17,9 +17,13 @@ output_folder = params["output_folder"]
 output_partition_path = params["output_partition_path"]
 df = params["df"]
 
+# Instanciate tokenizer
+tokenizer = MultilingualTokenizer(
+    stopwords_folder_path=(params["stopwords_folder_path"] if params["remove_stopwords"] else None)
+)
 # Load wordcloud visualizer
 worcloud_visualizer = WordcloudVisualizer(
-    tokenizer=MultilingualTokenizer(stopwords_folder_path=params["stopwords_folder_path"]),
+    tokenizer=tokenizer,
     text_column=params["text_column"],
     font_folder_path=font_folder_path,
     language=params["language"],
