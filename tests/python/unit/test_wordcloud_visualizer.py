@@ -120,4 +120,4 @@ def test_wordcloud_deterministic():
     frequencies = worcloud_visualizer.tokenize_and_count(input_df)
     for temp, output_file_name in worcloud_visualizer.generate_wordclouds(frequencies):
         generated_test_image = Image.open(temp)
-        assert generated_test_image == reference_test_image
+        assert list(generated_test_image.getdata()) == list(reference_test_image.getdata())
