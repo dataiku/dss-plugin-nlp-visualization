@@ -54,10 +54,7 @@ def test_tokenize_and_count_multilingual():
     assert frequencies == [
         ("en", Counter({"hope": 1, "Nothing": 3, "fear": 1, "free": 1})),
         ("fr", Counter({"sanglots": 1, "longs": 1, "violons": 1, "automne": 1})),
-        (
-            "zh",
-            Counter({"子": 1, "曰": 1, "學而": 1, "不思則": 1, "罔": 1, "思而": 1, "不學則": 1}),
-        ),
+        ("zh", Counter({"子": 1, "曰": 1, "學而": 1, "不思則": 1, "罔": 1, "思而": 1, "不學則": 1}),),
     ]
 
 
