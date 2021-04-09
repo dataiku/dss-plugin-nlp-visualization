@@ -155,9 +155,9 @@
             "description": "List of hexadecimal color codes",
             "allowDuplicates": false,
             "defaultValue": [
-                "#1F75B3",
-                "#FF7F0F",
-                "#2CA02B"
+                "#1F77B4",
+                "#FF7F0E",
+                "#2CA02C"
             ],
             "visibilityCondition": "model.color_palette == 'custom'"
         },
