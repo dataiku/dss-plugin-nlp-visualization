@@ -36,7 +36,7 @@ DSS_BUILTIN_COLOR_PALETTES = [
     {
         "id": "dku_pastel2",
         "name": "Pastel 2",
-        "colors": ["#f06548", "#fdc766", "#7bc9a6", "#4ec5da", "#548ecb", "#97668f", "#5e2974"],
+        "colors": ["#F06548", "#FDC766", "#7BC9A6", "#4EC5DA", "#548ECB", "#97668F", "#5E2974"],
     },
 ]
 """list: Constant with DSS built-in color palette identifiers, names and lists of colors
