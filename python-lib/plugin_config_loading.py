@@ -14,7 +14,7 @@ from dataiku.customrecipe import (
     get_recipe_resource,
 )
 
-from language_dict import SUPPORTED_LANGUAGES_SPACY
+from language_support import SUPPORTED_LANGUAGES_SPACY
 from partitions_handling import get_folder_partition_root
 
 

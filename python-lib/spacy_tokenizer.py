@@ -18,7 +18,7 @@ from spacymoji import Emoji
 from emoji import UNICODE_EMOJI
 from fastcore.utils import store_attr
 
-from language_dict import SUPPORTED_LANGUAGES_SPACY, SPACY_LANGUAGE_MODELS
+from language_support import SUPPORTED_LANGUAGES_SPACY, SPACY_LANGUAGE_MODELS
 from plugin_io_utils import generate_unique, truncate_text_list
 
 

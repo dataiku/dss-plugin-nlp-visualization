@@ -28,7 +28,7 @@
             "acceptsManagedFolder": true
         }
     ],
-    "paramsPythonSetup": "get_language_list.py",
+    "paramsPythonSetup": "dynamic_select.py",
     "params": [
         {
             "name": "separator_params",
@@ -112,40 +112,7 @@
             "label": "Color palette",
             "description": "Select a built-in DSS palette or set a custom one to randomly color each word",
             "mandatory": true,
-            "selectChoices": [
-                {
-                    "label": "Default",
-                    "value": "default"
-                },
-                {
-                    "label": "DSS Next",
-                    "value": "dku_dss_next"
-                },
-                {
-                    "label": "Pastel",
-                    "value": "dku_pastel1"
-                },
-                {
-                    "label": "Corporate",
-                    "value": "dku_corpo1"
-                },
-                {
-                    "label": "Deuteranopia",
-                    "value": "dku_deuteranopia1"
-                },
-                {
-                    "label": "Tritanopia",
-                    "value": "dku_tritanopia1"
-                },
-                {
-                    "label": "Pastel 2",
-                    "value": "dku_pastel2"
-                },
-                {
-                    "label": "Custom palette",
-                    "value": "custom"
-                }
-            ],
+            "getChoicesFromPython": true,
             "defaultValue": "default"
         },
         {
