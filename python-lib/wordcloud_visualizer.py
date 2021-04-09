@@ -143,7 +143,9 @@ class WordcloudVisualizer:
 
         return wordcloud
 
-    def _generate_wordcloud(self, frequencies: Dict, title: AnyStr, language: AnyStr) -> matplotlib.pyplot.figure:
+    def _generate_wordcloud(
+        self, frequencies: Dict, language: AnyStr, title: AnyStr = None
+    ) -> matplotlib.pyplot.figure:
         """Return a wordcloud as a matplotlib figure"""
         # Manage font exceptions based on language
         font = self._retrieve_font(language)
@@ -153,9 +155,10 @@ class WordcloudVisualizer:
         fig = plt.figure(figsize=self.figsize, dpi=self.dpi)
         fig.tight_layout()
         plt.axis("off")
-        plt.rcParams["axes.titlepad"] = self.titlepad
-        plt.rcParams["axes.titlesize"] = self.titlesize
-        plt.title(title)
+        if title:
+            plt.rcParams["axes.titlepad"] = self.titlepad
+            plt.rcParams["axes.titlesize"] = self.titlesize
+            plt.title(title)
         plt.imshow(wc, interpolation="bilinear")
         return fig
 
@@ -286,12 +289,12 @@ class WordcloudVisualizer:
                 output_file_name = pathvalidate.sanitize_filename(
                     f"wordcloud_{self.subchart_column}_{name}.png"
                 ).lower()
-                wordcloud_title = output_file_name[:-4]
+                wordcloud_title = f"{self.subchart_column}: {name}"
                 # Generate chart
                 if self.language_as_subchart:
-                    fig = self._generate_wordcloud(frequencies=count, title=wordcloud_title, language=name)
+                    fig = self._generate_wordcloud(frequencies=count, language=name, title=wordcloud_title,)
                 else:
-                    fig = self._generate_wordcloud(frequencies=count, title=wordcloud_title, language=self.language)
+                    fig = self._generate_wordcloud(frequencies=count, language=self.language, title=wordcloud_title)
                 # Return chart
                 temp = BytesIO()
                 fig.savefig(temp, bbox_inches=self.bbox_inches, pad_inches=self.pad_inches, dpi=fig.dpi)
@@ -300,7 +303,7 @@ class WordcloudVisualizer:
         else:
             # Generate chart
             count = counts[0][1]
-            fig = self._generate_wordcloud(count, "wordcloud", self.language)
+            fig = self._generate_wordcloud(frequencies=count, language=self.language)
             # Return chart
             temp = BytesIO()
             fig.savefig(temp, bbox_inches=self.bbox_inches, pad_inches=self.pad_inches, dpi=fig.dpi)
