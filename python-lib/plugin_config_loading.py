@@ -14,7 +14,8 @@ from dataiku.customrecipe import (
     get_recipe_resource,
 )
 
-from language_dict import SUPPORTED_LANGUAGES_SPACY
+from language_support import SUPPORTED_LANGUAGES_SPACY
+from color_palettes import DSS_BUILTIN_COLOR_PALETTES
 from partitions_handling import get_folder_partition_root
 
 
@@ -114,13 +115,26 @@ def load_plugin_config_wordcloud() -> Dict:
         raise PluginParamValidationError("Maximum number of words is not a positive integer")
     logging.info(f"Max number of words: {params['max_words']}")
 
-    params["color_list"] = recipe_config.get("color_list")
-    if not (isinstance(params["color_list"], list) & (len(params["color_list"]) >= 1)):
-        raise PluginParamValidationError("Empty color palette")
-    if not all([matplotlib.colors.is_color_like(color) for color in params["color_list"]]):
-        raise PluginParamValidationError(f"Invalid color palette: {params['color_list']}")
-
-    params["color_list"] = [matplotlib.colors.to_hex(color) for color in params["color_list"]]
-    logging.info(f"Color list: {params['color_list']}")
+    color_palette = recipe_config.get("color_palette")
+    if not color_palette:
+        raise PluginParamValidationError("Empty color palette selection")
+    if color_palette == "custom":
+        params["color_list"] = recipe_config.get("color_list")
+        if not (isinstance(params["color_list"], list) & (len(params["color_list"]) >= 1)):
+            raise PluginParamValidationError("Empty custom palette")
+        if not all([matplotlib.colors.is_color_like(color) for color in params["color_list"]]):
+            raise PluginParamValidationError(f"Invalid custom palette: {params['color_list']}")
+        params["color_list"] = [matplotlib.colors.to_hex(color) for color in params["color_list"]]
+        logging.info(f"Custom palette: {params['color_list']}")
+    else:
+        if color_palette not in {builtin_palette["id"] for builtin_palette in DSS_BUILTIN_COLOR_PALETTES}:
+            raise PluginParamValidationError(f"Unsupported color palette: {color_palette}")
+        selected_palette_dict = [
+            builtin_palette for builtin_palette in DSS_BUILTIN_COLOR_PALETTES if builtin_palette["id"] == color_palette
+        ][0]
+        params["color_list"] = selected_palette_dict["colors"]
+        logging.info(
+            f"Using built-in DSS palette: '{selected_palette_dict['name']}' with colors: {params['color_list']}"
+        )
 
     return params
