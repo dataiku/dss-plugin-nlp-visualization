@@ -65,6 +65,7 @@ class WordcloudVisualizer:
     """
     FONT_EXCEPTIONS_DICT = {
         "gu": "NotoSansMerged-Regular-2048upem.ttf",
+        "ja": "NotoSansCJKjp-Regular.otf",
         "kn": "NotoSansMerged-Regular-2048upem.ttf",
         "ml": "NotoSansMerged-Regular-2048upem.ttf",
         "te": "NotoSansMerged-Regular-2048upem.ttf",

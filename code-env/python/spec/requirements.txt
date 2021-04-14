@@ -4,7 +4,7 @@ pymorphy2==0.9.1
 jieba==0.42.1
 pyvi==0.1
 regex==2020.11.13
-spacy[lookups,th]==2.3.5
+spacy[ja,lookups,th]==2.3.5
 emoji==1.2.0
 tqdm==4.50.2
 matplotlib==3.3.1
