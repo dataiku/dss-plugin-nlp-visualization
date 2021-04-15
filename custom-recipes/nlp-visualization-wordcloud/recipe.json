@@ -9,7 +9,7 @@
     "inputRoles": [
         {
             "name": "input_dataset",
-            "label": "Input dataset",
+            "label": "Text dataset",
             "description": "Dataset with a text column",
             "arity": "UNARY",
             "required": true,
