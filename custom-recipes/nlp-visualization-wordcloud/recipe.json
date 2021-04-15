@@ -88,7 +88,7 @@
         },
         {
             "name": "case_insensitive",
-            "label": "Case-insensitive",
+            "label": "Normalize case",
             "description": "Normalize case to count 'You' and 'you' as the same word. The most common case will be displayed.",
             "type": "BOOLEAN",
             "defaultValue": false,
