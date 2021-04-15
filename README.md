@@ -6,6 +6,10 @@ This Dataiku DSS plugin provides a recipe to visualize text data in 59 languages
 
 Documentation: https://www.dataiku.com/product/plugins/nlp-visualization/
 
+## Release notes
+
+See the [changelog](CHANGELOG.md) for a history of notable changes to this plugin.
+
 ## License
 
 This plugin is distributed under the [Apache License version 2.0](LICENSE).
