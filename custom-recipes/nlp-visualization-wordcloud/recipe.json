@@ -72,7 +72,7 @@
         },
         {
             "name": "remove_stopwords",
-            "label": "Clear stopwords",
+            "label": "Clear stop words",
             "description": "Remove so-called 'stop words' (the, I, a, of, ...). This transformation is language-specific.",
             "type": "BOOLEAN",
             "defaultValue": true,
