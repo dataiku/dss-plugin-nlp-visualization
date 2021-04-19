@@ -91,7 +91,7 @@
             "label": "Normalize case",
             "description": "Normalize case to treat 'You' and 'you' as the same word. The most common case will be displayed.",
             "type": "BOOLEAN",
-            "defaultValue": false,
+            "defaultValue": true,
             "mandatory": true
         },
         {
