@@ -2,7 +2,7 @@
     "id": "nlp-visualization",
     "version": "1.0.0",
     "meta": {
-        "label": "Text visualization",
+        "label": "Text Visualization",
         "category": "Natural Language Processing",
         "description": "Visualize text data in 59 languages using word clouds",
         "author": "Dataiku (Alex LANDEAU, Alex COMBESSIE)",
