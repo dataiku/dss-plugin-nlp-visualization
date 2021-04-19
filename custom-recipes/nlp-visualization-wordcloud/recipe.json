@@ -55,7 +55,7 @@
         },
         {
             "name": "language_column",
-            "label": "  ↳ Document language",
+            "label": "  ↳ Language column",
             "type": "COLUMN",
             "description": "Column containing ISO 639-1 language codes",
             "columnRole": "input_dataset",
