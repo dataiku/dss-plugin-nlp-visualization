@@ -18,7 +18,7 @@ plugin:
 	@zip --delete dist/${archive_file_name} "tests/*"
 	@zip -u dist/${archive_file_name} release_info.json
 	@rm release_info.json
-	@echo "Archiving plugin to dist/ folder: Done!"
+	@echo "Archiving plugin to dist/ folder: Done"
 
 .ONESHELL:
 unit-tests:
@@ -38,7 +38,7 @@ unit-tests:
 	@export STOPWORDS_FOLDER_PATH="$(PWD)/resource/stopwords"
 	@export TEST_RESOURCE_FOLDER_PATH="$(PWD)/tests/resource"
 	@pytest tests/python/unit --alluredir=tests/allure_report
-	@echo "Running unit tests: Done!"
+	@echo "Running unit tests: Done"
 
 .ONESHELL:
 integration-tests:
@@ -50,7 +50,7 @@ integration-tests:
 	@pip install --upgrade pip
 	@pip install --no-cache-dir -r tests/python/integration/requirements.txt
 	@pytest tests/python/integration --alluredir=tests/allure_report
-	@echo "Running integration tests: Done!"
+	@echo "Running integration tests: Done"
 
 tests: unit-tests integration-tests
 
