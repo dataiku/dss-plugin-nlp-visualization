@@ -10,6 +10,7 @@ def do(payload, config, plugin_config, inputs):
             [{"value": k, "label": v} for k, v in SUPPORTED_LANGUAGES_SPACY.items()], key=lambda x: x.get("label")
         )
         language_choices.insert(0, {"value": "language_column", "label": "Multilingual"})
+        print(language_choices)
         return {"choices": language_choices}
     elif payload.get("parameterName") == "color_palette":
         color_palette_choices = [
@@ -17,6 +18,7 @@ def do(payload, config, plugin_config, inputs):
             for color_palette in DSS_BUILTIN_COLOR_PALETTES
         ]
         color_palette_choices.append({"value": "custom", "label": "Custom"})
+        print(color_palette_choices)
         return {"choices": color_palette_choices}
     else:
         return {"choices": []}
