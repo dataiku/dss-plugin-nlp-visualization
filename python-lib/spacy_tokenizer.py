@@ -87,12 +87,14 @@ class MultilingualTokenizer:
             Slower but adds additional tagging capabilities to the pipeline.
         hashtags_as_token (bool): Treat hashtags as one token instead of two
         batch_size (int): Number of documents to process in spaCy pipelines
+        max_num_characters (int): Maximum number of characters in a single text
         spacy_nlp_dict (dict): Dictionary holding spaCy Language instances (value) by language code (key)
         tokenized_column (str): Name of the dataframe column storing tokenized documents
 
     """
 
     DEFAULT_BATCH_SIZE = 1000
+    MAX_NUM_CHARACTERS = 10 ** 7
     DEFAULT_NUM_PROCESS = 2
     DEFAULT_FILTER_TOKEN_ATTRIBUTES = {
         "is_space": "Whitespace",
@@ -121,18 +123,21 @@ class MultilingualTokenizer:
         use_models: bool = False,
         hashtags_as_token: bool = True,
         batch_size: int = DEFAULT_BATCH_SIZE,
+        max_num_characters: int = MAX_NUM_CHARACTERS
     ):
         """Initialization method for the MultilingualTokenizer class, with optional arguments
 
         Args:
             stopwords_folder_path (str, optional): Path to a folder with stopword text files (one line per stopword)
                 Files should be named "{language_code}.txt" with the code in ISO 639-1 format
-            use_models (bool, optional): If True (default), loads spaCy models, which is slower but allows to retrieve
+            use_models (bool): If True (default), loads spaCy models, which is slower but allows to retrieve
                 Part-of-Speech and Entities tags for downstream tasks
-            hashtags_as_token (bool, optional): Treat hashtags as one token instead of two
+            hashtags_as_token (bool): Treat hashtags as one token instead of two
                 Default is True, which overrides the spaCy default behavior
-            batch_size (int, optional): Number of documents to process in spaCy pipelines
+            batch_size (int): Number of documents to process in spaCy pipelines
                 Default is set by the DEFAULT_BATCH_SIZE class constant
+            max_num_characters (int): Maximum number of characters in a single text
+                Default is 10 million, higher than spaCy more conservative default at 1 million
 
         """
         store_attr()
@@ -161,6 +166,7 @@ class MultilingualTokenizer:
                 nlp = spacy.load(SPACY_LANGUAGE_MODELS[language])
             else:
                 nlp = spacy.blank(language)  # spaCy language without models (https://spacy.io/usage/models)
+            nlp.max_length = self.max_num_characters
         except (ValueError, OSError) as e:
             raise TokenizationError(
                 f"SpaCy tokenization not available for language '{language}' because of error: '{e}'"
