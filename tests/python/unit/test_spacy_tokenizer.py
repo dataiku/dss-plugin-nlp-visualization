@@ -4,8 +4,6 @@
 # see https://docs.pytest.org for more information
 
 import os
-import random
-import string
 
 import pytest
 import pandas as pd
@@ -51,7 +49,7 @@ def test_tokenize_df_multilingual():
 
 
 def test_tokenize_df_long_text():
-    input_df = pd.DataFrame({"input_text": [" ".join(random.choice(string.ascii_lowercase) for i in range(10 ** 7))]})
-    tokenizer = MultilingualTokenizer()
+    input_df = pd.DataFrame({"input_text": ["Long text"]})
+    tokenizer = MultilingualTokenizer(max_num_characters=1)
     with pytest.raises(ValueError):
-        tokenizer.tokenize_df(df=input_df, text_column="input_text")
+        tokenizer.tokenize_df(df=input_df, text_column="input_text", language="en")
