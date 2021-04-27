@@ -7,6 +7,7 @@ import os
 import random
 import string
 
+import pytest
 import pandas as pd
 
 from spacy_tokenizer import MultilingualTokenizer
