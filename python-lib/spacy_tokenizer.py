@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Module with a class to tokenize text data in multiple languages"""
 
+
 import regex as re
 import os
 import logging
@@ -51,12 +52,13 @@ MISC_UNITS = {"k", "a", "v", "mol", "cd", "w", "n", "c"}
 ALL_UNITS = ORDER_UNITS | WEIGHT_UNITS | DISTANCE_SPEED_UNITS | VOLUME_UNITS | MISC_UNITS
 Token.set_extension(
     "is_measure",
-    getter=lambda token: not token.like_num  # avoid conflict with existing token attribute
+    getter=lambda token: not token.like_num
     and not getattr(token._, "is_datetime", False)
     and token.text[:1].isdigit()
-    and any([re.sub(NUMERIC_SEPARATOR_REGEX, "", token.lower_).replace(unit, "").isdigit() for unit in ALL_UNITS]),
+    and any(re.sub(NUMERIC_SEPARATOR_REGEX, "", token.lower_).replace(unit, "").isdigit() for unit in ALL_UNITS),
     force=True,
 )
+
 INVISIBLE_CHARS_REGEX = re.compile(
     r"(\p{C}|\p{Z}|\p{M})+"
 )  # matches unicode categories C (control chars), Z (separators) and M (marks)
@@ -95,7 +97,7 @@ class MultilingualTokenizer:
 
     DEFAULT_BATCH_SIZE = 1000
     MAX_NUM_CHARACTERS = 10 ** 7
-    DEFAULT_NUM_PROCESS = 2
+    DEFAULT_NUM_PROCESS = 1
     DEFAULT_FILTER_TOKEN_ATTRIBUTES = {
         "is_space": "Whitespace",
         "is_punct": "Punctuation",
@@ -123,7 +125,7 @@ class MultilingualTokenizer:
         use_models: bool = False,
         hashtags_as_token: bool = True,
         batch_size: int = DEFAULT_BATCH_SIZE,
-        max_num_characters: int = MAX_NUM_CHARACTERS
+        max_num_characters: int = MAX_NUM_CHARACTERS,
     ):
         """Initialization method for the MultilingualTokenizer class, with optional arguments
 
@@ -258,17 +260,17 @@ class MultilingualTokenizer:
         text_list = [str(t) if pd.notnull(t) else "" for t in text_list]
         try:
             self._add_spacy_tokenizer(language)
-            tokenized = list(
-                self.spacy_nlp_dict[language].pipe(
-                    text_list, batch_size=self.batch_size, n_process=self.DEFAULT_NUM_PROCESS
-                )
-            )
-            logging.info(
-                f"Tokenizing {len(tokenized)} document(s) in language '{language}': "
-                + f"done in {perf_counter() - start:.2f} seconds"
-            )
         except TokenizationError as e:
             raise TokenizationError(f"Tokenization error: {e} for document(s): '{truncate_text_list(text_list)}'")
+        tokenized = list(
+            self.spacy_nlp_dict[language].pipe(
+                text_list, batch_size=self.batch_size, n_process=self.DEFAULT_NUM_PROCESS
+            )
+        )
+        logging.info(
+            f"Tokenizing {len(tokenized)} document(s) in language '{language}': "
+            + f"done in {perf_counter() - start:.2f} seconds"
+        )
         return tokenized
 
     def tokenize_df(

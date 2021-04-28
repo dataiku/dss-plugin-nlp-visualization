@@ -53,3 +53,8 @@ def test_wordcloud_unpartitioned_folder_file(user_dss_clients):
 
 def test_wordcloud_unpartitioned_folder_sql(user_dss_clients):
     dss_scenario.run(user_dss_clients, project_key=TEST_PROJECT_KEY, scenario_id="unpartitionned_folder_sql")
+
+    
+def test_wordcloud_long_text(user_dss_clients):
+    dss_scenario.run(user_dss_clients, project_key=TEST_PROJECT_KEY, scenario_id="TEST_LONGTEXT")
+
