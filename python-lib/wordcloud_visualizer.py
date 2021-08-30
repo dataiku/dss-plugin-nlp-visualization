@@ -247,10 +247,12 @@ class WordcloudVisualizer:
         for doc in docs:
             counter = Counter()
             for token in doc:
-                token_is_stopwords = token.is_stop if self.remove_stopwords else False
-                token_is_punctuation = token.is_punct if self.remove_punctuation else False
-                if not token_is_stopwords and not token_is_punctuation and not token.is_space:
-                    counter[token.text] += 1  # Equivalently, token.lemma_
+                if not token.is_space:
+                    token_is_stopwords = token.is_stop if self.remove_stopwords else False
+                    if not token_is_stopwords:
+                        token_is_punctuation = token.is_punct if self.remove_punctuation else False
+                        if not token_is_punctuation:
+                            counter[token.text] += 1  # Equivalently, token.lemma_
             counters.append(counter)
 
         if not self.subchart_column:
@@ -293,7 +295,11 @@ class WordcloudVisualizer:
                 wordcloud_title = f"{self.subchart_column}: {name}"
                 # Generate chart
                 if self.language_as_subchart:
-                    fig = self._generate_wordcloud(frequencies=count, language=name, title=wordcloud_title,)
+                    fig = self._generate_wordcloud(
+                        frequencies=count,
+                        language=name,
+                        title=wordcloud_title,
+                    )
                 else:
                     fig = self._generate_wordcloud(frequencies=count, language=self.language, title=wordcloud_title)
                 # Return chart
