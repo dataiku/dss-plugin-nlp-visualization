@@ -305,6 +305,7 @@ class WordcloudVisualizer:
                 # Return chart
                 temp = BytesIO()
                 fig.savefig(temp, bbox_inches=self.bbox_inches, pad_inches=self.pad_inches, dpi=fig.dpi)
+                plt.close()
                 yield (temp, output_file_name)
 
         else:
@@ -314,6 +315,7 @@ class WordcloudVisualizer:
             # Return chart
             temp = BytesIO()
             fig.savefig(temp, bbox_inches=self.bbox_inches, pad_inches=self.pad_inches, dpi=fig.dpi)
+            plt.close()
             yield (temp, "wordcloud.png")
 
     def tokenize_and_count(self, df: pd.DataFrame) -> List[Tuple[AnyStr, Dict]]:
