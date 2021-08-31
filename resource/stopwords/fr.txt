@@ -7,6 +7,8 @@ aie
 aient
 aies
 ait
+allaient
+allons
 alors
 as
 au
@@ -119,6 +121,7 @@ eut
 eût
 eûtes
 eux
+façon
 fais
 faisaient
 faisant
@@ -136,6 +139,7 @@ fussions
 fut
 fût
 fûtes
+gens
 ici
 il
 ils
@@ -214,6 +218,8 @@ s'
 s‘
 s’
 sa
+sais
+sait
 sans
 se
 sera
@@ -262,12 +268,17 @@ toutes
 tu
 un
 une
+va
+vais
+vas
 vers
 voici
 voilà
+vont
 vos
 votre
 vôtre
 vôtres
 vous
+vu
 y
