@@ -235,6 +235,20 @@ class WordcloudVisualizer:
         normalized_counts = Counter(dict(zip(df_counts_agg.token_majority_case, df_counts_agg["sum"])))
         return normalized_counts
 
+    def _save_chart(self, fig: plt.figure) -> BytesIO:
+        """Private method to save chart as a bytes stream
+
+        Args:
+            fig (plt.figure): matplotlib figure to save
+
+        Returns:
+            BytesIO: bytes stream containing the chart's data
+        """
+        temp = BytesIO()
+        fig.savefig(temp, bbox_inches=self.bbox_inches, pad_inches=self.pad_inches, dpi=fig.dpi)
+        plt.close()
+        return temp
+
     @time_logging(log_message="Counting tokens")
     def _count_tokens(self, docs: List[Doc]) -> List[Tuple[AnyStr, Dict]]:
         """Private method to count tokens for each document in corpus
@@ -303,9 +317,7 @@ class WordcloudVisualizer:
                 else:
                     fig = self._generate_wordcloud(frequencies=count, language=self.language, title=wordcloud_title)
                 # Return chart
-                temp = BytesIO()
-                fig.savefig(temp, bbox_inches=self.bbox_inches, pad_inches=self.pad_inches, dpi=fig.dpi)
-                plt.close()
+                temp = self._save_chart(fig)
                 yield (temp, output_file_name)
 
         else:
@@ -313,9 +325,7 @@ class WordcloudVisualizer:
             count = counts[0][1]
             fig = self._generate_wordcloud(frequencies=count, language=self.language)
             # Return chart
-            temp = BytesIO()
-            fig.savefig(temp, bbox_inches=self.bbox_inches, pad_inches=self.pad_inches, dpi=fig.dpi)
-            plt.close()
+            temp = self._save_chart(fig)
             yield (temp, "wordcloud.png")
 
     def tokenize_and_count(self, df: pd.DataFrame) -> List[Tuple[AnyStr, Dict]]:
