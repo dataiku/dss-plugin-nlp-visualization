@@ -193,7 +193,7 @@ class WordcloudVisualizer:
         texts = []
         group_names = []
         for name, group in df_grouped:
-            texts.append([group[self.text_column].str.cat(sep=" ")])
+            texts.append(list(group[self.text_column]))
             group_names.append(name)
 
         # Get tokenization languages differently depending on language/subchart settings combinations
@@ -210,8 +210,10 @@ class WordcloudVisualizer:
             languages = group_names
 
         # Tokenize
-        docs = [self.tokenizer.tokenize_list(text, language)[0] for text, language in zip(texts, languages)]
-
+        docs = [
+            Doc.from_docs(self.tokenizer.tokenize_list(text_list, language))
+            for text_list, language in zip(texts, languages)
+        ]
         return docs
 
     def _normalize_case_token_counts(self, counts: Counter) -> Counter:
