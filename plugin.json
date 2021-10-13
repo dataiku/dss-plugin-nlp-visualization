@@ -1,0 +1,17 @@
+{
+    "id": "nlp-visualization",
+    "version": "1.0.0",
+    "meta": {
+        "label": "Text Visualization",
+        "category": "Natural Language Processing",
+        "description": "Visualize text as word clouds in 59 languages",
+        "author": "Dataiku (Alex LANDEAU, Alex COMBESSIE)",
+        "icon": "icon-quote-left",
+        "tags": [
+            "NLP"
+        ],
+        "url": "https://www.dataiku.com/product/plugins/nlp-visualization/",
+        "licenseInfo": "Apache Software License",
+        "supportLevel": "NOT_SUPPORTED"
+    }
+}

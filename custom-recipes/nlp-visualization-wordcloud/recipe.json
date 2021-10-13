@@ -1,0 +1,421 @@
+{
+    "meta": {
+        "label": "Word clouds",
+        "description": "Generate word clouds from your text data",
+        "icon": "icon-comment"
+    },
+    "kind": "PYTHON",
+    "selectableFromDataset": "input_dataset",
+    "inputRoles": [
+        {
+            "name": "input_dataset",
+            "label": "Text dataset",
+            "description": "Dataset with a text column",
+            "arity": "UNARY",
+            "required": true,
+            "acceptsDataset": true,
+            "acceptsManagedFolder": false
+        }
+    ],
+    "outputRoles": [
+        {
+            "name": "output_folder",
+            "label": "Word cloud folder",
+            "description": "Folder where the word clouds will be saved as images",
+            "arity": "UNARY",
+            "required": true,
+            "acceptsDataset": false,
+            "acceptsManagedFolder": true
+        }
+    ],
+    "params": [
+        {
+            "name": "separator_params",
+            "label": "Input parameters",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "text_column",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "allowedColumnTypes": [
+                "string"
+            ],
+            "label": "Text column",
+            "mandatory": true
+        },
+        {
+            "name": "language",
+            "type": "SELECT",
+            "label": "Language",
+            "mandatory": true,
+            "defaultValue": "en",
+            "selectChoices": [
+                {
+                    "value": "language_column",
+                    "label": "Multilingual"
+                },
+                {
+                    "value": "af",
+                    "label": "Afrikaans"
+                },
+                {
+                    "value": "sq",
+                    "label": "Albanian"
+                },
+                {
+                    "value": "ar",
+                    "label": "Arabic"
+                },
+                {
+                    "value": "hy",
+                    "label": "Armenian"
+                },
+                {
+                    "value": "eu",
+                    "label": "Basque"
+                },
+                {
+                    "value": "bn",
+                    "label": "Bengali"
+                },
+                {
+                    "value": "bg",
+                    "label": "Bulgarian"
+                },
+                {
+                    "value": "ca",
+                    "label": "Catalan"
+                },
+                {
+                    "value": "zh",
+                    "label": "Chinese (simplified)"
+                },
+                {
+                    "value": "hr",
+                    "label": "Croatian"
+                },
+                {
+                    "value": "cs",
+                    "label": "Czech"
+                },
+                {
+                    "value": "da",
+                    "label": "Danish"
+                },
+                {
+                    "value": "nl",
+                    "label": "Dutch"
+                },
+                {
+                    "value": "en",
+                    "label": "English"
+                },
+                {
+                    "value": "et",
+                    "label": "Estonian"
+                },
+                {
+                    "value": "fi",
+                    "label": "Finnish"
+                },
+                {
+                    "value": "fr",
+                    "label": "French"
+                },
+                {
+                    "value": "de",
+                    "label": "German"
+                },
+                {
+                    "value": "el",
+                    "label": "Greek"
+                },
+                {
+                    "value": "gu",
+                    "label": "Gujarati"
+                },
+                {
+                    "value": "he",
+                    "label": "Hebrew"
+                },
+                {
+                    "value": "hi",
+                    "label": "Hindi"
+                },
+                {
+                    "value": "hu",
+                    "label": "Hungarian"
+                },
+                {
+                    "value": "is",
+                    "label": "Icelandic"
+                },
+                {
+                    "value": "id",
+                    "label": "Indonesian"
+                },
+                {
+                    "value": "ga",
+                    "label": "Irish"
+                },
+                {
+                    "value": "it",
+                    "label": "Italian"
+                },
+                {
+                    "value": "ja",
+                    "label": "Japanese"
+                },
+                {
+                    "value": "kn",
+                    "label": "Kannada"
+                },
+                {
+                    "value": "lv",
+                    "label": "Latvian"
+                },
+                {
+                    "value": "lt",
+                    "label": "Lithuanian"
+                },
+                {
+                    "value": "lb",
+                    "label": "Luxembourgish"
+                },
+                {
+                    "value": "mk",
+                    "label": "Macedonian"
+                },
+                {
+                    "value": "ml",
+                    "label": "Malayalam"
+                },
+                {
+                    "value": "mr",
+                    "label": "Marathi"
+                },
+                {
+                    "value": "ne",
+                    "label": "Nepali"
+                },
+                {
+                    "value": "nb",
+                    "label": "Norwegian Bokmål"
+                },
+                {
+                    "value": "fa",
+                    "label": "Persian"
+                },
+                {
+                    "value": "pl",
+                    "label": "Polish"
+                },
+                {
+                    "value": "pt",
+                    "label": "Portuguese"
+                },
+                {
+                    "value": "ro",
+                    "label": "Romanian"
+                },
+                {
+                    "value": "ru",
+                    "label": "Russian"
+                },
+                {
+                    "value": "sa",
+                    "label": "Sanskrit"
+                },
+                {
+                    "value": "sr",
+                    "label": "Serbian"
+                },
+                {
+                    "value": "si",
+                    "label": "Sinhala"
+                },
+                {
+                    "value": "sk",
+                    "label": "Slovak"
+                },
+                {
+                    "value": "sl",
+                    "label": "Slovenian"
+                },
+                {
+                    "value": "es",
+                    "label": "Spanish"
+                },
+                {
+                    "value": "sv",
+                    "label": "Swedish"
+                },
+                {
+                    "value": "tl",
+                    "label": "Tagalog"
+                },
+                {
+                    "value": "ta",
+                    "label": "Tamil"
+                },
+                {
+                    "value": "tt",
+                    "label": "Tatar"
+                },
+                {
+                    "value": "te",
+                    "label": "Telugu"
+                },
+                {
+                    "value": "th",
+                    "label": "Thai"
+                },
+                {
+                    "value": "tr",
+                    "label": "Turkish"
+                },
+                {
+                    "value": "uk",
+                    "label": "Ukrainian"
+                },
+                {
+                    "value": "ur",
+                    "label": "Urdu"
+                },
+                {
+                    "value": "vi",
+                    "label": "Vietnamese"
+                },
+                {
+                    "value": "yo",
+                    "label": "Yoruba"
+                }
+            ]
+        },
+        {
+            "name": "language_column",
+            "label": "  ↳ Language column",
+            "type": "COLUMN",
+            "description": "Column containing ISO 639-1 language codes",
+            "columnRole": "input_dataset",
+            "allowedColumnTypes": [
+                "string"
+            ],
+            "visibilityCondition": "model.language == 'language_column'",
+            "mandatory": false
+        },
+        {
+            "name": "separator_text_handling",
+            "label": "Text cleaning",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "remove_stopwords",
+            "label": "Clear stop words",
+            "description": "Remove common words with little meaning e.g., the, I, a, of. This transformation is language-specific.",
+            "type": "BOOLEAN",
+            "defaultValue": true,
+            "mandatory": true
+        },
+        {
+            "name": "remove_punctuation",
+            "label": "Clear punctuation",
+            "description": "Remove punctuation characters e.g., ! ? ( ). This transformation is language-specific.",
+            "type": "BOOLEAN",
+            "defaultValue": true,
+            "mandatory": true
+        },
+        {
+            "name": "case_insensitive",
+            "label": "Normalize case",
+            "description": "Normalize case to treat 'You' and 'you' as the same word. The most common case will be displayed.",
+            "type": "BOOLEAN",
+            "defaultValue": true,
+            "mandatory": true
+        },
+        {
+            "name": "separator_display",
+            "label": "Word cloud",
+            "type": "SEPARATOR"
+        },
+        {
+            "type": "INT",
+            "name": "max_words",
+            "label": "Maximum number of words",
+            "minI": 1,
+            "defaultValue": 100
+        },
+        {
+            "type": "SELECT",
+            "name": "color_palette",
+            "label": "Color palette",
+            "mandatory": true,
+            "defaultValue": "default",
+            "selectChoices": [
+                {
+                    "value": "default",
+                    "label": "Default"
+                },
+                {
+                    "value": "dku_dss_next",
+                    "label": "DSS Next"
+                },
+                {
+                    "value": "dku_pastel1",
+                    "label": "Pastel"
+                },
+                {
+                    "value": "dku_corpo1",
+                    "label": "Corporate"
+                },
+                {
+                    "value": "dku_deuteranopia1",
+                    "label": "Deuteranopia"
+                },
+                {
+                    "value": "dku_tritanopia1",
+                    "label": "Tritanopia"
+                },
+                {
+                    "value": "dku_pastel2",
+                    "label": "Pastel 2"
+                },
+                {
+                    "value": "custom",
+                    "label": "Custom"
+                }
+            ]
+        },
+        {
+            "type": "STRINGS",
+            "name": "color_list",
+            "label": "  ↳ Custom palette",
+            "description": "List of hexadecimal color codes or CSS color names",
+            "allowDuplicates": false,
+            "defaultValue": [
+                "#1F77B4",
+                "#FF7F0E",
+                "#2CA02C"
+            ],
+            "visibilityCondition": "model.color_palette == 'custom'"
+        },
+        {
+            "name": "separator_subcharts",
+            "label": "Subcharts",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "subchart_column",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "allowedColumnTypes": [
+                "string"
+            ],
+            "label": "Split by column",
+            "description": "Optional column to generate one word cloud per category",
+            "mandatory": false
+        }
+    ],
+    "resourceKeys": []
+}
