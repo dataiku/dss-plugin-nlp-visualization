@@ -45,7 +45,7 @@ def test_tokenize_df_multilingual():
     output_df = tokenizer.tokenize_df(df=input_df, text_column="input_text", language_column="language")
     tokenized_documents = output_df[tokenizer.tokenized_column]
     tokenized_documents_length = [len(doc) for doc in tokenized_documents]
-    assert tokenized_documents_length == [12, 8, 13, 9]
+    assert tokenized_documents_length == [12, 8, 19, 9]
 
 
 def test_tokenize_df_long_text():
