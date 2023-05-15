@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Module with a class to tokenize text data in multiple languages"""
 
 import regex as re
@@ -36,7 +37,9 @@ Token.set_extension(
     getter=lambda token: any(c in UNICODE_EMOJI for c in token.text),
     force=True,
 )
-SYMBOL_CHARS_REGEX = re.compile(r"(\p{M}|\p{S})+")  # matches unicode categories M (marks) and S (symbols)
+SYMBOL_CHARS_REGEX = re.compile(
+    r"(\p{M}|\p{S})+"
+)  # matches unicode categories M (marks) and S (symbols)
 Token.set_extension(
     "is_symbol",
     getter=lambda token: not token.is_punct
@@ -45,7 +48,9 @@ Token.set_extension(
     and not re.sub(SYMBOL_CHARS_REGEX, "", token.text).strip(),
     force=True,
 )
-DATETIME_REGEX = re.compile(r"(:|-|\.|\/|am|pm|hrs|hr|h|minutes|mins|min|sec|s|ms|ns|y)+", flags=re.IGNORECASE)
+DATETIME_REGEX = re.compile(
+    r"(:|-|\.|\/|am|pm|hrs|hr|h|minutes|mins|min|sec|s|ms|ns|y)+", flags=re.IGNORECASE
+)
 Token.set_extension(
     "is_datetime",
     getter=lambda token: not token.like_num  # avoid conflict with existing token attribute
@@ -65,7 +70,12 @@ Token.set_extension(
     getter=lambda token: not token.like_num  # avoid conflict with existing token attribute
     and not getattr(token._, "is_datetime", False)
     and token.text[:1].isdigit()
-    and any([re.sub(NUMERIC_SEPARATOR_REGEX, "", token.lower_).replace(unit, "").isdigit() for unit in ALL_UNITS]),
+    and any(
+        [
+            re.sub(NUMERIC_SEPARATOR_REGEX, "", token.lower_).replace(unit, "").isdigit()
+            for unit in ALL_UNITS
+        ]
+    ),
     force=True,
 )
 INVISIBLE_CHARS_REGEX = re.compile(
@@ -73,7 +83,9 @@ INVISIBLE_CHARS_REGEX = re.compile(
 )  # matches unicode categories C (control chars), Z (separators) and M (marks)
 Token.set_extension(
     "is_space",
-    getter=lambda token: not getattr(token._, "is_symbol", False)  # avoid conflict with existing token attribute
+    getter=lambda token: not getattr(
+        token._, "is_symbol", False
+    )  # avoid conflict with existing token attribute
     and (
         not "".join(c for c in token.text.strip() if c.isprintable())
         or not re.sub(INVISIBLE_CHARS_REGEX, "", token.text.strip())
@@ -110,7 +122,8 @@ class MultilingualTokenizer:
 
     DEFAULT_BATCH_SIZE = 1000
     MAX_NUM_CHARACTERS = 10 ** 7
-    DEFAULT_NUM_PROCESS = 2
+    # Set to 1 to prevent pickling issues when spawning multiple processes on MacOS
+    DEFAULT_NUM_PROCESS = 1
     DEFAULT_FILTER_TOKEN_ATTRIBUTES = {
         "is_space": "Whitespace",
         "is_punct": "Punctuation",
@@ -177,10 +190,12 @@ class MultilingualTokenizer:
         """spacy.language.DisabledPipes object initialized in create_spacy_tokenizer()
         Contains the components of each SpaCy.Language object that have been disabled by spacy.Languages.select_pipes() method.
         Those components can be re-added to each SpaCy.Language at their initial place in the pipeline, by calling restore_pipe_components[language].restore()
-
+        
         """
         if self.enable_pipe_components and self.disable_pipe_components:
-            raise ValueError("Only one of enable_pipe_components and disable_pipe_components can be specified at once.")
+            raise ValueError(
+                "Only one of enable_pipe_components and disable_pipe_components can be specified at once."
+            )
 
     def _set_use_models(self, languages: List[AnyStr]) -> bool:
         """Set self.use_models attribute to True in case the text should be lemmatize with a SpaCy pre-trained model.
@@ -247,7 +262,9 @@ class MultilingualTokenizer:
         start = perf_counter()
         logging.info(f"Loading tokenizer for language '{language}'...")
         try:
-            if language == "th":  # PyThaiNLP requires a "data directory" even if nothing needs to be downloaded
+            if (
+                language == "th"
+            ):  # PyThaiNLP requires a "data directory" even if nothing needs to be downloaded
                 os.environ["PYTHAINLP_DATA_DIR"] = mkdtemp()  # dummy temp directory
             if language in SPACY_LANGUAGE_MODELS and self.use_models:
                 nlp = spacy.load(SPACY_LANGUAGE_MODELS[language])
@@ -257,7 +274,9 @@ class MultilingualTokenizer:
             elif language == "zh":
                 nlp = Chinese.from_config({"nlp": {"tokenizer": {"segmenter": "jieba"}}})
             else:
-                nlp = spacy.blank(language)  # spaCy language without models (https://spacy.io/usage/models)
+                nlp = spacy.blank(
+                    language
+                )  # spaCy language without models (https://spacy.io/usage/models)
             nlp.max_length = self.max_num_characters
             for component in self.add_pipe_components:
                 nlp.add_pipe(
@@ -268,9 +287,13 @@ class MultilingualTokenizer:
             if not self.use_models:
                 nlp.initialize()
             if self.enable_pipe_components:
-                self._restore_pipe_components[language] = nlp.select_pipes(enable=self.enable_pipe_components)
+                self._restore_pipe_components[language] = nlp.select_pipes(
+                    enable=self.enable_pipe_components
+                )
             if self.disable_pipe_components:
-                self._restore_pipe_components[language] = nlp.select_pipes(disable=self.disable_pipe_components)
+                self._restore_pipe_components[language] = nlp.select_pipes(
+                    disable=self.disable_pipe_components
+                )
 
         except (ValueError, OSError) as e:
             raise TokenizationError(
@@ -286,7 +309,9 @@ class MultilingualTokenizer:
                 nlp.tokenizer.prefix_search = spacy.util.compile_prefix_regex(_prefixes).search
         if self.stopwords_folder_path and language in SUPPORTED_LANGUAGES_SPACY:
             self._customize_stopwords(nlp, language)
-        logging.info(f"Loading tokenizer for language '{language}': done in {perf_counter() - start:.2f} seconds")
+        logging.info(
+            f"Loading tokenizer for language '{language}': done in {perf_counter() - start:.2f} seconds"
+        )
         return nlp
 
     def _customize_stopwords(self, nlp: Language, language: AnyStr) -> None:
@@ -312,7 +337,9 @@ class MultilingualTokenizer:
                     nlp.vocab[word.upper()].is_stop = False
             nlp.Defaults.stop_words = custom_stopwords
         except (ValueError, OSError) as e:
-            raise TokenizationError(f"Stopword file for language '{language}' not available because of error: '{e}'")
+            raise TokenizationError(
+                f"Stopword file for language '{language}' not available because of error: '{e}'"
+            )
 
     def add_spacy_tokenizer(self, language: AnyStr) -> bool:
         """Private method to add a spaCy tokenizer for a given language to the `spacy_nlp_dict` attribute
@@ -363,7 +390,9 @@ class MultilingualTokenizer:
                 f"Tokenizing {len(tokenized)} document(s) in language '{language}': done in {perf_counter() - start:.2f} seconds"
             )
         except TokenizationError as e:
-            raise TokenizationError(f"Tokenization error: {e} for document(s): '{truncate_text_list(text_list)}'")
+            raise TokenizationError(
+                f"Tokenization error: {e} for document(s): '{truncate_text_list(text_list)}'"
+            )
         return tokenized
 
     def tokenize_df(

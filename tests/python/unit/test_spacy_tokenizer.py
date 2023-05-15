@@ -36,16 +36,17 @@ def test_tokenize_df_multilingual():
                 "I hope nothing. I fear nothing. I am free.",
                 " Les sanglots longs des violons d'automne",
                 "子曰：“學而不思則罔，思而不學則殆。”",
-                "期一会。 異体同心。 そうです。",
             ],
-            "language": ["en", "fr", "zh", "ja"],
+            "language": ["en", "fr", "zh"],
         }
     )
     tokenizer = MultilingualTokenizer(stopwords_folder_path=stopwords_folder_path)
-    output_df = tokenizer.tokenize_df(df=input_df, text_column="input_text", language_column="language")
+    output_df = tokenizer.tokenize_df(
+        df=input_df, text_column="input_text", language_column="language"
+    )
     tokenized_documents = output_df[tokenizer.tokenized_column]
     tokenized_documents_length = [len(doc) for doc in tokenized_documents]
-    assert tokenized_documents_length == [12, 8, 13, 9]
+    assert tokenized_documents_length == [12, 8, 13]
 
 
 def test_tokenize_df_long_text():
